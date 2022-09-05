@@ -44,12 +44,17 @@
 ||51topshow.com^$important
 #腾讯视频
 @@||tv.aiseet.atianqi.com^$important
+##优酷
+@@||pns.alicdn.com^$important
+@@||ott.cibntv.net^$important
+@@||streamsb.net^$important
 #苹果ios
 ||mesu.apple.com^$important
 ||appldnld.apple.com^$important
 ||swscan.apple.com^$important
 ||xp.apple.com^$important
 ||gdmf.apple.com^$important
+@@||amp-api-edge.apps.apple.com^$important
 ##微信头像
 @@||qqpublic.qpic.cn^$important
 @@||wx.qlogo.cn^$important
@@ -116,6 +121,8 @@
 @@||ahcdn.com^$important
 #手机下载
 @@||a.app.qq.com^$important
+##阿里小号
+@@||acs.m.taobao.com^$important
 #夸克网盘
 @@||px.effirst.com^$important
 @@||track.uc.cn^$important
@@ -125,6 +132,7 @@
 ||applovin.com^
 ||applvn.com^
 ##其他
+@@||t.co^$important
 @@||privatehost.com^$important
 @@||i.p04.space^$important
 @@||cdn.kuaidi100.com^$important
