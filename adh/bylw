@@ -42,6 +42,13 @@
 ||tianmaolive.com^$important
 ||51livetv.com^$important
 ||51topshow.com^$important
+||huannew.api.snmtcl.aisee.tv^$important
+||xiaomor.com^$important
+||imoran.net^$important
+||upl.baidu.com^$important
+||log.iflytek.com^$important
+||dev.voicecloud.cn^$important
+||restapi.amap.com^$important
 #腾讯视频
 @@||tv.aiseet.atianqi.com^$important
 ##优酷
@@ -140,4 +147,4 @@
 @@||static-pub.highwebmedia.com^$important
 @@||roomimg.stream.highwebmedia.com^$important
 ||_services._dns-sd._udp.local^$important
-||huannew.api.snmtcl.aisee.tv^$important
+
