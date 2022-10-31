@@ -5,16 +5,16 @@
 ||hmeng.com.cn^$important
 ||hmeng.org^$important
 ||hmeng.cn^$important
-||tcltech.com
+||tcltech.com^$important
 ||tclking.com^$important
 ||tventry.com^$important
 #双十一广告壁纸
-#@@||launcher.tcloudfamily.com^$important
+||launcher.tcloudfamily.com^$important
 ||tcloudfamily.com^$important
-#@@||media-poster-o.img.leiniao.com^^$important
+##@@||media-poster-o.img.leiniao.com^^$important
 ||leiniao.com^$important
 ||aisee.tv^$important
-#@@||api.snm0516.aisee.tv^$important
+##@@||api.snm0516.aisee.tv^$important
 ||huannew.api.snmtcl.aisee.tv^$important
 
 ##欢太
@@ -67,7 +67,7 @@
 
 #腾讯视频
 #@@||tv.aiseet.atianqi.com^$important
-||aiseet.aa.atianqi.com^$important
+#||aiseet.aa.atianqi.com^$important
 ##优酷
 @@||pns.alicdn.com^$important
 @@||ott.cibntv.net^$important
