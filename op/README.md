@@ -7,7 +7,7 @@
 | Google | http://www.google.com/generate_204 |  0 | 10 |
 | Google | http://connectivitycheck.gstatic.com/generate_204 |  4 | 10 |
 | Apple | http://captive.apple.com |  3 | 10 |
-| Apple | http://captive.apple.com |  7 | 10 |
+| Apple | http://www.apple.com/library/test/success.html |  7 | 10 |
 | MicroSoft | http://www.msftconnecttest.com/connecttest.txt |  5 | 10 |
 | Cloudflare | http://cp.cloudflare.com/ |  4 | 10 |
 | Firefox | http://detectportal.firefox.com/success.txt |  5 | 10 |
