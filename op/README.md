@@ -1,3 +1,4 @@
+#测Ping网址
 | 服务提供者 | 链接 | 内 | 外 |
 | :----: | :----: | :----: | :----: |
 | Google | http://www.gstatic.com/generate_204 | 5 | 10 |
