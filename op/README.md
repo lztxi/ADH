@@ -1,3 +1,7 @@
+| 服务提供者      | 链接     | 大陆体验     | 境外体验    |
+| ---------- | :-----------:  | :-----------: |
+| Google      | http://www.gstatic.com/generate_204     | 5     | 10    |
+
 服务提供者	  链接	  大陆体验	  境外体验
 Google	http://www.gstatic.com/generate_204	5	10
 Google	http://www.google-analytics.com/generate_204	6	4
