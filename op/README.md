@@ -1,6 +1,9 @@
-| 服务提供者 | 链接 | 居中对齐 |
+| 服务提供者 | 链接 |
 | :----: | :----: | :----: |
-| 单元格 | 单元格 | 单元格 |
+| Google | [单元格](http://www.gstatic.com/generate_204) | 单元格 |
+| Google | [单元格](http://www.google-analytics.com/generate_204) | 单元格 |
+| Google | [单元格](http://www.google.com/generate_204) | 单元格 |
+| Google | [单元格](http://connectivitycheck.gstatic.com/generate_204) | 单元格 |
 | 单元格 | 单元格 | 单元格 |
 
 服务提供者	  链接	  大陆体验	  境外体验
