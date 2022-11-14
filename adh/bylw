@@ -61,9 +61,14 @@
 ||xiaomor.com^$important
 ||imoran.net^$important
 ||upl.baidu.com^$important
-||log.iflytek.com^$important
+||ota.baidu.com^$important
+||hitv.com^$important
 ||dev.voicecloud.cn^$important
 ||restapi.amap.com^$important
+##电视科大
+||iflytek.com^$important
+||openspeech.cn^$important
+
 
 #腾讯视频
 #@@||tv.aiseet.atianqi.com^$important
@@ -88,6 +93,7 @@
 @@||activity.m.duiba.com.cn^$important
 @@||analytics.95516.com^$important
 ##小米
+@@||api.vip.miui.com^$important
 @@||market.xiaomi.com^$important
 @@||mi-img.com^$important
 @@||api.io.mi.com^$important
@@ -98,8 +104,8 @@
 @@||wl.jd.com^$important
 @@||gia.jd.com^$important
 @@||img12.360buyimg.com^$important
-#快手图片
-#@@||static.yximgs.com^$important
+#快手
+@@||yximgs.com^$important
 #onenote
 @@||docs.live.net^$important
 #验证码
@@ -159,4 +165,4 @@
 @@||static-pub.highwebmedia.com^$important
 @@||roomimg.stream.highwebmedia.com^$important
 ||_services._dns-sd._udp.local^$important
-
+||in-addr.arpa^$important
