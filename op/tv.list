@@ -10,7 +10,7 @@ DOMAIN-KEYWORD,tclking.com
 DOMAIN-KEYWORD,tventry.com
 DOMAIN-KEYWORD,tcloudfamily.com
 DOMAIN-KEYWORD,leiniao.com
-DOMAIN-KEYWORD,aisee.tv
+#DOMAIN-KEYWORD,aisee.tv
 DOMAIN-KEYWORD,huannew.api.snmtcl.aisee.tv
 
 ##欢太
@@ -56,3 +56,4 @@ DOMAIN-KEYWORD,upl.baidu.com
 DOMAIN-KEYWORD,log.iflytek.com
 DOMAIN-KEYWORD,dev.voicecloud.cn
 DOMAIN-KEYWORD,restapi.amap.com
+DOMAIN-KEYWORD,ota.baidu.com
