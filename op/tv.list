@@ -1,59 +1,59 @@
 ##tcl
-DOMAIN-KEYWORD,tcl.com
-DOMAIN-KEYWORD,tcl.com.cn
-DOMAIN-KEYWORD,hmeng.net.cn
-DOMAIN-KEYWORD,hmeng.com.cn
-DOMAIN-KEYWORD,hmeng.org
-DOMAIN-KEYWORD,hmeng.cn
-DOMAIN-KEYWORD,tcltech.com
-DOMAIN-KEYWORD,tclking.com
-DOMAIN-KEYWORD,tventry.com
-DOMAIN-KEYWORD,tcloudfamily.com
-DOMAIN-KEYWORD,leiniao.com
-#DOMAIN-KEYWORD,aisee.tv
-DOMAIN-KEYWORD,huannew.api.snmtcl.aisee.tv
+  - DOMAIN-SUFFIX,tcl.com
+  - DOMAIN-SUFFIX,tcl.com.cn
+  - DOMAIN-SUFFIX,hmeng.net.cn
+  - DOMAIN-SUFFIX,hmeng.com.cn
+  - DOMAIN-SUFFIX,hmeng.org
+  - DOMAIN-SUFFIX,hmeng.cn
+  - DOMAIN-SUFFIX,tcltech.com
+  - DOMAIN-SUFFIX,tclking.com
+  - DOMAIN-SUFFIX,tventry.com
+  - DOMAIN-SUFFIX,tcloudfamily.com
+  - DOMAIN-SUFFIX,leiniao.com
+#  - DOMAIN-SUFFIX,aisee.tv
+  - DOMAIN-SUFFIX,huannew.api.snmtcl.aisee.tv
 
 ##欢太
-DOMAIN-KEYWORD,huan.tv
-DOMAIN-KEYWORD,tvhuan.com
-DOMAIN-KEYWORD,tvhuan.tv
-DOMAIN-KEYWORD,cedock.com
-DOMAIN-KEYWORD,huantest.com
-DOMAIN-KEYWORD,kkttww.net
-DOMAIN-KEYWORD,cedock.net
-DOMAIN-KEYWORD,lejiao.tv
-DOMAIN-KEYWORD,cnsta.cn
-DOMAIN-KEYWORD,chsmarttv.com
+  - DOMAIN-SUFFIX,huan.tv
+  - DOMAIN-SUFFIX,tvhuan.com
+  - DOMAIN-SUFFIX,tvhuan.tv
+  - DOMAIN-SUFFIX,cedock.com
+  - DOMAIN-SUFFIX,huantest.com
+  - DOMAIN-SUFFIX,kkttww.net
+  - DOMAIN-SUFFIX,cedock.net
+  - DOMAIN-SUFFIX,lejiao.tv
+  - DOMAIN-SUFFIX,cnsta.cn
+  - DOMAIN-SUFFIX,chsmarttv.com
 
 #电视相关
-DOMAIN-KEYWORD,my7v.com
-DOMAIN-KEYWORD,OTTcn.com
-DOMAIN-KEYWORD,ffalcon.cn
-DOMAIN-KEYWORD,gz-data.com
-DOMAIN-KEYWORD,gzads.com
-DOMAIN-KEYWORD,gozendata.com
-DOMAIN-KEYWORD,emar.com
-DOMAIN-KEYWORD,onemob.mobi
-DOMAIN-KEYWORD,reyun.com
-DOMAIN-KEYWORD,71360.com
-DOMAIN-KEYWORD,zhihuiyun.net.cn
-DOMAIN-KEYWORD,www.chance-ad.com
-DOMAIN-KEYWORD,www.nequal.cn
-DOMAIN-KEYWORD,www.n1q.cn
-DOMAIN-KEYWORD,www.nequal.com
-DOMAIN-KEYWORD,ad7.com
-DOMAIN-KEYWORD,gd.xinhuanet.com
-DOMAIN-KEYWORD,shixunsuda.com
-DOMAIN-KEYWORD,haimaotv.com
-DOMAIN-KEYWORD,51topshow.com
-DOMAIN-KEYWORD,tianmaotv.cn
-DOMAIN-KEYWORD,tianmaolive.com
-DOMAIN-KEYWORD,51livetv.com
-DOMAIN-KEYWORD,51topshow.com
-DOMAIN-KEYWORD,xiaomor.com
-DOMAIN-KEYWORD,imoran.net
-DOMAIN-KEYWORD,upl.baidu.com
-DOMAIN-KEYWORD,log.iflytek.com
-DOMAIN-KEYWORD,dev.voicecloud.cn
-DOMAIN-KEYWORD,restapi.amap.com
-DOMAIN-KEYWORD,ota.baidu.com
+  - DOMAIN-SUFFIX,my7v.com
+  - DOMAIN-SUFFIX,OTTcn.com
+  - DOMAIN-SUFFIX,ffalcon.cn
+  - DOMAIN-SUFFIX,gz-data.com
+  - DOMAIN-SUFFIX,gzads.com
+  - DOMAIN-SUFFIX,gozendata.com
+  - DOMAIN-SUFFIX,emar.com
+  - DOMAIN-SUFFIX,onemob.mobi
+  - DOMAIN-SUFFIX,reyun.com
+  - DOMAIN-SUFFIX,71360.com
+  - DOMAIN-SUFFIX,zhihuiyun.net.cn
+  - DOMAIN-SUFFIX,www.chance-ad.com
+  - DOMAIN-SUFFIX,www.nequal.cn
+  - DOMAIN-SUFFIX,www.n1q.cn
+  - DOMAIN-SUFFIX,www.nequal.com
+  - DOMAIN-SUFFIX,ad7.com
+  - DOMAIN-SUFFIX,gd.xinhuanet.com
+  - DOMAIN-SUFFIX,shixunsuda.com
+  - DOMAIN-SUFFIX,haimaotv.com
+  - DOMAIN-SUFFIX,51topshow.com
+  - DOMAIN-SUFFIX,tianmaotv.cn
+  - DOMAIN-SUFFIX,tianmaolive.com
+  - DOMAIN-SUFFIX,51livetv.com
+  - DOMAIN-SUFFIX,51topshow.com
+  - DOMAIN-SUFFIX,xiaomor.com
+  - DOMAIN-SUFFIX,imoran.net
+  - DOMAIN-SUFFIX,upl.baidu.com
+  - DOMAIN-SUFFIX,log.iflytek.com
+  - DOMAIN-SUFFIX,dev.voicecloud.cn
+  - DOMAIN-SUFFIX,restapi.amap.com
+  - DOMAIN-SUFFIX,ota.baidu.com
