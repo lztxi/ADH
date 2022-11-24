@@ -1,4 +1,3 @@
-##tcl
 DOMAIN-SUFFIX,tcl.com
 DOMAIN-SUFFIX,tcl.com.cn
 DOMAIN-SUFFIX,hmeng.net.cn
@@ -12,7 +11,6 @@ DOMAIN-SUFFIX,tcloudfamily.com
 DOMAIN-SUFFIX,leiniao.com
 #DOMAIN-SUFFIX,aisee.tv
 DOMAIN-SUFFIX,huannew.api.snmtcl.aisee.tv
-##欢太
 DOMAIN-SUFFIX,huan.tv
 DOMAIN-SUFFIX,tvhuan.com
 DOMAIN-SUFFIX,tvhuan.tv
@@ -23,7 +21,6 @@ DOMAIN-SUFFIX,cedock.net
 DOMAIN-SUFFIX,lejiao.tv
 DOMAIN-SUFFIX,cnsta.cn
 DOMAIN-SUFFIX,chsmarttv.com
-#电视相关
 DOMAIN-SUFFIX,my7v.com
 DOMAIN-SUFFIX,OTTcn.com
 DOMAIN-SUFFIX,ffalcon.cn
@@ -56,6 +53,5 @@ DOMAIN-SUFFIX,dev.voicecloud.cn
 DOMAIN-SUFFIX,restapi.amap.com
 DOMAIN-SUFFIX,ota.baidu.com
 DOMAIN-SUFFIX,igexin.com
-##测试
 IP-CIDR,221.238.41.0/24
 IP-CIDR,42.81.179.0/24
