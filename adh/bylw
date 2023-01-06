@@ -160,7 +160,9 @@ yiticm.com^$important
 
 
 #腾讯视频
-||aiseet.aa.atianqi.com^$important
+#||aiseet.aa.atianqi.com^$important
+#@@||dp3.play.aiseet.atianqi.com^$important
+#@@||lives.l.aiseet.atianqi.com^$important
 ##优酷
 @@||pns.alicdn.com^$important
 @@||ott.cibntv.net^$important
@@ -177,6 +179,9 @@ yiticm.com^$important
 @@||wx.qlogo.cn^$important
 @@||thirdwx.qlogo.cn^$important
 #@@||puui.qpic.cn^$important
+#微信定位
+@@||analytics.map.qq.com^$important
+
 ##云闪付
 @@||activity.m.duiba.com.cn^$important
 @@||analytics.95516.com^$important
@@ -194,6 +199,9 @@ yiticm.com^$important
 @@||img12.360buyimg.com^$important
 #快手
 @@||yximgs.com^$important
+@@||api.e.kuaishou.com^$important
+@@||bing.com^$important
+@@||jsdelivr.net^$important
 #onenote
 @@||docs.live.net^$important
 #验证码
