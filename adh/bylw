@@ -18,7 +18,6 @@
 ||ffalcon.cn^
 ||aisee.tv^
 
-
 ##欢太
 ||huan.tv^
 ||tvhuan.com^
@@ -32,7 +31,6 @@
 ||chsmarttv.com^
 #电视相关
 ||OTTcn.com^
-
 ||gz-data.com^
 ||gzads.com^
 ||gozendata.com^
@@ -149,6 +147,7 @@ yiticm.com^
 ##电视科大
 ||iflytek.com^
 ||openspeech.cn^
+#####################其他规则
 #苹果ios
 ||mesu.apple.com^
 ||appldnld.apple.com^
@@ -163,6 +162,15 @@ yiticm.com^
 ||kgslb.com^
 ||edge4k.com^
 ||daumcdn.net^
+
+#蓝
+||bdurl.net^$important
+||dingtalk.com^$important
+||tnc3-alisc1.zijieapi.com^$important
+||mon.zijieapi.com^$important
+||qzs.gdtimg.com^$important
+||irisdt.cn^$important
+||open.youzanyun.com^$important
 
 ##其他
 ||_services._dns-sd._udp.local^
