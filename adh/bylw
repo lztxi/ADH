@@ -13,13 +13,17 @@
 ||tclyun.cn^
 ||myxiaoqi.com^
 #双十一广告壁纸
-#@@||launcher.tcloudfamily.com^
 ||tcloudfamily.com^
-##@@||media-poster-o.img.leiniao.com^^
+#@@||media-poster-o.img.leiniao.com^
+#@@||launcher.tcloudfamily.com^
 ||leiniao.com^
 ||ffalcon.cn^
 ||aisee.tv^
-||huannew.api.snmtcl.aisee.tv^
+#电视信息流
+@@||laucolumn-o.api.leiniao.com^$important
+@@||wup.dobby.qq.com^$important
+##背景图片
+@@||launcher.tcloudfamily.com^
 
 ##欢太
 ||huan.tv^
@@ -32,13 +36,11 @@
 ||lejiao.tv^
 ||cnsta.cn^
 ||chsmarttv.com^
-#@@||dl-tclapp.huan.tv^
-#@@||tclapi-appstore.huan.tv^
-#@@||applog.appstore3.huan.tv^
-#@@||ntp1.huan.tv^
-#@@||img-appstore.huan.tv^
+###欢太商城
+@@||dl-tclapp.huan.tv^$important
+@@||img-appstore.huan.tv^$important
+@@||huannew.api.snmtcl.aisee.tv^$important
 #电视相关
-||wup.dobby.qq.com^
 ||OTTcn.com^
 
 ||gz-data.com^
