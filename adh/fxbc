@@ -15,7 +15,6 @@
 #饿了么
 @@||ele.me^$important
 #1688
-
 @@||ynuf.aliapp.org^$important
 ##微信头像
 @@||qqpublic.qpic.cn^
@@ -32,7 +31,6 @@
 @@||mi-img.com^$important
 @@||api.io.mi.com^$important
 @@||zhuti.xiaomi.com^$important
-#@@||api.vip.miui.com^
 @@||cnbj1.fds.api.xiaomi.com^$important
 ##京东
 @@||wl.jd.com^$important
@@ -50,9 +48,9 @@
 @@||api.geetest.com^$important
 
 #哔哩哔哩TV登录
-@@||dataflow.snm0516.aisee.tv^$important
-@@||passport.snm0516.aisee.tv^$important
-@@||api.snm0516.aisee.tv^$important
+#@@||dataflow.snm0516.aisee.tv^$important
+#@@||passport.snm0516.aisee.tv^$important
+#@@||api.snm0516.aisee.tv^$important
 #openclash
 @@||ipify.org^$important
 @@||ip.sb^$important
