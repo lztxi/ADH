@@ -1,5 +1,5 @@
-DOMAIN-KEYWORD,live-o.api.leiniao.com
-DOMAIN-KEYWORD,dataflow.biliapi.com
+#DOMAIN-KEYWORD,live-o.api.leiniao.com
+#DOMAIN-KEYWORD,dataflow.biliapi.com
 IP-CIDR,120.234.0.0/16
 IP-CIDR,183.237.0.0/16
 IP-CIDR,183.239.0.0/16
