@@ -1,0 +1,18 @@
+payload:
+#  - DOMAIN-KEYWORD,live-o.api.leiniao.com
+  - DOMAIN-KEYWORD,dataflow.biliapi.com
+  - IP-CIDR,120.234.0.0/16
+  - IP-CIDR,183.237.0.0/16
+  - IP-CIDR,183.239.0.0/16
+  - IP-CIDR,119.29.29.98/32
+#测试
+  - MATCH,defaultts.tc.qq.com
+  - DOMAIN,defaultts.tc.qq.com
+  - DOMAIN-SUFFIX,defaultts.tc.qq.com
+  - DOMAIN-KEYWORD,defaultts.tc.qq.com
+#  - IP-CIDR,114.112.0.0/16
+#  - IP-CIDR,116.198.0.0/16
+#  - IP-CIDR,218.60.0.0/16
+#  - IP-CIDR,220.194.0.0/16
+#  - IP-CIDR,60.28.0.0/16
+#  - IP-CIDR,60.29.0.0/16
