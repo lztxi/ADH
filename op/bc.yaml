@@ -6,7 +6,6 @@ payload:
   - IP-CIDR,183.239.0.0/16
   - IP-CIDR,119.29.29.98/32
 #测试
-  - MATCH,defaultts.tc.qq.com
   - DOMAIN,defaultts.tc.qq.com
   - DOMAIN-SUFFIX,defaultts.tc.qq.com
   - DOMAIN-KEYWORD,defaultts.tc.qq.com
