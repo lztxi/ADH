@@ -1,3 +1,6 @@
+合集
+https://raw.githubusercontent.com/lztxi/adgh/main/rule/dns.txt
+
 AdGuard DNS filter
 https://cdn.jsdelivr.net/gh/AdguardTeam/AdguardFilters@master/EnglishFilter/sections/adservers.txt
 
