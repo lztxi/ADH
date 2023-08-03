@@ -597,9 +597,13 @@
 
 
 #miui扫描信息
-||a0.app.xiaomi.com^$important
-||miav-cse.avlyun.com^$important
-||miui-fxcse.avlyun.com^$important
+||miav-cse.avlyun.com^$important #［腾讯/安天］
+||a0.app.xiaomi.com^$important #［小米跟踪API］
+||miui-fxcse.avlyun.com^$important #［腾讯/安天］
+||api.installer.xiaomi.com^$important #［应用包扫描API］
+#||a0.app.xiaomi.com^$important
+#||miav-cse.avlyun.com^$important
+#||miui-fxcse.avlyun.com^$important
 
 #蓝
 ||bdurl.net^$important
