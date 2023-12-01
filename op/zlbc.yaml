@@ -3,3 +3,4 @@ payload:
   - DOMAIN-KEYWORD,bitwarden
   - DOMAIN-SUFFIX,bitwarden.net
   - DOMAIN-SUFFIX,bitwarden.com
+  - PROCESS-NAME,adbyby
