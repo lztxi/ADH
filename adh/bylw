@@ -601,9 +601,14 @@
 ||a0.app.xiaomi.com^$important #［小米跟踪API］
 ||miui-fxcse.avlyun.com^$important #［腾讯/安天］
 ||api.installer.xiaomi.com^$important #［应用包扫描API］
-#||a0.app.xiaomi.com^$important
-#||miav-cse.avlyun.com^$important
-#||miui-fxcse.avlyun.com^$important
+#此处主要屏蔽小米云扫描组件
+||log.avlyun.sec.intl.miui.com^$important
+||update.avlyun.sec.miui.com^$important
+||ixav-cse.avlyun.com^$important
+||logupdate.avlyun.sec.miui.com^$important
+||sdkconf.avlyun.com^$important
+||tmfsdk.m.qq.com^$important
+
 
 #蓝
 ||bdurl.net^$important
