@@ -1,0 +1,6 @@
+bilibili.com###i_cecream > div.adblock-tips:nth-child(2)
+bilibili.com###i_cecream > div.bili-feed4:last-child > div.bili-header.large-header:first-child > div.bili-header__banner:nth-child(2) > a.banner-link:last-child
+youku.com###app > div.app_normal.window:first-child > div:first-child > div > div:last-child > div.live-bg
+v.youku.com###top-header > div > div:last-child > div.live-bg
+www.youtube.com##.ytp-ce-element
+youtube.com##.ytp-ce-covering-overlay
