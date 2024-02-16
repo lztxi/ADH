@@ -586,6 +586,22 @@
 ||zhihuiyun.net.cn^$important
 ||gd.xinhuanet.com^$important
 
+#央视频
+@@||chinaott.com^$important
+||sv-video.play.t002.ottcn.com^$important
+@@||ottcn.com^
+
+#电视快应用
+||extscreen.com^$important
+||hiliphoto.com^$important
+||aiphoto.fun^$important
+
+#电视广告增加
+||duokanbox.com^$important
+||hpplay.com^$important
+||hpplay.cn^$important
+||hpplay.com.cn^$important
+
 #####################其他规则
 #苹果ios
 ||mesu.apple.com^
@@ -597,10 +613,14 @@
 
 
 #miui扫描信息
-||miav-cse.avlyun.com^$important #［腾讯/安天］
-||a0.app.xiaomi.com^$important #［小米跟踪API］
-||miui-fxcse.avlyun.com^$important #［腾讯/安天］
-||api.installer.xiaomi.com^$important #［应用包扫描API］
+||miav-cse.avlyun.com^$important
+#［腾讯/安天］
+||a0.app.xiaomi.com^$important
+#［小米跟踪API］
+||miui-fxcse.avlyun.com^$important
+#［腾讯/安天］
+||api.installer.xiaomi.com^$important
+#［应用包扫描API］
 #此处主要屏蔽小米云扫描组件
 ||log.avlyun.sec.intl.miui.com^$important
 ||update.avlyun.sec.miui.com^$important
@@ -618,9 +638,31 @@
 ||qzs.gdtimg.com^$important
 ||irisdt.cn^$important
 ||open.youzanyun.com^$important
+||live-im.blued.cn^$important
+||dopen.weimob.com^$important
+||pay.blued.cn^$important
+
+#腾讯反外挂
+||anticheatexpert.com^$important
 
 #360
 ||360.cn^$important
+
+#夸克网盘
+@@||pan.quark.cn^$important
+@@||b.quark.cn^$important
+@@||uop.quark.cn^$important
+
+#ip归属地
+@@||skk.moe^$important
+@@||ipify.org^$important
+
+#快手网页版验证
+@@||gdfp.gifshow.com^$important
+@@||log-sdk.ksapisrv.com^$important
+@@||wlog.kuaishou.com^$important
+@@||w2.kskwai.com^$important
+@@||a.yximgs.com^$important
 
 #不知道什么
 ||xdrtc.com^$important
