@@ -1,0 +1,62 @@
+[custom]
+
+# 基于blackmatrix7
+# 基于hope140
+# 自用
+ruleset=🐳 全球直连,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Download/Download.yaml
+ruleset=🐳 全球直连,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Lan/Lan.yaml
+ruleset=🐳 全球直连,clash-classic:https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/tv.yaml
+ruleset=🍃 广告拦截,clash-classic:https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/HTTPDNS.yaml
+ruleset=🍃 广告拦截,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Advertising/Advertising.yaml
+#ruleset=🍃 广告拦截,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml
+ruleset=Ⓜ️ 微软服务,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Bing/Bing.yaml
+ruleset=Ⓜ️ 微软服务,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml
+ruleset=Ⓜ️ 微软服务,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OneDrive/OneDrive.yaml
+ruleset=🍎 苹果服务,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Apple/Apple.yaml
+ruleset=📲 电报消息,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml
+ruleset=🐸 蓝鸟平台,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Twitter/Twitter.yaml
+ruleset=🎮 游戏平台,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Epic/Epic.yaml
+ruleset=🎮 游戏平台,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.yaml
+ruleset=🎮 游戏平台,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/EA/EA.yaml
+ruleset=🎥 油管视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTube/YouTube.yaml
+ruleset=🎥 油管视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Google/Google.yaml
+ruleset=🎥 油管视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml
+ruleset=💻 国内视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Tencent/Tencent.yaml
+ruleset=💻 国内视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ChinaMedia/ChinaMedia.yaml
+ruleset=💻 国内视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/DouYin/DouYin.yaml
+ruleset=💻 国内视频,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/KuaiShou/KuaiShou.yaml
+ruleset=♻️ 自动选择,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Developer/Developer.yaml
+ruleset=♻️ 自动选择,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ProxyLite/ProxyLite.yaml
+ruleset=🐳 全球直连,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/China/China.yaml
+ruleset=🐳 全球直连,clash-classic:https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Direct/Direct.yaml
+ruleset=🐳 全球直连,clash-classic:https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/zlbc.yaml
+#ruleset=🎃 在外旅游,clash-classic:https://gcore.jsdelivr.net/gh/lwd-temp/anti-ip-attribution@main/generated/rule-provider.yaml
+#ruleset=🐳 全球直连,clash-ipcidr:https://gcore.jsdelivr.net/gh/soffchen/GeoIP2-CN/release/clash-rule-provider.yml
+ruleset=🐳 全球直连,clash-ipcidr:https://gcore.jsdelivr.net/gh/RikudouPatrickstar/GeoIP2-CN@release/cncidr.yaml
+ruleset=🐳 全球直连,[]GEOIP,CN
+ruleset=🐟 漏网之鱼,[]FINAL
+
+
+
+custom_proxy_group=🚀 手动切换`select`.*
+custom_proxy_group=♻️ 自动选择`url-test`.*`https://cp.cloudflare.com/generate_204`300
+custom_proxy_group=🍉 负责稳定`url-test`(入口)`https://cp.cloudflare.com/generate_204`300
+custom_proxy_group=🍊 负责跑量`url-test`(x|移|电|国际|联|京|沪|家宽|下载)`https://cp.cloudflare.com/generate_204`300
+custom_proxy_group=🐻‍❄️ 负责临时`url-test`(白嫖|_)`https://cp.cloudflare.com/generate_204`300 
+custom_proxy_group=📲 电报消息`select`[]🍉 负责稳定`[]🍊 负责跑量`[]🐻‍❄️ 负责临时`[]♻️ 自动选择`[]🚀 手动切换
+#custom_proxy_group=📲 电报消息`select`[]🍉 负责稳定`[]🍊 负责跑量`[]♻️ 自动选择`[]🚀 手动切换
+custom_proxy_group=🐸 蓝鸟平台`select`[]🍉 负责稳定`[]🍊 负责跑量`[]🐻‍❄️ 负责临时`[]♻️ 自动选择`[]🚀 手动切换
+custom_proxy_group=🎥 油管视频`select`[]🍉 负责稳定`[]🍊 负责跑量`[]🐻‍❄️ 负责临时`[]♻️ 自动选择`[]🚀 手动切换
+custom_proxy_group=🐟 漏网之鱼`select`[]🍉 负责稳定`[]🍊 负责跑量`[]🐻‍❄️ 负责临时`[]♻️ 自动选择`[]🚀 手动切换`[]🐳 全球直连
+#custom_proxy_group=🎃 在外旅游`select`[]🍉 负责稳定`[]🍊 负责跑量`[]♻️ 自动选择`[]🚀 手动切换`[]🐳 全球直连
+custom_proxy_group=🎮 游戏平台`select`[]🐳 全球直连`[]🚀 手动切换`[]♻️ 自动选择
+custom_proxy_group=Ⓜ️ 微软服务`select`[]🐳 全球直连`[]🚀 手动切换`[]♻️ 自动选择
+custom_proxy_group=🍎 苹果服务`select`[]🐳 全球直连`[]🚀 手动切换`[]♻️ 自动选择
+custom_proxy_group=💻 国内视频`select`[]🐳 全球直连`[]🚀 手动切换
+custom_proxy_group=🍃 广告拦截`select`[]REJECT`[]DIRECT
+custom_proxy_group=🐳 全球直连`select`[]DIRECT
+
+enable_rule_generator=true
+overwrite_original_rules=true
+
+;clash_rule_base=https://gcore.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/GeneralClashConfig.yml

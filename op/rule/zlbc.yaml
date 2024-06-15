@@ -1,0 +1,6 @@
+#bitwarden 密码管理器
+payload:
+  - DOMAIN-KEYWORD,bitwarden
+  - DOMAIN-SUFFIX,bitwarden.net
+  - DOMAIN-SUFFIX,bitwarden.com
+  - PROCESS-NAME,adbyby
