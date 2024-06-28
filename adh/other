@@ -34,7 +34,6 @@
 ||social.blued.cn^
 ||live-im.blued.cn^
 ||passport.blued.cn^
-#||dingtalk.com^
 ||irisdt.cn^
 ||tnc3-alisc1.zijieapi.com^
 ||qzs.gdtimg.com^
@@ -75,6 +74,9 @@
 #抖音系
 ||ecomuser.snssdk.com^$important
 
+#IDM
+||secure.internetdownloadmanager.com^$important
+
 #不知道什么
 ||xdrtc.com^
 ||dumall.com^
@@ -82,4 +84,4 @@
 
 ##其他
 #||_services._dns-sd._udp.local^
-#||in-addr.arpa^
+||in-addr.arpa^$important
