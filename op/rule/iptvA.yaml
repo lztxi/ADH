@@ -1,11 +1,7 @@
 #IPtv直连
 payload:
   - DOMAIN-SUFFIX,dnsany.com
-  - DOMAIN-SUFFIX,cmvideo.cn
-  - DOMAIN-SUFFIX,chinamobile.com
   - DOMAIN-SUFFIX,mobaibox.com
-  - DOMAIN-SUFFIX,gitv.tv
-  - DOMAIN-SUFFIX,cctv.cn
   - DOMAIN-SUFFIX,yangshipin.cn
   - DOMAIN-SUFFIX,beesport.livednow.com
-  - IP-CIDR,183.206.0.0/15,DIRECT,no-resolve
+  - IP-CIDR,183.206.0.0/15
