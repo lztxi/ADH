@@ -1,8 +1,9 @@
-#iptv代理
+#IPtv代理
 payload:
   - DOMAIN-SUFFIX,livednow.com
   - DOMAIN-SUFFIX,orz-7.com
   - DOMAIN-SUFFIX,4gtv.tv
   - DOMAIN-SUFFIX,hinet.net
   - DOMAIN-SUFFIX,ofiii.com
+  - DOMAIN-SUFFIX,hinet.net
   - DOMAIN-SUFFIX,mytvsuper.com
