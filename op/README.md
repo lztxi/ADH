@@ -20,6 +20,13 @@
 </details>
 
 ---
+<details>
+<summary><code><strong>📃<br/></strong></code></summary>
+
+![](http://profile-counter.glitch.me/lztxi/count.svg)<br/>
+</details>
+
+---
 ## 🚫[ HTTPDNS](https://github.com/VirgilClyne/GetSomeFries/wiki/%F0%9F%9A%AB-HTTPDNS " HTTPDNS") 
 ## ❣️[分流信息](https://github.com/blackmatrix7/ios_rule_script "分流信息")
 ## ❤️‍🩹[NOAD](https://github.com/TG-Twilight/AWAvenue-Ads-Rule "NOAD")
