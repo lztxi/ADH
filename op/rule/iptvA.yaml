@@ -1,0 +1,11 @@
+#IPtv直连
+payload:
+  - DOMAIN-SUFFIX,dnsany.com,DIRECT
+  - DOMAIN-SUFFIX,mobaibox.com,DIRECT
+  - DOMAIN-SUFFIX,yangshipin.cn,DIRECT
+  - DOMAIN-SUFFIX,beesport.livednow.com,DIRECT
+  - DOMAIN-SUFFIX,gcable.cn,DIRECT
+  - DOMAIN-SUFFIX,ottdns.com,DIRECT
+  - IP-CIDR,183.206.0.0/15,DIRECT,no-resolve
+  - IP-CIDR,58.208.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,183.238.66.0/24,DIRECT,no-resolve

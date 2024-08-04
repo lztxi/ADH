@@ -1,0 +1,13 @@
+payload:
+- IP-CIDR,182.254.118.118/32
+- IP-CIDR,182.254.116.116/32
+- IP-CIDR,119.28.28.98/32
+- IP-CIDR,203.119.169.0/24
+- DOMAIN-KEYWORD,adts,REJECT
+- DOMAIN-KEYWORD,adts.tc,REJECT
+- DOMAIN-REGEX,adts.tc.qq.com,REJECT
+- DOMAIN-KEYWORD,amdc,REJECT
+- DOMAIN-KEYWORD,amdc.alipay.com,REJECT
+- DOMAIN-KEYWORD,amdc-sibling.alipay.com.cn,REJECT
+- DOMAIN-KEYWORD,amdc.cp12.ott.cibntv.net,REJECT
+- DOMAIN-KEYWORD,appdownload.alicdn.com,REJECT

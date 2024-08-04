@@ -1,0 +1,4 @@
+payload:
+- IP-CIDR,119.28.28.98/32
+- DOMAIN-KEYWORD,adts
+- DOMAIN-REGEX,adts.tc.qq.com
