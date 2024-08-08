@@ -4,7 +4,12 @@
 #!homepage=https://github.com/VirgilClyne/GetSomeFries/wiki/🚫-HTTPDNS
 #!icon=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Server.png
 
-
+#腾讯HTTPDNS
+IP-CIDR,182.254.118.118/32,no-resolve
+IP-CIDR,182.254.116.116/32,no-resolve
+IP-CIDR,119.28.28.98/32,no-resolve
+#阿里amdc
+IP-CIDR,203.119.169.0/24,no-resolve
 # Alibaba
 DOMAIN,httpdns.alicdn.com,no-resolve
 # Aliyun
