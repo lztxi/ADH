@@ -1,0 +1,30 @@
+#IPtv直连
+payload:
+  - DOMAIN-SUFFIX,dnsany.com
+  - DOMAIN-SUFFIX,mobaibox.com
+  - DOMAIN-SUFFIX,yangshipin.cn
+  - DOMAIN-SUFFIX,beesport.livednow.comT
+  - DOMAIN-SUFFIX,gcable.cn
+  - DOMAIN-SUFFIX,ottdns.com
+  - IP-CIDR,183.206.0.0/15,no-resolve
+  - IP-CIDR,27.36.0.0/14,no-resolve
+  - IP-CIDR,183.238.66.0/24,no-resolve
+  - DOMAIN-SUFFIX,7moor-fs1.com
+  - DOMAIN-SUFFIX,7moor-fs2.com
+  - DOMAIN-SUFFIX,agit.ai
+  - DOMAIN-SUFFIX,kstore.space
+  - DOMAIN-SUFFIX,wogg.link
+  - DOMAIN-SUFFIX,wogg.xyz
+  - DOMAIN-SUFFIX,xhww.fun
+  - DOMAIN-SUFFIX,wogg.net
+  - DOMAIN-SUFFIX,饭太硬.top
+  - DOMAIN-SUFFIX,饭太硬.com
+  - DOMAIN-SUFFIX,xxooo.cf
+  - DOMAIN-SUFFIX,肥猫.live
+  - DOMAIN-SUFFIX,肥猫.com
+  - DOMAIN-SUFFIX,112114.xyz
+  - DOMAIN-SUFFIX,fanmingming.com
+  - DOMAIN-SUFFIX,xhdwc.tk
+  - DOMAIN-SUFFIX,王二小放牛娃.top
+  - DOMAIN-SUFFIX,王二小放牛娃.xyz
+  - DOMAIN-SUFFIX,999888987.xyz

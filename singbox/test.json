@@ -1,0 +1,402 @@
+{
+  "log": {
+        "disabled": false,
+        "level": "warn",
+        "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns_name",
+        "address": "192.168.2.99",
+        "strategy": "prefer_ipv4",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns_block",
+        "address": "rcode://refused"
+      }
+    ],
+   "rules": [
+      {
+        "outbound": "any",
+        "server": "dns_name"
+      },
+      {
+        "clash_mode": "direct",
+        "server": "dns_name"
+      },
+      {
+        "clash_mode": "global",
+        "server": "dns_name"
+      }，
+     {
+      "outbound": ["httpdns", "httpdns_Block"]
+      "server": "dns_block",
+      "disable_cache": true
+     }
+    ],
+   "final": "dns_name"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "inet4_address": "172.19.0.1/30",
+      "mtu": 9000,
+      "auto_route": true,
+      "strict_route": true,
+      "sniff": true,
+      "endpoint_independent_nat": false,
+      "stack": "system",
+      "platform": {
+        "http_proxy": {
+          "enabled": true,
+          "server": "127.0.0.1",
+          "server_port": 2080
+        }
+      }
+    },
+    {
+      "type": "mixed",
+      "listen": "127.0.0.1",
+      "listen_port": 2080,
+      "sniff": true,
+      "users": []
+    }
+  ],
+  "outbounds": [
+    { 
+      "tag": "🚀 手动切换", 
+      "type": "selector", 
+      "outbounds": ["{all}"]
+    },
+    { 
+      "tag": "♻️ 自动选择", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+        { 
+          "action": "exclude", 
+          "keywords": ["区域|流量|模式|剩余|长期|重置|倒卖|重置"] 
+        }
+        ], 
+            "url": "http://www.apple.com/library/test/success.html", 
+            "interval": "10m", 
+            "tolerance": 50 
+    },
+    { 
+      "tag": "🍋 负责稳定", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+      { 
+        "action": "include", 
+        "keywords": ["vmess|Hy2"] 
+      }
+      ], 
+          "url": "http://www.apple.com/library/test/success.html", 
+          "interval": "10m", 
+          "tolerance": 50 
+    },
+    { 
+      "tag": "🍑 负责临时", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+    { 
+      "action": "iexclude", 
+      "keywords": ["vmess|Hy2|区域|流量|模式|剩余|长期|重置|倒卖|重置"] 
+    }
+    ], 
+        "url": "http://www.apple.com/library/test/success.html", 
+        "interval": "10m", 
+        "tolerance": 50 
+    },
+    { 
+      "tag": "🐸 报鸟的哇", 
+      "type": "selector", 
+      "outbounds": ["🍋 负责稳定", "🍑 负责临时", "♻️ 自动选择", "👻 港台", "👺 日韩", "🤖 美国", "👹 新加印", "🚀 手动切换"] 
+    },
+    {
+      "tag": "🎥 油管视频", 
+      "type": "selector", 
+      "outbounds": ["🍋 负责稳定", "🍑 负责临时", "♻️ 自动选择", "👻 港台", "👺 日韩", "🤖 美国", "👹 新加印", "🚀 手动切换"] 
+    },
+    {
+      "tag": "🐟 漏网之鱼", 
+      "type": "selector", 
+      "outbounds": ["🍋 负责稳定", "🍑 负责临时", "♻️ 自动选择", "👻 港台", "👺 日韩", "🤖 美国", "👹 新加印", "🚀 手动切换", "🐳 全球直连"] 
+    },
+    {
+      "tag": "🚚 万年直连", 
+      "type": "selector", 
+      "outbounds": ["🐳 全球直连", "♻️ 自动选择", "🚀 手动切换"] 
+    },
+    {
+      "tag": "🍃 拦截净化", 
+      "type": "selector", 
+      "outbounds": ["REJECT", "DIRECT"] 
+    },
+    {
+      "tag": "🐳 全球直连", 
+      "type": "selector", 
+      "outbounds": ["DIRECT"] 
+    },
+    {
+      "tag": "👻 港台", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+    { 
+      "action": "iexclude", 
+      "keywords": ["香港|HK|台湾|TW"] 
+    }
+    ], 
+        "url": "http://www.apple.com/library/test/success.html", 
+        "interval": "10m", 
+        "tolerance": 50 
+    },
+    {
+      "tag": "👺 日韩", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+    { 
+      "action": "iexclude", 
+      "keywords": ["日本|JP|韩国|KR"] 
+    }
+    ], 
+        "url": "http://www.apple.com/library/test/success.html", 
+        "interval": "10m", 
+        "tolerance": 50 
+    },
+    {
+      "tag": "🤖 美国", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+    { 
+      "action": "iexclude", 
+      "keywords": ["美国|纽约|洛杉矶|圣荷西|芝加哥|丹佛|阿姆|凤凰城"] 
+    }
+    ], 
+        "url": "http://www.apple.com/library/test/success.html", 
+        "interval": "10m", 
+        "tolerance": 50 
+    },
+    {
+      "tag": "👹 新加印", 
+      "type": "urltest", 
+      "outbounds": ["{all}"], 
+      "filter": [
+    { 
+      "action": "iexclude", 
+      "keywords": ["新加坡|SG|加拿大|印度"] 
+    }
+    ], 
+        "url": "http://www.apple.com/library/test/success.html", 
+        "interval": "10m", 
+        "tolerance": 50 
+    },
+    {
+      "tag": "dns-out", 
+      "type": "dns"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "clash_mode": "direct",
+        "outbound": "🐳 全球直连"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "🐟 漏网之鱼"
+      },
+      {
+        "rule_set": [
+          "Direct_r",
+          "iptvA"
+        ],
+        "outbound": "🐳 全球直连"
+      },
+      {
+        "rule_set": [
+          "httpdns",
+          "httpdns_Block"
+        ],
+        "outbound": "🍃 拦截净化"
+      },
+      {
+        "rule_set": [
+          "iptvB",
+          "ProxyLite"
+        ],
+        "outbound": "🐟 漏网之鱼"
+      },
+      {
+        "rule_set": [
+          "Microsoft",
+          "Apple",
+          "Epic"
+        ],
+        "outbound": "🚚 万年直连"
+      },
+      {
+        "rule_set": [
+          "Telegram",
+          "Twitter"
+        ],
+        "outbound": "🐸 报鸟的哇"
+      },
+      {
+        "rule_set": [
+          "YouTube",
+          "GitHub",
+          "Docker"
+        ],
+        "outbound": "🎥 油管视频"
+      },
+      {
+        "rule_set": [
+          "ChinaMedia",
+          "TencentVideo",
+          "China"
+        ],
+        "outbound": "🐳 全球直连"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "Direct_r",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/VirgilClyne/GetSomeFries@main/ruleset/Direct.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "httpdns",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/HTTPDNS.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "httpdns_Block",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/HTTPDNS.Block.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "iptvA",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/iptvA.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "iptvB",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/iptvB.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "Microsoft",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/Microsoft.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "Apple",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/Apple.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "Telegram",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/Telegram.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "Twitter",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/Twitter.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "YouTube",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/YouTube.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "GitHub",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/GitHub.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "Docker",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/Docker.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "Epic",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/Epic.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "ChinaMedia",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/ChinaMedia.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "TencentVideo",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/TencentVideo.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "ProxyLite",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/ProxyLite.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "China",
+        "format": "binary",
+        "url": "https://fastly.jsdelivr.net/gh/lztxi/sing-box-geosite@main/rule/China.srs",
+        "download_detour": "direct"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "🐟 漏网之鱼"
+  },
+  "experimental": {}
+}
