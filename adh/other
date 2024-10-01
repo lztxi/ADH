@@ -140,6 +140,11 @@
 ||line3-adscore-api.biligame.net^
 ||activity.growth.video.qq.com^
 ||api.sobot.com^
+||upos-sz-static.bilivideo.com^
+||pay.bilibili.com^$importan
+||broadcast.chat.bilibili.com^
+||api.vc.bilibili.com^
+||grpc.biliapi.net^
 
 #360
 ||360.cn^
@@ -166,6 +171,7 @@
 
 #抖音系
 ||ecomuser.snssdk.com^
+||ecom3-normal-lq.ecombdapi.com^
 
 #IDM
 ||secure.internetdownloadmanager.com^
