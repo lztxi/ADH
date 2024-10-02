@@ -5,6 +5,7 @@
 ||kwimgs.com^
 ||xxpkg.com^
 ||kwaixiaodian.com^
+||gamekuaishou.com^
 
 #快手
 ||api.kuaishouzt.com^
@@ -13,20 +14,20 @@
 ||*-upload-js.*.com^
 ||*-upload.js.*.com^
 ||*-upload.ksapisrv.com^
-||az1-upload.ksapisrv.com^
+#||az1-upload.ksapisrv.com^
 
 #快手P2P
 ||*-p2p-pull.*.com^
 ||*-p2p.pull.*.com^
+||*-p2p-v2.pull.yximgs.com^
 ||*-p2p-other.vcloud.ks-live.com^
 #||p2p-punch.xxpkg.com^
-||*-p2p-v2.pull.yximgs.com^
 
 #快手直播-节点
+||*-live-js.*.com^
 ||*-adaptive-pull.*.com^
 ||*-adaptive.pull.*.com^
-||*-adaptive.pull.yximgs.com^
-||*-live-js.*.com^
+#||*-adaptive.pull.yximgs.com^
 
 #快手广告
 ||ulogjs.*.com^
@@ -44,7 +45,7 @@
 #快手游戏
 ||*-game.pull.yximgs.com^
 ||*-game.push.yximgs.com^
-||center-api.game.kuaishou.com^
+||game.kuaishou.com^
 
 #快手杂
 ||miniapi.gifshow.com^
@@ -56,9 +57,9 @@
 ||*-proxy-pull.*.com^
 ||*-origin.pull.*.com^
 ||*-origin-pull.*.com^
+|*-live-idc.*.com^
 ||*-live.ksapisrv.com^
-||*-api-idc.*.com^
-||*-live-idc.*.com^
+||*-api-idc.*.com^|
 ||*-magic.static.yximgs.com^
 ||access.d.yximgs.com^
 ||ws.pull.yximgs.com^
