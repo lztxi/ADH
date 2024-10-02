@@ -1,0 +1,2 @@
+IP-CIDR,10.10.10.10/32,no-resolve
+IP-CIDR6,::ffff:10.10.10.10/128,no-resolve
