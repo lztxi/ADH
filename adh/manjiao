@@ -37,7 +37,6 @@
 ||js.a.kspkg.com^
 ||yximgs-webrtc.liveplay.myqcloud.com^
 ||media-watchmen-delay.*.com^
-||az1-api-js.gifshow.com^
 
 #快手dns
 ||apidns-js.kwd.inkuai.com^
@@ -58,8 +57,12 @@
 ||*-origin.pull.*.com^
 ||*-origin-pull.*.com^
 ||*-live.ksapisrv.com^
-||*-api-js.gifshow.com^
 ||*-api-idc.*.com^
 ||*-live-idc.*.com^
 ||*-magic.static.yximgs.com^
 ||access.d.yximgs.com^
+||ws.pull.yximgs.com^
+||pcdn.yximgs.com^
+
+#IOS刷新视频
+#||*-api-js.gifshow.com^
