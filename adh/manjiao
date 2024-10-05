@@ -10,13 +10,22 @@
 #快手
 ||api.kuaishouzt.com^
 
+#快手-日志分析
+||sentry.kuaishou.com^
+
 #快手上传？
+||*-upload-js.^
+||*-upload.js.^
+
 ||*-upload-js.*.com^
 ||*-upload.js.*.com^
 ||*-upload.ksapisrv.com^
 #||az1-upload.ksapisrv.com^
 
 #快手P2P
+||*-p2p-pull.^
+||*-p2p.pull.^
+
 ||*-p2p-pull.*.com^
 ||*-p2p.pull.*.com^
 ||*-p2p-v2.pull.yximgs.com^
@@ -24,20 +33,28 @@
 #||p2p-punch.xxpkg.com^
 
 #快手直播-节点
+||*-live-js.^
 ||*-live-js.*.com^
+
+||*-adaptive-pull.^
+||*-adaptive.pull.^
 ||*-adaptive-pull.*.com^
 ||*-adaptive.pull.*.com^
-#||*-adaptive.pull.yximgs.com^
+
 
 #快手广告
 ||ulogjs.*.com^
 ||ulogs1.*.com^
 ||ulogs2.*.com^
 ||a.etoote.com^
+
+||*-ec.static.^
 ||*-ec.static.*.com^
 ||js.a.kspkg.com^
-||yximgs-webrtc.liveplay.myqcloud.com^
+
+||media-watchmen-delay.^
 ||media-watchmen-delay.*.com^
+||yximgs-webrtc.liveplay.myqcloud.com^
 
 #快手dns
 ||apidns-js.kwd.inkuai.com^
@@ -52,14 +69,17 @@
 ||centertime.ksyun.com^
 ||apijsv6.gifshow.com^
 ||az4-api.ksapisrv.com^
-||*-pull.*.com^
 ||*-proxy.pull.*.com^
 ||*-proxy-pull.*.com^
 ||*-origin.pull.*.com^
 ||*-origin-pull.*.com^
-|*-live-idc.*.com^
+
+||*-live-idc.^
+||*-live-idc.*.com^
 ||*-live.ksapisrv.com^
-||*-api-idc.*.com^|
+
+||*-api-idc.^
+||*-api-idc.*.com^
 ||*-magic.static.yximgs.com^
 ||access.d.yximgs.com^
 ||ws.pull.yximgs.com^
