@@ -14,8 +14,8 @@
 ||sentry.kuaishou.com^
 
 #快手上传？
-||*-upload-js.^
-||*-upload.js.^
+||*-upload-js.*^
+||*-upload.js.*^
 
 ||*-upload-js.*.com^
 ||*-upload.js.*.com^
@@ -23,8 +23,8 @@
 #||az1-upload.ksapisrv.com^
 
 #快手P2P
-||*-p2p-pull.^
-||*-p2p.pull.^
+||*-p2p-pull.*^
+||*-p2p.pull.*^
 
 ||*-p2p-pull.*.com^
 ||*-p2p.pull.*.com^
@@ -33,11 +33,11 @@
 #||p2p-punch.xxpkg.com^
 
 #快手直播-节点
-||*-live-js.^
+||*-live-js.*^
 ||*-live-js.*.com^
 
-||*-adaptive-pull.^
-||*-adaptive.pull.^
+||*-adaptive-pull.*^
+||*-adaptive.pull.*^
 ||*-adaptive-pull.*.com^
 ||*-adaptive.pull.*.com^
 
@@ -48,11 +48,11 @@
 ||ulogs2.*.com^
 ||a.etoote.com^
 
-||*-ec.static.^
+||*-ec.static.*^
 ||*-ec.static.*.com^
 ||js.a.kspkg.com^
 
-||media-watchmen-delay.^
+||media-watchmen-delay.*^
 ||media-watchmen-delay.*.com^
 ||yximgs-webrtc.liveplay.myqcloud.com^
 
@@ -74,11 +74,11 @@
 ||*-origin.pull.*.com^
 ||*-origin-pull.*.com^
 
-||*-live-idc.^
+||*-live-idc.*^
 ||*-live-idc.*.com^
 ||*-live.ksapisrv.com^
 
-||*-api-idc.^
+||*-api-idc.*^
 ||*-api-idc.*.com^
 ||*-magic.static.yximgs.com^
 ||access.d.yximgs.com^
