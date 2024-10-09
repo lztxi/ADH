@@ -16,30 +16,18 @@
 #快手上传？
 ||*-upload-js.*^
 ||*-upload.js.*^
-
-||*-upload-js.*.com^
-||*-upload.js.*.com^
 ||*-upload.ksapisrv.com^
 #||az1-upload.ksapisrv.com^
 
 #快手P2P
 ||*-p2p-pull.*^
 ||*-p2p.pull.*^
-
-||*-p2p-pull.*.com^
-||*-p2p.pull.*.com^
-||*-p2p-v2.pull.yximgs.com^
+||*-p2p-v2.pull.*^
 ||*-p2p-other.vcloud.ks-live.com^
 #||p2p-punch.xxpkg.com^
 
 #快手直播-节点
-||*-live-js.*^
-||*-live-js.*.com^
-
-||*-adaptive-pull.*^
-||*-adaptive.pull.*^
-||*-adaptive-pull.*.com^
-||*-adaptive.pull.*.com^
+#||*-live-js.*^
 
 
 #快手广告
@@ -49,11 +37,9 @@
 ||a.etoote.com^
 
 ||*-ec.static.*^
-||*-ec.static.*.com^
 ||js.a.kspkg.com^
 
 ||media-watchmen-delay.*^
-||media-watchmen-delay.*.com^
 ||yximgs-webrtc.liveplay.myqcloud.com^
 
 #快手dns
@@ -69,21 +55,19 @@
 ||centertime.ksyun.com^
 ||apijsv6.gifshow.com^
 ||az4-api.ksapisrv.com^
-||*-proxy.pull.*.com^
-||*-proxy-pull.*.com^
-||*-origin.pull.*.com^
-||*-origin-pull.*.com^
-
-||*-live-idc.*^
-||*-live-idc.*.com^
-||*-live.ksapisrv.com^
-
-||*-api-idc.*^
-||*-api-idc.*.com^
 ||*-magic.static.yximgs.com^
-||access.d.yximgs.com^
-||ws.pull.yximgs.com^
 ||pcdn.yximgs.com^
 
 #IOS刷新视频
 #||*-api-js.gifshow.com^
+#去除
+#||*-origin.pull.yximgs.com^
+#||*-origin-pull.live-voip.com^
+#||*-adaptive.pull.yximgs.com^
+#||*-adaptive-pull.yximgs.com^
+#||*-proxy.pull.*.com^
+#||*-proxy-pull.*.com^
+#||ws.pull.yximgs.com^
+#||access.d.yximgs.com^
+#||*-api-idc.*^
+#||*-live-idc.*^
