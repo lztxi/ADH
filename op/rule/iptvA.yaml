@@ -3,12 +3,11 @@ payload:
   - DOMAIN-SUFFIX,dnsany.com
   - DOMAIN-SUFFIX,mobaibox.com
   - DOMAIN-SUFFIX,yangshipin.cn
-  - DOMAIN-SUFFIX,beesport.livednow.comT
+  - DOMAIN-SUFFIX,livednow.com
+  - DOMAIN-SUFFIX,livednow.org
   - DOMAIN-SUFFIX,gcable.cn
   - DOMAIN-SUFFIX,ottdns.com
-  - IP-CIDR,183.206.0.0/15,no-resolve
-  - IP-CIDR,27.36.0.0/14,no-resolve
-  - IP-CIDR,183.238.66.0/24,no-resolve
+  - IP-CIDR,183.207.0.0/16,no-resolve
   - DOMAIN-SUFFIX,7moor-fs1.com
   - DOMAIN-SUFFIX,7moor-fs2.com
   - DOMAIN-SUFFIX,agit.ai
