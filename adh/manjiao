@@ -44,6 +44,11 @@
 ||media-watchmen-delay.*^
 ||yximgs-webrtc.liveplay.myqcloud.com^
 
+||az1-api.*^
+||az1-api-js.*
+||az1-api-js.*.com^
+||az1-api-idc.*^
+||kste.ksapisrv.com^
 #快手dns
 ||apidns-js.kwd.inkuai.com^
 
