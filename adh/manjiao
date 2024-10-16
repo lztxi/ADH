@@ -17,7 +17,7 @@
 ||*-upload-js.*^
 ||*-upload.js.*^
 ||*-upload.ksapisrv.com^
-#||az1-upload.ksapisrv.com^
+
 
 #快手P2P
 ||*-p2p-pull.*^
@@ -37,18 +37,11 @@
 ||a.etoote.com^
 ||ad.partner.gifshow.com^
 ||kste.ksapisrv.com^
-
 ||*-ec.static.*^
 ||js.a.kspkg.com^
-
 ||media-watchmen-delay.*^
 ||yximgs-webrtc.liveplay.myqcloud.com^
 
-||az1-api.*^
-||az1-api-js.*
-||az1-api-js.*.com^
-||az1-api-idc.*^
-||kste.ksapisrv.com^
 #快手dns
 ||apidns-js.kwd.inkuai.com^
 
@@ -78,3 +71,7 @@
 #||access.d.yximgs.com^
 #||*-api-idc.*^
 #||*-live-idc.*^
+#||az1-api.*^
+#||az1-api-js.*
+#||az1-api-js.*.com^
+#||az1-api-idc.*^
