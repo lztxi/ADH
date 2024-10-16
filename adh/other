@@ -78,9 +78,6 @@
 ||bytescm.com.bytedns1.com^
 ||mbd4.n.shifen.com^
 ||mobads.e.shifen.com^
-#||mlvbdc.live.qcloud.com^
-#||mssdk.volces.com.w.cdngslb.com^
-#||cn-northwest-1.amazonaws.com.cn^
 
 
 #云试听极光
@@ -125,14 +122,14 @@
 ||updateback.aisee.tv^
 
 #bili
+||api.sobot.com^
+||grpc.biliapi.net^
+||pay.bilibili.com^
 ||impression.biligame.com^
 ||line3-adscore-api.biligame.net^
-||activity.growth.video.qq.com^
-||api.sobot.com^
-||upos-sz-static.bilivideo.com^
-||pay.bilibili.com^$importan
 ||broadcast.chat.bilibili.com^
-||grpc.biliapi.net^
+||upos-sz-static.bilivideo.com^
+||upos-sz-staticcos.bilivideo.com^
 
 
 #qq音乐p2p
@@ -150,10 +147,10 @@
 ||mengjiamedia.com^
 
 #广州奇异果互动科技
-||fruitiee.com^
 ||mokiwi.cn^
 ||mokiwi.com^
 ||ad1024.com^
+||fruitiee.com^
 
 #抖音系
 ||ecomuser.snssdk.com^
