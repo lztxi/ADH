@@ -1,0 +1,173 @@
+p: &p {type: http, interval: 3600, health-check: {enable: true, url: "https://www.gstatic.com/generate_204", interval: 300}}
+######### 锚点 end #######
+# 机场订阅，名称不能重复
+proxy-providers:
+  机场名称:
+    <<: *p
+    url: "订阅地址"
+      override:
+        additional-prefix: "[订阅重置前缀]"
+       
+# 用于下载订阅时指定UA
+global-ua: clash.meta
+    
+# 全局配置
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7894
+ipv6: true
+allow-lan: true
+unified-delay: true
+tcp-concurrent: true
+  
+geodata-mode: false
+# GEO 文件加载模式（standard：标准加载器/memconservative：专为内存受限 (小内存) 设备优化的加载器 (默认值)）
+geodata-loader: memconservative
+geo-auto-update: true
+geo-update-interval: 48
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+
+# 匹配进程 always/strict/off
+find-process-mode: off
+global-client-fingerprint: chrome
+keep-alive-idle: 600
+keep-alive-interval: 30
+
+# 策略组选择和fakeip缓存
+profile:
+  store-selected: true
+  store-fake-ip: true
+  
+# 流量嗅探
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  force-domain:
+    - +.v2ex.com
+  skip-domain:
+    - "Mijia Cloud"
+    - "dlg.io.mi.com"
+    - "+.push.apple.com"
+    - "+.apple.com"
+    
+# 代理模式
+tun:
+  enable: true
+  stack: mixed
+  mtu: 9000
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+  
+# DNS模块
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: true
+  respect-rules: true
+  # 模式切换 redir-host / fake-ip
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  # 模式切换 whitelist/blacklist 
+  # 黑名单模式表示如果匹配成功则不返回 Fake-IP, 白名单模式时只有匹配成功才返回 Fake-IP
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "+.lan"
+    - "+.local"
+    - geosite:private
+    - geosite:cn
+  default-nameserver:
+    - 192.168.1.240
+  proxy-server-nameserver:
+    - 192.168.1.240
+  nameserver:
+    - 192.168.1.240
+    
+proxies:
+- name: "direct"
+  type: direct
+  udp: true
+ 
+# 策略组
+proxy-groups:
+  - {name: 🚀 手动切换, type: select, include-all: true}
+  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "^((?!(流量|剩余|长期|重置|倒卖|频道)).)*$"}
+  - {name: 🍋 负责稳定, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?i)稳定|Hy2|vmess"}
+  - {name: 🍑 负责临时, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "^((?!(稳定|CF)).)*$"}
+  - {name: 🐸 报鸟的哇, type: select, proxies: [🍋 负责稳定, 🍑 负责临时, ♻️ 自动选择, 👻 港台, 👺 日韩, 🤖 美国, 👹 新加印, 🚀 手动切换, 🐳 全球直连]}
+  - {name: 🎥 油管视频, type: select, proxies: [🍋 负责稳定, 🍑 负责临时, ♻️ 自动选择, 👻 港台, 👺 日韩, 🤖 美国, 👹 新加印, 🚀 手动切换, 🐳 全球直连]}
+  - {name: 🐟 漏网之鱼, type: select, proxies: [🍋 负责稳定, 🍑 负责临时, ♻️ 自动选择, 👻 港台, 👺 日韩, 🤖 美国, 👹 新加印, 🚀 手动切换, 🐳 全球直连]}
+  - {name: 🚚 万年直连, type: select, proxies: [🐳 全球直连, ♻️ 自动选择, 🚀 手动切换]}
+  - {name: 🍃 拦截净化, type: select, proxies: [REJECT, DIRECT]}
+  - {name: 🐳 全球直连, type: select, proxies: [DIRECT]}
+  - {name: 👻 港台, type: url-test, include-all: true, filter: "(?i)香港|HK|台湾|TW"}
+  - {name: 👺 日韩, type: url-test, include-all: true, filter: "(?i)日本|JP|韩国|KR"}
+  - {name: 🤖 美国, type: url-test, include-all: true, filter: "(?i)美国|纽约|洛杉矶|圣荷西|芝加哥|丹佛|阿姆|凤凰城"}
+  - {name: 👹 新加印, type: url-test, include-all: true, filter: "(?i)新加坡|SG|加拿大|印度"}
+rules:
+  - RULE-SET,private_domain,🐳 全球直连
+  - RULE-SET,UnBan,🐳 全球直连
+  - RULE-SET,httpdns,🍃 拦截净化
+  - RULE-SET,httpdns_block,🍃 拦截净化
+  - RULE-SET,iptvA,🐳 全球直连
+  - RULE-SET,iptvB,🐟 漏网之鱼
+  - RULE-SET,microsoft_domain,🚚 万年直连
+  - RULE-SET,onedrive_domain,🚚 万年直连
+  - RULE-SET,apple_domain,🚚 万年直连
+  - RULE-SET,telegram_domain,🐸 报鸟的哇
+  - RULE-SET,telegram_ip,🐸 报鸟的哇,no-resolve
+  - RULE-SET,twitter_domain,🐸 报鸟的哇
+  - RULE-SET,twitter_ip,🐸 报鸟的哇,no-resolve
+  - RULE-SET,youtube_domain,🎥 油管视频
+  - RULE-SET,github_domain,🎥 油管视频
+  - RULE-SET,docker_domain,🎥 油管视频
+  - RULE-SET,epicgames_domain,🚚 万年直连
+  - RULE-SET,steam_domain,🚚 万年直连
+  - RULE-SET,ChinaMedia,🐳 全球直连
+  - RULE-SET,tencent_domain,🐳 全球直连
+  - RULE-SET,cn_ip,🐳 全球直连
+  - MATCH,🐟 漏网之鱼
+rule-anchor:
+#domain 域名mrs |ip ip地址，rs| class list结尾
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+rule-providers: 
+  private_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs" }
+  UnBan: { <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/UnBan.list" }
+  httpdns: { <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/httpdns.list" }
+  httpdns_block: { <<: *class, url: "https://gcore.jsdelivr.net/gh/VirgilClyne/GetSomeFries@main/ruleset/HTTPDNS.Block.list" }
+  iptvA: { <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/iptvA.list" }
+  iptvB: { <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/iptvB.list" }
+  microsoft_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft.mrs" }
+  onedrive_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/onedrive.mrs" }
+  apple_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple-cn.mrs" }
+  telegram_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs" }
+  telegram_ip: { <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs" }
+  twitter_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/twitter.mrs" }
+  twitter_ip: { <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/twitter.mrs" }
+  youtube_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs" }
+  github_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs" }
+  google_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs" }
+  docker_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/docker.mrs" }
+  epicgames_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/epicgames.mrs" }
+  steam_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steamr.mrs" }
+  ChinaMedia: { <<: *class, url: "https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ChinaMedia/ChinaMedia.list" }
+  tencent_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tencent.mrs" }
+  cn_ip: { <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo-lite/geoip/cn.mrs" }
