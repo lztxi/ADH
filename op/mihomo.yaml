@@ -32,6 +32,7 @@ geox-url:
   geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
   mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
   asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+  
 
 # 匹配进程 always/strict/off
 find-process-mode: off
@@ -79,7 +80,7 @@ tun:
 dns:
   enable: true
   listen: 0.0.0.0:1053
-  ipv6: true
+  ipv6: false
   respect-rules: true
   # 模式切换 redir-host / fake-ip
   enhanced-mode: fake-ip
@@ -90,17 +91,16 @@ dns:
   fake-ip-filter:
     - "+.lan"
     - "+.local"
-    - geosite:private
-    - geosite:cn
   default-nameserver:
-    - 192.168.1.240
-  proxy-server-nameserver:
     - 192.168.1.240
   nameserver:
     - 192.168.1.240
-    
+  proxy-server-nameserver:
+    - 192.168.1.240
+ 
+   
 proxies:
-- name: "direct"
+- name: "🐳 全球直连"
   type: direct
   udp: true
  
@@ -120,7 +120,9 @@ proxy-groups:
   - {name: 👺 日韩, type: url-test, include-all: true, filter: "(?i)日本|JP|韩国|KR"}
   - {name: 🤖 美国, type: url-test, include-all: true, filter: "(?i)美国|纽约|洛杉矶|圣荷西|芝加哥|丹佛|阿姆|凤凰城"}
   - {name: 👹 新加印, type: url-test, include-all: true, filter: "(?i)新加坡|SG|加拿大|印度"}
+
 rules:
+  - GEOIP,lan,🐳 全球直连,no-resolve
   - RULE-SET,private_domain,🐳 全球直连
   - RULE-SET,UnBan,🐳 全球直连
   - RULE-SET,httpdns,🍃 拦截净化
@@ -131,23 +133,26 @@ rules:
   - RULE-SET,onedrive_domain,🚚 万年直连
   - RULE-SET,apple_domain,🚚 万年直连
   - RULE-SET,telegram_domain,🐸 报鸟的哇
-  - RULE-SET,telegram_ip,🐸 报鸟的哇,no-resolve
   - RULE-SET,twitter_domain,🐸 报鸟的哇
-  - RULE-SET,twitter_ip,🐸 报鸟的哇,no-resolve
   - RULE-SET,youtube_domain,🎥 油管视频
   - RULE-SET,github_domain,🎥 油管视频
   - RULE-SET,docker_domain,🎥 油管视频
   - RULE-SET,epicgames_domain,🚚 万年直连
   - RULE-SET,steam_domain,🚚 万年直连
+
+
+  - RULE-SET,telegram_ip,🐸 报鸟的哇,no-resolve
+  - RULE-SET,twitter_ip,🐸 报鸟的哇,no-resolve
   - RULE-SET,ChinaMedia,🐳 全球直连
   - RULE-SET,tencent_domain,🐳 全球直连
-  - RULE-SET,cn_ip,🐳 全球直连
+  - RULE-SET,cn_ip,🐳 全球直连,no-resolve
   - MATCH,🐟 漏网之鱼
 rule-anchor:
-#domain 域名mrs |ip ip地址，rs| class list结尾
+#domain 域名mrs文件 |ip 域名，mrs文件| class list文件
   ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
   domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
   class: &class {type: http, interval: 86400, behavior: classical, format: text}
+
 rule-providers: 
   private_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs" }
   UnBan: { <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/UnBan.list" }
@@ -164,7 +169,6 @@ rule-providers:
   twitter_ip: { <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/twitter.mrs" }
   youtube_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs" }
   github_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs" }
-  google_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs" }
   docker_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/docker.mrs" }
   epicgames_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/epicgames.mrs" }
   steam_domain: { <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steamr.mrs" }
