@@ -1,0 +1,158 @@
+######### 锚点 start #######
+#这里是订阅更新和延迟测试相关的
+p: &p {type: http, interval: 3600, health-check: {enable: true, url: "https://www.apple.com/library/test/success.html", interval: 300, proxy: 🐳 直连}}
+
+# url 里填写自己的订阅,名称不能重复
+proxy-providers:
+  稳定-机场:
+    !!merge <<: *p
+    url: "https://"
+    override:
+      additional-prefix: "[稳定-机场]"
+
+
+#开启IPV6
+ipv6: true
+#允许局域网
+allow-lan: true
+mixed-port: 7890
+#日志等级
+log-level: error
+#统一延迟
+unified-delay: true
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+#GEO数据加载模式 false=mmdb
+geodata-mode: false
+#自动更新
+geo-auto-update: true
+#更新间隔 72小时
+geo-update-interval: 72 
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/alecthw/mmdb_china_ip_list@release/lite/Country.mmdb"
+  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+
+# 流量嗅探
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+    - "+.push.apple.com"
+
+# 代理模式
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+#dns 相关
+dns:
+  enable: true
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*"
+    - "+.lan"
+    - "+.local"
+  default-nameserver:
+    - 192.168.1.240
+  nameserver:
+    - 192.168.1.240
+
+proxies:
+- name: "🐳 直连"
+  type: direct
+  udp: true
+ 
+# 锚点
+proxy-groups:
+  - {name: 🐻 手动切换, type: select, include-all: true, filter: "(?=.*(流量|稳定))^((?!(倒卖|重置|CF|转八|线程|TG|费节|剩余|到期|失联|官网)).)*$"}
+  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(流量|稳定))^((?!(倒卖|重置|CF|转八|线程|TG|费节|剩余|到期|失联|官网)).)*$"}
+  - {name: 🍋 负责稳定, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(稳定))^((?!(流量|倒卖|重置|CF|转八|线程|TG|费节|剩余|到期|失联|官网)).)*$"}
+  - {name: 🍑 负责流量, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(流量))^((?!(倒卖|重置|CF|转八|线程|TG|费节|剩余|到期|失联|官网)).)*$"}
+  - {name: 🐸 报鸟的哇, type: select, proxies: [🍋 负责稳定, 🍑 负责流量, ♻️ 自动选择, 👻 港台, 👺 日韩, 🤖 美国, 👹 新加印, 🐻 手动切换, 🐳 全球直连]}
+  - {name: 🎥 油管视频, type: select, proxies: [🍋 负责稳定, 🍑 负责流量, ♻️ 自动选择, 👻 港台, 👺 日韩, 🤖 美国, 👹 新加印, 🐻 手动切换, 🐳 全球直连]}
+  - {name: 🐟 漏网之鱼, type: select, proxies: [🍋 负责稳定, 🍑 负责流量, ♻️ 自动选择, 👻 港台, 👺 日韩, 🤖 美国, 👹 新加印, 🐻 手动切换, 🐳 全球直连]}
+  - {name: 🚚 万年直连, type: select, proxies: [🐳 全球直连, ♻️ 自动选择, 🐻 手动切换]}
+  - {name: 🍃 拦截净化, type: select, proxies: [REJECT, REJECT-DROP, DIRECT]}
+  - {name: 🐳 全球直连, type: select, proxies: [DIRECT]}
+  - {name: 👻 港台, type: url-test, include-all: true, filter: "(?i)香港|HK|台湾|TW"}
+  - {name: 👺 日韩, type: url-test, include-all: true, filter: "(?i)日本|JP|韩国|KR"}
+  - {name: 🤖 美国, type: url-test, include-all: true, filter: "(?i)美国|纽约|洛杉矶|圣荷西|芝加哥|丹佛|阿姆|凤凰城"}
+  - {name: 👹 新加印, type: url-test, include-all: true, filter: "(?i)新加坡|SG|加拿大|印度"}
+
+rules:
+  - RULE-SET,private_domain,🐳 全球直连
+  - RULE-SET,UnBan,🐳 全球直连
+  - RULE-SET,httpdns,🍃 拦截净化
+  - RULE-SET,httpdns_block,🍃 拦截净化
+  - RULE-SET,iptvA,🐳 全球直连
+  - RULE-SET,iptvB,🐟 漏网之鱼
+  - RULE-SET,telegram_domain,🐸 报鸟的哇
+  - RULE-SET,twitter_domain,🐸 报鸟的哇
+  - RULE-SET,youtube_domain,🎥 油管视频
+  - RULE-SET,docker_domain,🎥 油管视频
+  - RULE-SET,github_domain,🎥 油管视频
+  - RULE-SET,microsoft_domain,🚚 万年直连
+  - RULE-SET,onedrive_domain,🚚 万年直连
+  - RULE-SET,apple_domain,🚚 万年直连
+  - RULE-SET,epicgames_domain,🚚 万年直连
+  - RULE-SET,steam_domain,🚚 万年直连
+  - RULE-SET,cn_domain,🐳 全球直连
+  - RULE-SET,geolocation-!cn,🐟 漏网之鱼
+
+  - RULE-SET,telegram_ip,🐸 报鸟的哇
+  - RULE-SET,twitter_ip,🐸 报鸟的哇
+  - RULE-SET,ChinaMedia,🐳 全球直连
+  - RULE-SET,tencent_domain,🐳 全球直连
+  - RULE-SET,cn_ip,🐳 全球直连,no-resolve
+  - MATCH,🐟 漏网之鱼
+
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+
+rule-providers: 
+  private_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs" }
+  cn_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo-lite/geosite/cn.mrs" }
+  UnBan: {!!merge <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/UnBan.list" }
+  httpdns: {!!merge <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/httpdns.list" }
+  httpdns_block: {!!merge <<: *class, url: "https://gcore.jsdelivr.net/gh/VirgilClyne/GetSomeFries@main/ruleset/HTTPDNS.Block.list" }
+  iptvA: {!!merge <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/iptvA.list" }
+  iptvB: {!!merge <<: *class, url: "https://gcore.jsdelivr.net/gh/lztxi/ADH@main/op/rule/iptvB.list" }
+  microsoft_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft.mrs" }
+  onedrive_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/onedrive.mrs" }
+  apple_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple-cn.mrs" }
+  telegram_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs" }
+  twitter_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/twitter.mrs" }
+  youtube_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs" }
+  github_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs" }
+  docker_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/docker.mrs" }
+  epicgames_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/epicgames.mrs" }
+  steam_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steam.mrs" }
+  ChinaMedia: {!!merge <<: *class, url: "https://gcore.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ChinaMedia/ChinaMedia.list" }
+  tencent_domain: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tencent.mrs" }
+  geolocation-!cn: {!!merge <<: *domain, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/geolocation-!cn.mrs" }
+
+  cn_ip: {!!merge <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo-lite/geoip/cn.mrs" }
+  telegram_ip: {!!merge <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs" }
+  twitter_ip: {!!merge <<: *ip, url: "https://gcore.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/twitter.mrs" }
