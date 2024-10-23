@@ -5,9 +5,10 @@ blackhole.m.jd.com
 
 #上游dns
 doh.pub
+sm2.doh.pub
 dot.pub
-1.12.12.12
-120.53.53.53
+162.14.21.56
+162.14.21.178
 alidns.com
 doh.360.cn
 
