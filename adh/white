@@ -4,15 +4,16 @@ gia.jd.com
 blackhole.m.jd.com
 
 #上游dns
+dot.pub
+dns.pub
 doh.pub
 sm2.doh.pub
-dot.pub
-1.12.12.12
-120.53.53.53
-162.14.21.56
-162.14.21.178
 alidns.com
-doh.360.cn
+
+#微信小程序广告
+wxa.wxs.qq.com
+wximg.wxs.qq.com
+wxsmw.wxs.qq.com
 
 #央视频TV
 tv.t002.ottcn.com
@@ -34,6 +35,8 @@ cnbj1.fds.api.xiaomi.com
 cdn.cnbj1.fds.api.mi-img.com
 #定位找回
 cnac.account.xiaomi.com^
+#小米论坛
+api.vip.miui.com
 
 #UC扫码
 api.open.uc.cn
