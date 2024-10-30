@@ -5,3 +5,5 @@ IP-CIDR,119.28.28.98/32,no-resolve
 #阿里amdc
 IP-CIDR,203.119.169.0/24,no-resolve
 DOMAIN-KEYWORD,appdownload.alicdn.com,no-resolve
+#哔哩哔哩
+DOMAIN-KEYWORD,data.bilibili.com,no-resolve
