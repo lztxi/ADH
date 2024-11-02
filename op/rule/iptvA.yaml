@@ -8,6 +8,7 @@ payload:
   - DOMAIN-SUFFIX,gcable.cn
   - DOMAIN-SUFFIX,ottdns.com
   - IP-CIDR,183.207.0.0/16,no-resolve
+  - DOMAIN-SUFFIX,aiseet.atianqi.com
   - DOMAIN-SUFFIX,7moor-fs1.com
   - DOMAIN-SUFFIX,7moor-fs2.com
   - DOMAIN-SUFFIX,agit.ai
