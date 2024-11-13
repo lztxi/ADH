@@ -3,12 +3,7 @@ wl.jd.com
 gia.jd.com
 blackhole.m.jd.com
 
-#上游dns
-#dot.pub
-#dns.pub
-#doh.pub
-#sm2.doh.pub
-#alidns.com
+#DNS
 dns.google
 dns.cloudflare.com
 
@@ -48,6 +43,9 @@ broccoli.uc.cn
 
 #云闪付抽奖图片
 yun.duiba.com.cn
+
+#饿了么
+s-gm.mmstat.com
 
 # Epicgames
 ol.epicgames.com
