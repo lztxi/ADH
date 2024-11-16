@@ -1,7 +1,9 @@
 #腾讯HTTPDNS
 #IP-CIDR,182.254.116.116/32,no-resolve
-IP-CIDR,182.254.118.118/32,no-resolve
+#IP-CIDR,182.254.118.118/32,no-resolve
 IP-CIDR,119.28.28.98/32,no-resolve
+IP-CIDR,119.29.29.98/32,no-resolve
+IP-CIDR,119.29.29.99/32,no-resolve
 #阿里amdc
 IP-CIDR,203.119.169.0/24,no-resolve
 DOMAIN-KEYWORD,appdownload.alicdn.com,no-resolve
