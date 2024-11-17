@@ -1,0 +1,7 @@
+DOMAIN-SUFFIX,dns.pub
+DOMAIN-SUFFIX,doh.pub
+DOMAIN-SUFFIX,dot.pub
+IP-CIDR,1.12.12.12/32,no-resolve
+IP-CIDR,1.12.34.56/32,no-resolve
+IP-CIDR,120.53.53.53/32,no-resolve
+IP-CIDR,106.55.91.174/32,no-resolve
