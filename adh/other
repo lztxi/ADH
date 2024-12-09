@@ -42,6 +42,7 @@
 ||gateway.sogou.com^
 ||om.tracking.miui.com^
 
+
 #小米下载
 ||rp.m.hub.sandai.net^
 ||sr.m.hub.sandai.net^
@@ -160,8 +161,10 @@
 ||fruitiee.com^
 
 #抖音系
+||*-ad.byteimg.com^
 ||ecomuser.snssdk.com^
 ||ecom3-normal-lq.ecombdapi.com^
+
 
 #IDM
 ||secure.internetdownloadmanager.com^
