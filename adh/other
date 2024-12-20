@@ -100,6 +100,8 @@
 ||amsweb-cdn-*.file.myqcloud.com^$important
 ||wallpaper-*.file.myqcloud.com^$important
 
+#银联云闪付
+||ads.cup.com.cn^$important
 
 #央视频TV
 ||adott.ottcn.com^
