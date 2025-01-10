@@ -7,8 +7,8 @@
 ||swscan.apple.com^
 ||xp.apple.com^
 ||gdmf.apple.com^
-||ocsp.apple.com^
-||ocsp2.apple.com^
+#||ocsp.apple.com^
+#||ocsp2.apple.com^
 ||cma.itunes.apple.com^
 ||configuration.ls.apple.com^
 ||inappcheck.itunes.apple.com^
