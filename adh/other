@@ -83,13 +83,14 @@
 
 #云试听极光
 ||adts.tc.qq.com^
-||defaultts.tc.qq.com^
 ||*-p2p.play.aiseet.atianqi.com^
 ||*-start.play.aiseet.atianqi.com^
 ||apd-vlive.apdcdn.tc.qq.com^
 ||apd-ugcvlive.apdcdn.tc.qq.com^
 ||apd-*.apdcdn.tc.qq.com^
 ||vmind.qqvideo.tc.qq.com^
+###屏蔽后部分最新视频不能播放
+#||defaultts.tc.qq.com^
 
 #云试听极光开屏
 ||vv.play.aiseet.atianqi.com^
