@@ -8,7 +8,6 @@ DOMAIN-KEYWORD,appdownload.alicdn.com,no-resolve
 #哔哩哔哩
 DOMAIN-KEYWORD,dataflow.biliapi.com,no-resolve
 #TCL
-DOMAIN-KEYWORD,cedock.com,no-resolve
-DOMAIN-KEYWORD,leiniao.com,no-resolve
-DOMAIN-KEYWORD,tclking.com,no-resolve
-
+DOMAIN-SUFFIX,cedock.com,no-resolve
+DOMAIN-SUFFIX,leiniao.com,no-resolve
+DOMAIN-SUFFIX,tclking.com,no-resolve
