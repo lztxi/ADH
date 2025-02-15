@@ -76,9 +76,12 @@
 ||dopen.weimob.com^
 ||deepinstall.com^
 ||tr.byteurl.cn^
+||voice.irisgw.cn^
+||share.irisgw.cn^
 #||bytescm.com.bytedns1.com^
 ||mbd4.n.shifen.com^
 ||mobads.e.shifen.com^
+
 
 
 #云试听极光
@@ -133,13 +136,13 @@
 
 #bili
 ||api.sobot.com^
-||grpc.biliapi.net^
 ||pay.bilibili.com^
 ||impression.biligame.com^
 ||line3-adscore-api.biligame.net^
 ||broadcast.chat.bilibili.com^
 ||upos-sz-static.bilivideo.com^
 ||upos-sz-staticcos.bilivideo.com^
+#||grpc.biliapi.net^
 #||upos-sz-mirrorcoso1.bilivideo.com^
 
 
