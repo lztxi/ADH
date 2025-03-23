@@ -92,6 +92,7 @@
 ||adts.tc.qq.com^
 ||*-p2p.play.aiseet.atianqi.com^
 ||*-start.play.aiseet.atianqi.com^
+||connect.play.aiseet.atianqi.com^
 ||onlineapi.huan.aisee.tv^
 ||apd-vlive.apdcdn.tc.qq.com^
 ||apd-ugcvlive.apdcdn.tc.qq.com^
@@ -194,5 +195,8 @@
 #不知道什么
 ||dumall.com^
 ||shark.dianping.com^
-106.74.25.198 uc.cmd
-106.74.25.198 miwifi.com
+
+
+#bandizip
+||ver.bandi.so^$important
+||bandisoft.com^$important
