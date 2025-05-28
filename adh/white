@@ -26,8 +26,8 @@ wlog.kuaishou.com
 log-sdk.ksapisrv.com
 
 #Miui 小米
-tracking.miui.com
-ssl-cdn.static.browser.mi-img.com
+#tracking.miui.com
+#ssl-cdn.static.browser.mi-img.com
 #小米蓝牙信号标定工具
 cnbj1.fds.api.xiaomi.com
 cdn.cnbj1.fds.api.mi-img.com
@@ -49,8 +49,8 @@ yun.duiba.com.cn
 s-gm.mmstat.com
 
 #快手
-w1.kskwai.com
-w2.kskwai.com
+#w1.kskwai.com
+#w2.kskwai.com
 
 #其他
 h8.blued.cn
