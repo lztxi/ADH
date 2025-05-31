@@ -1,8 +1,11 @@
+#
+DOMAIN-SUFFIX,696869.xyz
+
 #IPtv直连
-DOMAIN-SUFFIX,mobaibox.com
-DOMAIN-SUFFIX,yangshipin.cn
-DOMAIN-SUFFIX,livednow.com
-DOMAIN-SUFFIX,livednow.org
+#DOMAIN-SUFFIX,mobaibox.com
+#DOMAIN-SUFFIX,yangshipin.cn
+#DOMAIN-SUFFIX,livednow.com
+#DOMAIN-SUFFIX,livednow.org
 
 #tvbox
 DOMAIN-SUFFIX,7moor-fs1.com
