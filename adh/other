@@ -112,8 +112,10 @@
 ||sdk-e.play.aiseet.atianqi.com^
 ||v-terrific.play.aiseet.atianqi.com^
 ||html5.play.aiseet.atianqi.com^
-||amsweb-cdn-*.file.myqcloud.com^$important
-||wallpaper-*.file.myqcloud.com^$important
+||amsweb-cdn-*.file.myqcloud.com^
+||wallpaper-*.file.myqcloud.com^
+##云试听极光
+||ad.xelements.cn^$important
 
 #银联云闪付
 ||ads.cup.com.cn^$important
@@ -155,7 +157,9 @@
 ||upos-sz-staticcos.bilivideo.com^
 #||grpc.biliapi.net^
 #||upos-sz-mirrorcoso1.bilivideo.com^
-
+####bili pcdn
+||mcdn.bilivideo.cn^
+||h2.smtcdns.net^
 
 #qq音乐p2p
 ||tp2p.kg.qq.com^
@@ -199,7 +203,7 @@
 #不知道什么
 ||dumall.com^
 ||shark.dianping.com^
-
+||lebo.cn^
 
 #bandizip
 ||ver.bandi.so^$important
