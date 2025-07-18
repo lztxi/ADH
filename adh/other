@@ -44,13 +44,13 @@
 
 
 #小米下载
-||rp.m.hub.sandai.net^
-||sr.m.hub.sandai.net^
-||idx.m.hub.sandai.net^
-||hub5u.wap.sandai.net^
-||master.wap.dphub.sandai.net^
-||hub5pn.wap.sandai.net^
-||cdn.exp.xiaomi.com^
+#||rp.m.hub.sandai.net^
+#||sr.m.hub.sandai.net^
+#||idx.m.hub.sandai.net^
+#||hub5u.wap.sandai.net^
+#||master.wap.dphub.sandai.net^
+#||hub5pn.wap.sandai.net^
+#||cdn.exp.xiaomi.com^
 
 #搜狗输入法
 ||v2.get.sogou.com^
@@ -128,16 +128,16 @@
 ||yk-ssp-ad.cp31.ott.cibntv.net^
 
 ##优酷amdc
-||amdc.alipay.com^
-||amdc-sibling.alipay.com.cn^
-||amdc.cp12.ott.cibntv.net^
-||*-amdc.base.youku.com^
+#||amdc.alipay.com^
+#||amdc-sibling.alipay.com.cn^
+#||amdc.cp12.ott.cibntv.net^
+#||*-amdc.base.youku.com^
 
 #阿里httpdns
 ||httpdns.alicdn.com^
 
 #阿里巴巴
-||o2o-ad-clicking.alibaba.com^
+||ad-clicking.alibaba.com^
 
 #南方新媒体
 ||yst.aisee.tv^
@@ -187,6 +187,9 @@
 ||ecom3-normal-lq.ecombdapi.com^
 ||sf3-ttcdn-tos.pstatp.com^
 
+||*.lan^$important
+||ahdohpiechei.com^$important
+||whoami.akamai.net^$important
 
 #IDM
 ||internetdownloadmanager.com^
@@ -198,6 +201,16 @@
 ||brg0.cn^
 ||brg0.com^
 ||sportxuan.com^
+
+#及刻-位置信息营销
+||isjike.com^$important
+||clickwifi.net^$important
+###预防性加入
+||isjike.cn^$important
+||igeekee.cn^$important
+||keliuyi.com^$important
+||laikemap.com^$important
+||ekeliu.com^$important
 
 
 #不知道什么
