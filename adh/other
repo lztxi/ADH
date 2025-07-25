@@ -126,6 +126,7 @@
 #优酷
 ||appdownload.alicdn.com^
 ||yk-ssp-ad.cp31.ott.cibntv.net^
+||daqianadsense.youku.com^
 
 ##优酷amdc
 #||amdc.alipay.com^
@@ -187,7 +188,7 @@
 ||ecom3-normal-lq.ecombdapi.com^
 ||sf3-ttcdn-tos.pstatp.com^
 
-||*.lan^$important
+#||*.lan^$important
 ||ahdohpiechei.com^$important
 ||whoami.akamai.net^$important
 
@@ -196,6 +197,9 @@
 
 #米哈游
 ||ug-data.mihoyo.com^
+
+##mumu模拟器
+||mumu.nie.netease.com^
 
 #北京腾云天下
 ||brg0.cn^
