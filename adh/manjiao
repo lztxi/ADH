@@ -47,6 +47,9 @@
 #快手dns
 ||apidns-js.kwd.inkuai.com^
 
+#快手httpdns
+||hdns.ksyun.com^
+
 #快手游戏
 ||*-game.pull.yximgs.com^
 ||*-game.push.yximgs.com^
