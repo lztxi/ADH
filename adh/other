@@ -1,6 +1,3 @@
-##其他杂项手动补充
-
-
 #苹果ios
 ||mesu.apple.com^
 ||appldnld.apple.com^
@@ -66,23 +63,25 @@
 
 
 #蓝
-||blued.cn^
-||blued.com^
+#||bytescm.com.bytedns1.com^
 ||bdurl.net^
 ||bestadprof.com^
+||blued.cn^
+||blued.com^
 ||buluken.com^
-||irisdt.cn^
-||open.youzanyun.com^
-||dopen.weimob.com^
 ||deepinstall.com^
-||tr.byteurl.cn^
-||voice.irisgw.cn^
-||share.irisgw.cn^
-#||bytescm.com.bytedns1.com^
+||dopen.weimob.com^
+||fengkongcloud.com^
+||irisdt.cn^
+||live.irisgw.cn^
 ||mbd4.n.shifen.com^
 ||mobads.e.shifen.com^
-||live.irisgw.cn^
+||open.youzanyun.com^
+||share.irisgw.cn^
 ||social.irisgw.cn^
+||tr.byteurl.cn^
+||voice.irisgw.cn^
+
 
 #bandizip
 ||ver.bandi.so^
@@ -138,6 +137,12 @@
 ||httpdns.alicdn.com^
 ||httpdns.aliyuncs.com^
 
+#httpdns
+||httpdns-*.aliyuncs.com^
+||httpdns.yunxindns.com^
+||kuaishou.httpdns.pro^
+||httpdns.c.cdnhwc2.com^
+
 #阿里巴巴
 ||ad-clicking.alibaba.com^
 
@@ -186,13 +191,16 @@
 #抖音系
 ||id6.me^
 ||msv6.wosms.cn^
+#||*.lan^
+#||apimobile.meituan.com^
 ||*-ad.byteimg.com^
-||ecomuser.snssdk.com^
 ||ecom3-normal-lq.ecombdapi.com^
+||ecomuser.snssdk.com^
+||free-lbv3.idouyinvod.com^
 ||sf3-ttcdn-tos.pstatp.com^
 
-||ahdohpiechei.com^$important
-||whoami.akamai.net^$important
+||ahdohpiechei.com^
+||whoami.akamai.net^
 
 #IDM
 ||internetdownloadmanager.com^
@@ -227,6 +235,7 @@
 ||dumall.com^
 ||shark.dianping.com^
 ||lebo.cn^
+||adash-emas.cn-hangzhou.aliyuncs.com^
 
 #bandizip
 ||ver.bandi.so^$important
