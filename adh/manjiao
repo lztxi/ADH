@@ -1,16 +1,17 @@
 #一级域名
-||inkuai.com^
-||eckwai.com^
-||ecukwai.com^
-||paykwai.com^
-||adbkwai.com^
 #||kwimgs.com^
-||xxpkg.com^
-||kwaixiaodian.com^
-||gamekuaishou.com^
+
+#||inkuai.com^
+#||eckwai.com^
+#||ecukwai.com^
+#||paykwai.com^
+#||adbkwai.com^
+#||xxpkg.com^
+#||kwaixiaodian.com^
+
 
 #快手
-||api.kuaishouzt.com^
+#||api.kuaishouzt.com^
 
 #快手-日志分析
 ||sentry.kuaishou.com^
@@ -26,23 +27,25 @@
 ||*-p2p.pull.*^
 ||*-p2p-v2.pull.*^
 ||*-p2p-other.vcloud.ks-live.com^
-#||p2p-punch.xxpkg.com^
+||p2p-punch.xxpkg.com^
+||p2p-punch-v6.xxpkg.com^
 
 #快手直播-节点
 #||*-live-js.*^
 
 
 #快手广告
-||ulogjs.*.com^
-||ulogs1.*.com^
-||ulogs2.*.com^
-||a.etoote.com^
+#||ulogjs.*.com^
+#||ulogs1.*.com^
+#||ulogs2.*.com^
+
+#||a.etoote.com^
 ||ad.partner.gifshow.com^
-||kste.ksapisrv.com^
-||*-ec.static.*^
-||js.a.kspkg.com^
-||media-watchmen-delay.*^
-||yximgs-webrtc.liveplay.myqcloud.com^
+#||kste.ksapisrv.com^
+#||*-ec.static.*^
+#||js.a.kspkg.com^
+#||media-watchmen-delay.*^
+#||yximgs-webrtc.liveplay.myqcloud.com^
 
 #快手dns
 ||apidns-js.kwd.inkuai.com^
@@ -52,21 +55,24 @@
 ||hdns.ksyun.com^
 
 #快手游戏
+||gamekuaishou.com^
+||game.kuaishou.com^
 ||*-game.pull.yximgs.com^
 ||*-game.push.yximgs.com^
-||game.kuaishou.com^
 
 #快手杂
-||miniapi.gifshow.com^
-||centertime.ksyun.com^
+#||ntp.nc.gifshow.com^
+#||miniapi.gifshow.com^
+#||centertime.ksyun.com^
+||adukwai.com^
 ||apijsv6.gifshow.com^
 ||az4-api.ksapisrv.com^
 ||*-magic.static.yximgs.com^
 ||pcdn.yximgs.com^
 ||az1-api.ksapisrv.com^
 ||az4-api-js.gifshow.com^
-||ntp.nc.gifshow.com^
-||adukwai.com^
+
+
 
 #IOS刷新视频
 #||*-api-js.gifshow.com^
