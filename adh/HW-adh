@@ -29,6 +29,12 @@
 ||free-lbv3.idouyinvod.com^
 ||ahdohpiechei.com^
 ||whoami.akamai.net^
+! 视频内容广告智能匹配引擎
+||*-brain.ndcpp.com^$important
+||*-brain-v6.ndcpp.com^ $important
+||ecombdapi.com^$important
+||api*-ecom-*.amemv.com^$important
+||ecomuser.snssdk.com^$important
 
 #及刻-位置信息营销
 ||isjike.com^
