@@ -38,14 +38,24 @@
 #||ulogjs.*.com^
 #||ulogs1.*.com^
 #||ulogs2.*.com^
-
 #||a.etoote.com^
-||ad.partner.gifshow.com^
 #||kste.ksapisrv.com^
 #||*-ec.static.*^
 #||js.a.kspkg.com^
 #||media-watchmen-delay.*^
 #||yximgs-webrtc.liveplay.myqcloud.com^
+||ad.partner.gifshow.com^
+||vmcxz.cn^$important
+||z1cdn.com^$important
+||kwaixiaodian.com^$important
+||yiye.haianjituan.com^$important
+||ad.hunyuan.tencent.com^$important
+||djvod.ndcimgs.com^$important
+||djlive.ndcimgs.com^$important
+||*-proxy-config*.com^$important
+||*-pxy-*.com^$important
+||apmplus.volces.com^$important
+
 
 #快手dns
 ||apidns-js.kwd.inkuai.com^
