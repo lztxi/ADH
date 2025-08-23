@@ -9,12 +9,15 @@
 #||xxpkg.com^
 #||kwaixiaodian.com^
 
+||ppos.com^$important
 
 #快手
 #||api.kuaishouzt.com^
 
 #快手-日志分析
 ||sentry.kuaishou.com^
+||slink.gifshow.com^
+||slink.ksapisrv.com^
 
 #快手上传？
 ||*-upload-js.*^
@@ -81,6 +84,13 @@
 ||pcdn.yximgs.com^
 ||az1-api.ksapisrv.com^
 ||az4-api-js.gifshow.com^
+
+||traffic-monitor.kuaishou.com^
+||mdp-usertrace-cn.heytapmobi.com^
+||d.yximgs.com^
+||tm-access.xxpkg.com^
+||api1.kwaishop.com^
+||ad.zhuanzhuan.com^
 
 
 
