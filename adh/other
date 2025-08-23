@@ -84,7 +84,9 @@
 ||social.irisgw.cn^
 ||fengkongcloud.com^
 ||openinstall.io^
-
+||ido.gepush.com^
+||b-gtc.gepush.com^
+||sdk.open.talk.gepush.com^
 
 
 #bandizip
@@ -171,6 +173,7 @@
 ####bili pcdn
 ||mcdn.bilivideo.cn^
 ||h2.smtcdns.net^
+||live-play.acgvideo.com^
 
 #qq音乐p2p
 ||tp2p.kg.qq.com^
@@ -246,6 +249,7 @@
 ||shark.dianping.com^
 ||lebo.cn^
 ||adash-emas.cn-hangzhou.aliyuncs.com^
+||api.feelgood.cn^
 
 #bandizip
 ||ver.bandi.so^$important
