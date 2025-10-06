@@ -137,10 +137,10 @@
 ||daqianadsense.youku.com^
 
 ##优酷amdc
-#||amdc.alipay.com^
-#||amdc-sibling.alipay.com.cn^
-#||amdc.cp12.ott.cibntv.net^
-#||*-amdc.base.youku.com^
+||amdc.alipay.com^
+||amdc-sibling.alipay.com.cn^
+||amdc.cp12.ott.cibntv.net^
+||*-amdc.base.youku.com^
 
 #阿里httpdns
 ||httpdns.alicdn.com^
@@ -209,14 +209,24 @@
 ||free-lbv3.idouyinvod.com^
 ||sf3-ttcdn-tos.pstatp.com^
 ! 视频内容广告智能匹配引擎
-||*-brain.ndcpp.com^$important
-||*-brain-v6.ndcpp.com^ $important
-||ecombdapi.com^$important
-||api*-ecom-*.amemv.com^$important
-||ecomuser.snssdk.com^$important
-
+||*-brain.ndcpp.com^
+||*-brain-v6.ndcpp.com^
+||ecombdapi.com^
+||api*-ecom-*.amemv.com^
+||ecomuser.snssdk.com^
 ||ahdohpiechei.com^
 ||whoami.akamai.net^
+#巨量引擎
+||oceanengine.com^
+||bytesmanager.com^
+#抖音P2P
+||starrydyn.com^
+||xinqiucc.com^
+||sealaly.net^
+||xdrtc.com^
+#网心云
+||kuiniuca.com^
+
 
 #IDM
 ||internetdownloadmanager.com^
