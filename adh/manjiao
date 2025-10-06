@@ -48,16 +48,15 @@
 #||media-watchmen-delay.*^
 #||yximgs-webrtc.liveplay.myqcloud.com^
 ||ad.partner.gifshow.com^
-||vmcxz.cn^$important
-||z1cdn.com^$important
-||kwaixiaodian.com^$important
-||yiye.haianjituan.com^$important
-||ad.hunyuan.tencent.com^$important
-||djvod.ndcimgs.com^$important
-||djlive.ndcimgs.com^$important
-||*-proxy-config*.com^$important
-||*-pxy-*.com^$important
-||apmplus.volces.com^$important
+||vmcxz.cn^
+||z1cdn.com^
+||yiye.haianjituan.com^
+||ad.hunyuan.tencent.com^
+||djvod.ndcimgs.com^
+||djlive.ndcimgs.com^
+||*-proxy-config*.com^
+||*-pxy-*.com^
+||apmplus.volces.com^
 
 
 #快手dns
