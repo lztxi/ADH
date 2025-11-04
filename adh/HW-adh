@@ -29,7 +29,7 @@
 #||apimobile.meituan.com^
 #||*.lan^
 ||free-lbv3.idouyinvod.com^
-||ahdohpiechei.com^
+#||ahdohpiechei.com^
 ||whoami.akamai.net^
 ! 视频内容广告智能匹配引擎
 ||*-brain.ndcpp.com^
@@ -40,6 +40,10 @@
 ||ndcpp.com^
 ||siomxity.net^
 ||free-lbv*.idouyinvod.com^
+
+||z.cjjd14.com^
+||sdktt.data.tianwenca.com^
+
 #巨量引擎
 ||oceanengine.com^
 ||bytesmanager.com^
