@@ -37,7 +37,8 @@
 ||ecombdapi.com^
 ||api*-ecom-*.amemv.com^
 ||ecomuser.snssdk.com^
-||ndcpp.com^
+#非PCDN
+#||ndcpp.com^
 ||siomxity.net^
 ||free-lbv*.idouyinvod.com^
 
