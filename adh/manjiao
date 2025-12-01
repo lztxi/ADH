@@ -55,7 +55,6 @@
 ||djlive.ndcimgs.com^
 ||*-proxy-config*.com^
 ||*-pxy-*.com^
-||apmplus.volces.com^
 ||ctt-er.hnzkclouds.com^
 ||adtrack.e.kuaishou.com^
 ||adtrack.hongyibo.com.cn^
@@ -89,7 +88,7 @@
 ||az4-api-js.gifshow.com^
 
 ||traffic-monitor.kuaishou.com^
-||mdp-usertrace-cn.heytapmobi.com^
+#||mdp-usertrace-cn.heytapmobi.com^
 ||d.yximgs.com^
 ||tm-access.xxpkg.com^
 ||api1.kwaishop.com^
@@ -99,6 +98,8 @@
 
 #IOS刷新视频
 #||*-api-js.gifshow.com^
+#非快手
+#||apmplus.volces.com^
 #去除
 #||*-origin.pull.yximgs.com^
 #||*-origin-pull.live-voip.com^
