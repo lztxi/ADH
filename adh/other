@@ -208,7 +208,7 @@
 ||*-ad.byteimg.com^
 ||ecom3-normal-lq.ecombdapi.com^
 ||ecomuser.snssdk.com^
-||free-lbv3.idouyinvod.com^
+||free-lbv*.idouyinvod.com^
 ||sf3-ttcdn-tos.pstatp.com^
 ! 视频内容广告智能匹配引擎
 #非PCDN
@@ -220,10 +220,8 @@
 ||ecomuser.snssdk.com^
 #||ahdohpiechei.com^
 #内容分发
-#||whoami.akamai.net^
-
 ||siomxity.net^
-#||free-lbv*.idouyinvod.com^
+#||whoami.akamai.net^
 #巨量引擎
 ||oceanengine.com^
 ||bytesmanager.com^
