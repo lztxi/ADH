@@ -206,7 +206,6 @@
 #||*.lan^
 #||apimobile.meituan.com^
 ||*-ad.byteimg.com^
-||ecom3-normal-lq.ecombdapi.com^
 ||ecomuser.snssdk.com^
 ||free-lbv*.idouyinvod.com^
 ||sf3-ttcdn-tos.pstatp.com^
@@ -215,7 +214,7 @@
 #||ndcpp.com^
 #||*-brain.ndcpp.com^
 #||*-brain-v6.ndcpp.com^
-||ecombdapi.com^
+#||ecombdapi.com^
 ||api*-ecom-*.amemv.com^
 ||ecomuser.snssdk.com^
 #||ahdohpiechei.com^
