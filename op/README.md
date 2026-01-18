@@ -1,7 +1,7 @@
 <details>
   <summary>😶‍🌫️测Ping网址</summary>
 
-| 服务提供者 | 链接 | 内网延迟(ms) | 外网延迟(ms) |
+| 服务提供者 | 链接 | 内网评分 | 外网评分 |
 |------------|------|--------------|--------------|
 | Google     | http://www.gstatic.com/generate_204 | 5 | 10 |
 | Google     | http://www.google-analytics.com/generate_204 | 6 | 4 |
