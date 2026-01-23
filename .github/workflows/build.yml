@@ -1,0 +1,51 @@
+name: 无用的更新DNS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 */30 * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run script
+        run: python main.py
+
+      - name: Deploy generated files to dev branch (orphan style)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          # 切换到全新的 orphan 分支（无历史）
+          git checkout --orphan temp-dev
+
+          # 只清空 Git 的跟踪状态（--cached），工作区文件（刚生成的 adguard_dns.txt 和 README.md）不会被物理删除
+          git rm -rf --cached . || true
+
+          # 现在把生成的文件加进 index
+          git add adguard_dns.txt README.md || true
+
+          # 提交（用 --allow-empty 以防万一没变化，但正常会有）
+          git commit --allow-empty -m "Auto update $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+
+          # 强制推送到 dev 分支（会完全覆盖 dev 的历史，只剩这两个文件）
+          git push -f origin temp-dev:dev
+
+          # 清理临时分支（可选，但推荐）
+          git branch -D temp-dev || true
