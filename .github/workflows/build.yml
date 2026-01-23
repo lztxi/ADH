@@ -1,44 +1,65 @@
 name: 无用的更新DNS
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 0 */30 * *"
+    - cron: '0 0 */30 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 必须加这个，避免 push 403
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout main 分支
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: main       # 确保从 main 拉代码运行脚本
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'   # 你可以改回 3.11 如果需要
 
-      - name: Install deps
-        run: |
-          pip install -r scripts/requirements.txt
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
 
-      - name: Run script
+      - name: 生成 adguard_dns.txt 和 README.md
         run: python scripts/ADGH_dns.py
 
-      - name: Deploy generated files to dev branch (orphan style)
+      - name: 推送生成文件到 dev 分支（干净 orphan 方式）
         run: |
-          git config user.name "github-actions"
+          git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git checkout --orphan temp-dev
+          # 创建全新的 orphan dev 分支（无历史）
+          git checkout --orphan dev
+
+          # 清空 Git 索引（不删物理文件）
           git rm -rf --cached . || true
 
-          git add adguard_dns.txt README.md || true
+          # 检查文件是否存在（保险）
+          if [ ! -f adguard_dns.txt ] || [ ! -f README.md ]; then
+            echo "生成文件丢失，重新运行脚本..."
+            python scripts/ADGH_dns.py
+          fi
 
-          git commit --allow-empty -m "Auto update $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          # 只添加我们想要的文件
+          git add adguard_dns.txt README.md
 
-          git push -f origin temp-dev:dev
+          # 提交（允许空提交以防万一）
+          git commit --allow-empty -m "Auto update $(date -u +'%Y-%m-%d %H:%M UTC')"
 
-          git branch -D temp-dev || true
+          # 强制推送，覆盖 dev 分支
+          git push -f origin dev
+
+          echo "dev 分支已更新！现在只包含 adguard_dns.txt 和 README.md～"
+
+      # 可选：清理旧的 workflow 运行记录，保持列表干净
+      - name: Delete old workflow runs
+        if: always()   # 即使前面失败也执行
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          retain_days: 7          # 保留最近7天（可改0只留最新）
+          keep_minimum_runs: 3    # 至少保留3次运行记录
