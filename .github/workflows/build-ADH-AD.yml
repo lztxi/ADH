@@ -1,5 +1,8 @@
 name: ADH-广告订阅合并
 
+permissions:
+  contents: write      # 新增这一行，允许 GITHUB_TOKEN 推送代码
+
 on:
   schedule:
     - cron: "0 12 * * *"
