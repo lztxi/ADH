@@ -48,20 +48,28 @@ jobs:
       - name: Install dependencies
         run: pip install requests pyyaml
 
-      - name: Clean release directory
+      - name: Clean release directory (Safe Mode)
         run: |
-          # 👇 这里使用绝对路径，强制进入 release 目录，防止误删
+          # 进入 release 目录
           cd "${{ github.workspace }}/release"
           
-          # 🔒 安全检查：如果当前目录不是 git 仓库，说明有问题，直接报错
+          # 1. 检查 .git 是否存在
           if [ ! -d .git ]; then
-             echo "❌ 错误：找不到 .git 文件夹，说明 release 分支 checkout 失败。"
+             echo "❌ 严重错误：.git 文件夹不存在，无法继续。"
              exit 1
           fi
           
-          # 清理：删除当前目录下所有文件，唯独保留 .git
-          find . -mindepth 1 ! -path './.git' -exec rm -rf '{}' +
-          echo "✔ Release 目录清理完成"
+          # 2. 暂时把 .git 移到上级目录（避免被删除）
+          mv .git ../.git_backup_release
+          
+          # 3. 删除当前目录下的所有内容（包括隐藏文件，但不包括 ..）
+          # 这一步非常暴力，但因为 .git 已经移走了，所以是安全的
+          rm -rf * .[!.]* ..?*
+          
+          # 4. 把 .git 移回来
+          mv ../.git_backup_release .git
+          
+          echo "✔ Release 目录已彻底清空，但保留了 Git 记录"
 
       - name: Build rules
         env:
@@ -76,6 +84,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # 先查看一下当前目录里有什么，确认 .git 还在
+          echo "🔍 当前目录内容："
+          ls -la
+          
+          echo "🔍 Git 状态检查："
+          git status
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
@@ -83,10 +98,8 @@ jobs:
           
           git checkout release || git checkout -b release
           
-          # 暂存所有变更（包括删除和新增）
           git add -A
           
-          # 如果没有变更则退出
           git diff --cached --quiet && echo "No changes to commit, skipping" && exit 0
           
           git commit -m "auto: update rules $(date +'%Y-%m-%d %H:%M UTC')"
