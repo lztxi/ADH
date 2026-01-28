@@ -1,0 +1,92 @@
+name: ADH-广告订阅合并
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "仅构建，不提交 release"
+        required: false
+        default: "false"
+      force:
+        description: "忽略规则变化阈值"
+        required: false
+        default: "false"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run }}
+      FORCE_PASS: ${{ github.event.inputs.force }}
+
+    steps:
+      - name: Checkout main (scripts & config)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Checkout release (output branch)
+        uses: actions/checkout@v4
+        with:
+          ref: release
+          path: release
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install requests pyyaml
+
+      - name: Ensure output dir
+        run: mkdir -p release
+
+      - name: Build rules
+        env:
+          OUTPUT_DIR: ${{ github.workspace }}/release/output
+        run: |
+          cd main
+          python scripts/merge.py
+
+      - name: Commit & Push to release
+        if: env.DRY_RUN != 'true'
+        working-directory: release
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git status
+          git add output/
+          git diff --cached --quiet && exit 0
+          git commit -m "auto: update deduplicated rules"
+          git push origin release
+
+  cleanup:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete workflow runs older than 2 days
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const cutoff = Date.now() - 2 * 24 * 60 * 60 * 1000
+            const runs = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              { owner: context.repo.owner, repo: context.repo.repo }
+            )
+            for (const r of runs) {
+              if (new Date(r.created_at).getTime() < cutoff) {
+                await github.rest.actions.deleteWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: r.id,
+                })
+              }
+            }
