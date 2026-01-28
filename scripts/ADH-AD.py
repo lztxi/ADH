@@ -10,20 +10,31 @@ import requests
 from pathlib import Path
 
 # ================= Paths =================
+# 获取脚本所在的绝对路径，然后向上两级回到 main 目录
+# 脚本在 main/scripts/ADH-AD.py
+# parents[1] 是 main
 BASE = Path(__file__).resolve().parents[1]
 
+# 👇 修改这里：配置文件路径放在 config 文件夹下
+CFG = BASE / "config" / "ADH-AD.yaml"
+
+# 检查文件是否存在
+if not CFG.exists():
+    print(f"❌ 错误：找不到配置文件！")
+    print(f"脚本正在寻找的路径是: {CFG}")
+    print(f"请确保你已经将 ADH-AD.yaml 放在了 main/config 目录下。")
+    sys.exit(1)
+
+# ================= 输出目录 =================
 # 如果设置了 OUTPUT_DIR 环境变量就用它，否则默认使用 release 分支根目录
 out_dir = os.getenv("OUTPUT_DIR")
 if out_dir:
     OUT = Path(out_dir).resolve()
 else:
-    # 默认指向 ../release
     OUT = BASE.parent / "release"
 
 OUT.mkdir(parents=True, exist_ok=True)
 
-# 修改配置文件路径为根目录下的 ADH-AD.yaml
-CFG = BASE / "ADH-AD.yaml"
 
 # ================= Regex =================
 DOMAIN_RE = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,}$", re.I)
@@ -60,8 +71,11 @@ def parse_line(line: str):
 block_rules: set[str] = set()
 white_rules: set[str] = set()
 
-# 读取配置文件
-cfg = yaml.safe_load(CFG.read_text(encoding="utf-8"))
+try:
+    cfg = yaml.safe_load(CFG.read_text(encoding="utf-8"))
+except Exception as e:
+    print(f"❌ 读取配置文件失败: {e}")
+    sys.exit(1)
 
 for src in cfg.get("sources", []):
     if not src.get("enabled", True):
