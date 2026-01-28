@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# merge.py – SAFE VERSION (keep upstream whitelist for AdGuardHome only)
+# ADH-AD.py
 
 import re
 import json
@@ -17,12 +17,13 @@ out_dir = os.getenv("OUTPUT_DIR")
 if out_dir:
     OUT = Path(out_dir).resolve()
 else:
-    # 指向 ../release （因为脚本在 main/scripts/ 目录下，../ 是 main，../../ 是仓库根，../release 就是 release 分支 checkout 的位置）
+    # 默认指向 ../release
     OUT = BASE.parent / "release"
 
 OUT.mkdir(parents=True, exist_ok=True)
 
-CFG = BASE / "config/sources.yaml"
+# 修改配置文件路径为根目录下的 ADH-AD.yaml
+CFG = BASE / "ADH-AD.yaml"
 
 # ================= Regex =================
 DOMAIN_RE = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,}$", re.I)
@@ -59,14 +60,19 @@ def parse_line(line: str):
 block_rules: set[str] = set()
 white_rules: set[str] = set()
 
+# 读取配置文件
 cfg = yaml.safe_load(CFG.read_text(encoding="utf-8"))
 
 for src in cfg.get("sources", []):
     if not src.get("enabled", True):
         continue
 
-    resp = requests.get(src["url"], timeout=30)
-    resp.raise_for_status()
+    try:
+        resp = requests.get(src["url"], timeout=30)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"Error fetching {src.get('url')}: {e}")
+        continue
 
     for raw in resp.text.splitlines():
         domain, is_white = parse_line(raw)
@@ -83,7 +89,10 @@ for src in cfg.get("sources", []):
 stats_file = OUT / "stats.json"
 old_total = 0
 if stats_file.exists():
-    old_total = json.loads(stats_file.read_text()).get("total", 0)
+    try:
+        old_total = json.loads(stats_file.read_text()).get("total", 0)
+    except:
+        pass
 
 new_total = len(block_rules)
 delta = new_total - old_total
