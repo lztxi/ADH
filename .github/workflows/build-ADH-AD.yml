@@ -60,10 +60,17 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 显式设置 remote URL 带 token（强制使用认证）
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          
           git checkout release || git checkout -b release
           git add .
           git diff --cached --quiet && echo "No changes to commit, skipping" && exit 0
+          
           git commit -m "auto: update rules $(date +'%Y-%m-%d %H:%M UTC')"
+          
+          # 用 token 认证 push
           git push origin release
 
   cleanup:
