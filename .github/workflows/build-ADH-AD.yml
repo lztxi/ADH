@@ -45,7 +45,7 @@ jobs:
         run: pip install requests pyyaml
 
       - name: Ensure output dir
-        run: mkdir -p release
+        run: mkdir -p release/output
 
       - name: Build rules
         env:
