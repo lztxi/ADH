@@ -1,7 +1,8 @@
 name: ADH-广告订阅合并
 
 permissions:
-  contents: write      # 新增这一行，允许 GITHUB_TOKEN 推送代码
+  contents: write
+  actions: write
 
 on:
   schedule:
@@ -38,7 +39,6 @@ jobs:
           ref: release
           path: release
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}          # ← 这里加上 token 解决 403
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -48,12 +48,20 @@ jobs:
       - name: Install dependencies
         run: pip install requests pyyaml
 
+      - name: Clean release directory (keep only generated files)
+        working-directory: release
+        run: |
+          # 删除 release 分支下所有旧文件，确保只保留新生成的规则文件
+          git rm -rf .
+        continue-on-error: true
+
       - name: Build rules
         env:
           OUTPUT_DIR: ${{ github.workspace }}/release
         run: |
           cd main
-          python scripts/merge.py
+          # 修改运行脚本为 ADH-AD.py
+          python scripts/ADH-AD.py
 
       - name: Commit & Push to release
         if: env.DRY_RUN != 'true'
@@ -64,16 +72,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 显式设置 remote URL 带 token（强制使用认证）
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           
+          # 确保当前在 release 分支
           git checkout release || git checkout -b release
+          
           git add .
+          
+          # 检查是否有变更
           git diff --cached --quiet && echo "No changes to commit, skipping" && exit 0
           
           git commit -m "auto: update rules $(date +'%Y-%m-%d %H:%M UTC')"
           
-          # 用 token 认证 push
           git push origin release
 
   cleanup:
