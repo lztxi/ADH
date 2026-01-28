@@ -12,14 +12,17 @@ from pathlib import Path
 # ================= Paths =================
 BASE = Path(__file__).resolve().parents[1]
 
+# 如果设置了 OUTPUT_DIR 环境变量就用它，否则默认使用 release 分支根目录
 out_dir = os.getenv("OUTPUT_DIR")
 if out_dir:
     OUT = Path(out_dir).resolve()
 else:
-    OUT = BASE / "output"
+    # 指向 ../release （因为脚本在 main/scripts/ 目录下，../ 是 main，../../ 是仓库根，../release 就是 release 分支 checkout 的位置）
+    OUT = BASE.parent / "release"
+
+OUT.mkdir(parents=True, exist_ok=True)
 
 CFG = BASE / "config/sources.yaml"
-OUT.mkdir(parents=True, exist_ok=True)
 
 # ================= Regex =================
 DOMAIN_RE = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,}$", re.I)
@@ -75,6 +78,7 @@ for src in cfg.get("sources", []):
         else:
             block_rules.add(f"||{domain}^")
 
+
 # ================= Stats =================
 stats_file = OUT / "stats.json"
 old_total = 0
@@ -94,6 +98,7 @@ stats = {
 
 stats_file.write_text(json.dumps(stats, indent=2), encoding="utf-8")
 
+
 # ================= Threshold =================
 threshold = cfg.get("threshold", {})
 max_inc = threshold.get("max_increase", 0.2)
@@ -104,6 +109,7 @@ if old_total and not force:
     if ratio > max_inc or ratio < -max_dec:
         print("❌ Rule change exceeds threshold")
         sys.exit(1)
+
 
 # ================= Output =================
 
