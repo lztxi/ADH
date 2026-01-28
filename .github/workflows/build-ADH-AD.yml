@@ -35,6 +35,7 @@ jobs:
           ref: release
           path: release
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}          # ← 这里加上 token 解决 403
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -44,12 +45,9 @@ jobs:
       - name: Install dependencies
         run: pip install requests pyyaml
 
-      - name: Ensure output dir
-        run: mkdir -p release/output
-
       - name: Build rules
         env:
-          OUTPUT_DIR: ${{ github.workspace }}/release/output
+          OUTPUT_DIR: ${{ github.workspace }}/release
         run: |
           cd main
           python scripts/merge.py
@@ -58,13 +56,13 @@ jobs:
         if: env.DRY_RUN != 'true'
         working-directory: release
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git status
-          git add output/
-          git diff --cached --quiet && exit 0
-          git commit -m "auto: update deduplicated rules"
-          git push origin release
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B release || true
+          git add .
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "auto: update rules - $(date +'%Y-%m-%d %H:%M UTC')"
+          git push
 
   cleanup:
     needs: build
