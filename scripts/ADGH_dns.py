@@ -6,12 +6,12 @@ import tldextract
 import os
 import json
 
-# 脚本现在在 scripts/ 文件夹里运行，所有输入输出文件路径都相对于 scripts/
+# 脚本现在在 scripts/ 文件夹里运行
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(SCRIPT_DIR, "..", "config", "sources.yml")
-OUTPUT_DNS = os.path.join(SCRIPT_DIR, "..", "adguard_dns.txt")       # 输出到根目录
-OUTPUT_README = os.path.join(SCRIPT_DIR, "..", "README.md")        # 输出到根目录
-# 强制指定 config 目录下的 stats 文件
+OUTPUT_DNS = os.path.join(SCRIPT_DIR, "..", "adguard_dns.txt")
+OUTPUT_README = os.path.join(SCRIPT_DIR, "..", "README.md")
+# 统计文件路径
 STATS_FILE = os.path.join(SCRIPT_DIR, "..", "config", "ADGH_dns_stats.json")
 
 extractor = tldextract.TLDExtract(suffix_list_urls=None)
@@ -63,8 +63,12 @@ def load_sources():
 
 def load_stats():
     """读取上次运行的统计数据"""
+    # 打印绝对路径，方便调试
+    stats_abs_path = os.path.abspath(STATS_FILE)
+    print(f"[INFO] Loading stats from: {stats_abs_path}")
+    
     if not os.path.exists(STATS_FILE):
-        print(f"[INFO] Stats file not found at {STATS_FILE}, starting fresh.")
+        print(f"[INFO] Stats file not found, starting fresh.")
         return {}
     try:
         with open(STATS_FILE, "r", encoding="utf-8") as f:
@@ -77,17 +81,30 @@ def load_stats():
 def save_stats(stats):
     """保存本次运行的统计数据"""
     try:
-        # 关键修改：确保目录存在
         stats_dir = os.path.dirname(STATS_FILE)
+        stats_abs_path = os.path.abspath(STATS_FILE)
+        
+        # 确保目录存在
         if not os.path.exists(stats_dir):
             os.makedirs(stats_dir, exist_ok=True)
             print(f"[INFO] Created directory: {stats_dir}")
-            
+        else:
+            print(f"[INFO] Directory already exists: {stats_dir}")
+        
+        # 写入文件
         with open(STATS_FILE, "w", encoding="utf-8") as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
-        print(f"[INFO] Stats saved successfully to: {STATS_FILE}")
+        
+        # 验证文件是否真的写成功了
+        if os.path.exists(STATS_FILE):
+            print(f"[INFO] Stats saved successfully to: {stats_abs_path}")
+            print(f"[INFO] File size: {os.path.getsize(STATS_FILE)} bytes")
+        else:
+            print(f"[ERROR] File not found after save attempt: {stats_abs_path}")
     except Exception as e:
         print(f"[ERROR] Failed to save stats file: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def generate_data(data):
@@ -104,13 +121,13 @@ def generate_data(data):
             raw_domains.update(fetch_domains(url))
 
         # 不再进行 DNS 验证，所有原始域名都视为存活
-        alive_domains = raw_domains
+        alive_domains = raw_domains  # 修复：alive_domains 而不是 alive_digits
 
         category_data[category] = {
             "dns": dns,
             "domains": sorted(alive_domains),
             "raw_count": len(raw_domains),
-            "alive_count": len(alive_digits),
+            "alive_count": len(alive_domains),
         }
         stats[category] = len(alive_domains)
         all_domains.update(alive_domains)
@@ -129,11 +146,11 @@ def write_dns(category_data):
             if not domains:
                 continue
 
-            for chunk in chunk_list(domains, 200):  # 或你喜欢的数字，比如 60/100/200
+            for chunk in chunk_list(domains, 200):
                 merged = "/".join(chunk)
                 f.write(f"[/{merged}/]{dns}\n")
 
-            f.write("\n")  # 类别间加分隔
+            f.write("\n")
 
 
 def write_readme(all_domains, category_data, prev_stats):
@@ -143,23 +160,16 @@ def write_readme(all_domains, category_data, prev_stats):
 
     total_count = len(all_domains)
 
-    # 构建统计表格
     table_rows = []
-
-    # 计算上一次的总数，用于表格底部对比
     prev_total = 0
     for cat, info in category_data.items():
         prev_total += prev_stats.get(cat, 0)
 
     for cat, info in category_data.items():
         current = info['alive_count']
-        # 获取上次数量，如果没有则默认为 0
         prev = prev_stats.get(cat, 0)
-
-        # 计算变化
         diff = current - prev
 
-        # 格式化变化显示：带颜色和箭头
         if diff > 0:
             diff_str = f"🔼 +{diff}"
         elif diff < 0:
@@ -167,7 +177,6 @@ def write_readme(all_domains, category_data, prev_stats):
         else:
             diff_str = "➖ 0"
 
-        # 如果是第一次运行（prev == 0 且 current > 0），可以标记为 New
         if prev == 0 and current > 0:
             diff_str = "🆕 New"
 
@@ -175,7 +184,6 @@ def write_readme(all_domains, category_data, prev_stats):
             f"| {cat} | {prev:,} | {current:,} | {diff_str} |"
         )
 
-    # 计算总变化
     total_diff = total_count - prev_total
     if total_diff > 0:
         total_diff_str = f"🔼 +{total_diff}"
@@ -184,7 +192,6 @@ def write_readme(all_domains, category_data, prev_stats):
     else:
         total_diff_str = "➖ 0"
 
-    # 总计行
     table_rows.append(
         f"| **总计** | **{prev_total:,}** | **{total_count:,}** | **{total_diff_str}** |"
     )
@@ -227,6 +234,11 @@ def write_readme(all_domains, category_data, prev_stats):
 
 def main():
     print("=== Program start ===")
+
+    # 打印关键路径，方便调试
+    print(f"[DEBUG] SCRIPT_DIR: {SCRIPT_DIR}")
+    print(f"[DEBUG] STATS_FILE: {STATS_FILE}")
+    print(f"[DEBUG] STATS_FILE absolute: {os.path.abspath(STATS_FILE)}")
 
     # 1. 读取上次的统计数据
     prev_stats = load_stats()
