@@ -61,12 +61,38 @@ def parse_line(line: str):
     return domain.lower(), is_whitelist
 
 
+# ================= 统计文件读写 =================
+def load_stats():
+    """读取上次运行的统计数据（按源记录）"""
+    stats_file = OUT / "stats.json"
+    if not stats_file.exists():
+        return {}
+    try:
+        old_stats = json.loads(stats_file.read_text())
+        # 兼容旧格式：如果只有 total/previous/delta/ratio，则返回空字典
+        if isinstance(old_stats, dict) and "total" in old_stats:
+            return {}
+        return old_stats if isinstance(old_stats, dict) else {}
+    except Exception as e:
+        print(f"[WARN] 读取旧统计文件失败: {e}")
+        return {}
+
+
+def save_stats(new_stats):
+    """保存本次运行的统计数据（按源记录）"""
+    stats_file = OUT / "stats.json"
+    try:
+        stats_file.write_text(json.dumps(new_stats, indent=2), encoding="utf-8")
+    except Exception as e:
+        print(f"[WARN] 保存统计文件失败: {e}")
+
+
 # ================= Main =================
 block_rules: set[str] = set()
 white_rules: set[str] = set()
 
-# 新增：用于记录上游源统计
-source_stats = []
+# 用于记录每个源的统计信息：{ name: { url, count, status } }
+source_stats = {}
 
 try:
     cfg = yaml.safe_load(CFG.read_text(encoding="utf-8"))
@@ -74,22 +100,37 @@ except Exception as e:
     print(f"❌ 读取配置文件失败: {e}")
     sys.exit(1)
 
+# 读取上次的统计数据
+old_stats = load_stats()
+
 for src in cfg.get("sources", []):
     if not src.get("enabled", True):
         continue
 
-    url = src.get("url", "Unknown")
-    # 临时统计该源的规则数
+    url = src.get("url", "")
+    name = src.get("name", "")
+    
+    # 如果配置里没有 name，用 URL 的文件名作为默认名称
+    if not name and url:
+        name = url.rstrip("/").split("/")[-1]
+    if not name:
+        name = "Unknown"
+
     temp_block = 0
     temp_white = 0
+    status = "OK"
     
     try:
         resp = requests.get(url, timeout=30)
         resp.raise_for_status()
     except Exception as e:
         print(f"Error fetching {url}: {e}")
-        # 即使请求失败，也记录一下
-        source_stats.append({"url": url, "count": 0, "status": "Failed"})
+        status = "Failed"
+        source_stats[name] = {
+            "url": url,
+            "count": 0,
+            "status": status,
+        }
         continue
 
     for raw in resp.text.splitlines():
@@ -104,30 +145,22 @@ for src in cfg.get("sources", []):
             block_rules.add(f"||{domain}^")
             temp_block += 1
             
-    source_stats.append({"url": url, "count": temp_block, "status": "OK"})
+    source_stats[name] = {
+        "url": url,
+        "count": temp_block,
+        "status": status,
+    }
 
+# 构建本次统计（按源记录）
+new_stats = {}
+total_count = 0
+for name, info in source_stats.items():
+    count = info["count"]
+    new_stats[name] = count
+    total_count += count
 
-# ================= Stats =================
-stats_file = OUT / "stats.json"
-old_total = 0
-if stats_file.exists():
-    try:
-        old_total = json.loads(stats_file.read_text()).get("total", 0)
-    except:
-        pass
-
-new_total = len(block_rules)
-delta = new_total - old_total
-ratio = (delta / old_total) if old_total else 0
-
-stats = {
-    "total": new_total,
-    "previous": old_total,
-    "delta": delta,
-    "ratio": round(ratio, 4),
-}
-
-stats_file.write_text(json.dumps(stats, indent=2), encoding="utf-8")
+# 保存本次统计
+save_stats(new_stats)
 
 
 # ================= Threshold =================
@@ -135,6 +168,11 @@ threshold = cfg.get("threshold", {})
 max_inc = threshold.get("max_increase", 0.2)
 max_dec = threshold.get("max_decrease", 0.2)
 force = os.getenv("FORCE_PASS", "false").lower() == "true"
+
+# 计算上次总数用于阈值检查
+old_total = sum(old_stats.values()) if isinstance(old_stats, dict) else 0
+delta = total_count - old_total
+ratio = (delta / old_total) if old_total else 0
 
 if old_total and not force:
     if ratio > max_inc or ratio < -max_dec:
@@ -167,17 +205,59 @@ if old_total and not force:
     encoding="utf-8",
 )
 
+
 # ================= README 生成 =================
 # 计算北京时间 (UTC+8)
 now_utc = datetime.utcnow()
 now_cst = now_utc + timedelta(hours=8)
 time_str = now_cst.strftime('%Y-%m-%d %H:%M:%S')
 
-# 变化样式
-delta_str = f"+{delta}" if delta > 0 else str(delta)
-if delta == 0: delta_str = "0"
+# 生成表格行
+table_rows = []
+total_diff = 0
 
-# 生成 Markdown 内容
+for name, info in source_stats.items():
+    current = info["count"]
+    prev = old_stats.get(name, 0)
+    diff = current - prev
+    total_diff += diff
+    url = info.get("url", "")
+    status = info.get("status", "OK")
+    
+    # 变化显示
+    if diff > 0:
+        diff_str = f"🔼 +{diff}"
+    elif diff < 0:
+        diff_str = f"🔽 {diff}"
+    else:
+        diff_str = "➖ 0"
+    
+    if prev == 0 and current > 0:
+        diff_str = "🆕 New"
+    
+    # 名称做成超链接
+    if url:
+        link_cell = f"[{name}]({url})"
+    else:
+        link_cell = name
+    
+    status_icon = "✅" if status == "OK" else "❌"
+    table_rows.append(
+        f"| {len(table_rows) + 1} | {link_cell} | {prev:,} | {current:,} | {diff_str} | {status_icon} |"
+    )
+
+# 总计变化
+if total_diff > 0:
+    total_diff_str = f"🔼 +{total_diff}"
+elif total_diff < 0:
+    total_diff_str = f"🔽 {total_diff}"
+else:
+    total_diff_str = "➖ 0"
+
+table_rows.append(
+    f"| **总计** | **{len(source_stats)} 个源** | **{old_total:,}** | **{total_count:,}** | **{total_diff_str}** | |"
+)
+
 readme_content = f"""# ADH-AD 订阅统计
 
 > 数据最后合并时间 (北京时间): **{time_str}**
@@ -190,7 +270,7 @@ readme_content = f"""# ADH-AD 订阅统计
 | :--- | :--- | :--- |
 | 🚫 黑名单规则 | **{len(block_rules)}** | 包含所有阻断域名 |
 | ⚪ 白名单规则 | **{len(white_rules)}** | 包含所有信任域名 |
-| 📈 较上次变化 | **{delta_str}** | 上次总数: {old_total} |
+| 📈 较上次变化 | **{total_diff_str}** | 上次总数: {old_total} |
 
 ---
 
@@ -198,20 +278,9 @@ readme_content = f"""# ADH-AD 订阅统计
 
 共 **{len(source_stats)}** 个订阅源参与了合并。
 
-| 序号 | 订阅源 URL | 贡献规则数 (黑名单) | 状态 |
-| :--- | :--- | :--- | :--- |
-"""
-
-for idx, src in enumerate(source_stats, 1):
-    # 简单的 URL 截断显示，避免表格太宽
-    display_url = src["url"]
-    if len(display_url) > 60:
-        display_url = display_url[:57] + "..."
-    
-    status_icon = "✅" if src["status"] == "OK" else "❌"
-    readme_content += f"| {idx} | {display_url} | {src['count']} | {status_icon} |\n"
-
-readme_content += f"""
+| 序号 | 订阅源 | 上次更新 | 本次更新 | 更新变化 | 状态 |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+{chr(10).join(table_rows)}
 
 ---
 
