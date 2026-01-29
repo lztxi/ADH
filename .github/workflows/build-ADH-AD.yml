@@ -48,29 +48,6 @@ jobs:
       - name: Install dependencies
         run: pip install requests pyyaml
 
-      - name: Clean release directory (Safe Mode)
-        run: |
-          # 进入 release 目录
-          cd "${{ github.workspace }}/release"
-          
-          # 1. 检查 .git 是否存在
-          if [ ! -d .git ]; then
-             echo "❌ 严重错误：.git 文件夹不存在，无法继续。"
-             exit 1
-          fi
-          
-          # 2. 暂时把 .git 移到上级目录（避免被删除）
-          mv .git ../.git_backup_release
-          
-          # 3. 删除当前目录下的所有内容（包括隐藏文件，但不包括 ..）
-          # 这一步非常暴力，但因为 .git 已经移走了，所以是安全的
-          rm -rf * .[!.]* ..?*
-          
-          # 4. 把 .git 移回来
-          mv ../.git_backup_release .git
-          
-          echo "✔ Release 目录已彻底清空，但保留了 Git 记录"
-
       - name: Build rules
         env:
           OUTPUT_DIR: ${{ github.workspace }}/release
@@ -78,25 +55,37 @@ jobs:
           cd main
           python scripts/ADH-AD.py
 
+      # --- 新增：提交统计文件到 main 分支 ---
+      - name: Commit stats to main branch
+        working-directory: main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 检查 stats 文件是否存在并添加
+          if [ -f config/ADH_AD_stats.json ]; then
+            git add config/ADH_AD_stats.json
+            git diff --cached --quiet || git commit -m "chore: update ADH-AD stats $(date +'%Y-%m-%d %H:%M UTC')"
+            git push origin main
+            echo "✔ Stats file committed to main branch."
+          else
+            echo "⚠️ Stats file not found, skipping commit."
+          fi
+      # ----------------------------------------
+
       - name: Commit & Push to release
         if: env.DRY_RUN != 'true'
         working-directory: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 先查看一下当前目录里有什么，确认 .git 还在
           echo "🔍 当前目录内容："
           ls -la
-          
-          echo "🔍 Git 状态检查："
-          git status
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          
-          git checkout release || git checkout -b release
           
           git add -A
           
@@ -113,20 +102,7 @@ jobs:
       actions: write
     steps:
       - name: Delete workflow runs older than 2 days
-        uses: actions/github-script@v7
+        uses: Mattraks/delete-workflow-runs@v2
         with:
-          script: |
-            const cutoff = Date.now() - 2 * 24 * 60 * 60 * 1000
-            const runs = await github.paginate(
-              github.rest.actions.listWorkflowRunsForRepo,
-              { owner: context.repo.owner, repo: context.repo.repo }
-            )
-            for (const r of runs) {
-              if (new Date(r.created_at).getTime() < cutoff) {
-                await github.rest.actions.deleteWorkflowRun({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  run_id: r.id,
-                })
-              }
-            }
+          retain_days: 2
+          keep_minimum_runs: 3
