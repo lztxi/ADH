@@ -1,6 +1,6 @@
 # ADH-AD 订阅统计
 
-> 数据最后合并时间 (北京时间): **2026-01-29 15:37:53**
+> 数据最后合并时间 (北京时间): **2026-01-29 18:48:36**
 
 ---
 
@@ -8,8 +8,8 @@
 
 | 项目 | 上次更新 | 本次更新 | 更新变化 |
 | :--- | :---: | :---: | :---: |
-| 🚫 黑名单规则 | 0 | 293,668 | 🔼 +293668 |
-| ⚪ 白名单规则 | - | 120 | - |
+| 🚫 黑名单规则 | 0 | 293,728 | 🔼 +293728 |
+| ⚪ 白名单规则 | 0 | 131 | 🔼 +131 |
 
 ---
 
@@ -17,17 +17,17 @@
 
 共 **8** 个订阅源参与了合并。
 
-| 序号 | 订阅源 | 上次更新 | 本次更新 | 更新变化 | 状态 |
+| 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 0 | 141,760 | 🆕 New | ✅ |
-| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 0 | 6,477 | 🆕 New | ✅ |
-| 3 | [anti-AD（中文区主要规则）](https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt) | 0 | 97,471 | 🆕 New | ✅ |
-| 4 | [秋风（适配路由器）](https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt) | 0 | 905 | 🆕 New | ✅ |
-| 5 | [大萌主（轻量去除色情 / 悬浮广告）](https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt) | 0 | 4,446 | 🆕 New | ✅ |
-| 6 | [EasyPrivacy（隐私保护 / 跟踪器）](https://easylist.to/easylist/easyprivacy.txt) | 0 | 42,391 | 🆕 New | ✅ |
-| 7 | [cjx-annoyance（弹窗 / 跳转 / 自我推广）](https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt) | 0 | 114 | 🆕 New | ✅ |
-| 8 | [I-Don't-Care-About-Cookies](https://www.i-dont-care-about-cookies.eu/abp/) | 0 | 104 | 🆕 New | ✅ |
-| **总计** | **8 个源** | **0** | **293,668** | **🔼 +293668** | |
+| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 0 / 0 | 141,816 / 11 | 🆕 New / 🆕 New | ✅ |
+| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 0 / 0 | 6,481 / 11 | 🆕 New / 🆕 New | ✅ |
+| 3 | [anti-AD（中文区主要规则）](https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt) | 0 / 0 | 97,471 / 101 | 🆕 New / 🆕 New | ✅ |
+| 4 | [秋风（适配路由器）](https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt) | 0 / 0 | 905 / 0 | 🆕 New / ➖ 0 | ✅ |
+| 5 | [大萌主（轻量去除色情 / 悬浮广告）](https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt) | 0 / 0 | 4,446 / 4 | 🆕 New / 🆕 New | ✅ |
+| 6 | [EasyPrivacy（隐私保护 / 跟踪器）](https://easylist.to/easylist/easyprivacy.txt) | 0 / 0 | 42,391 / 4 | 🆕 New / 🆕 New | ✅ |
+| 7 | [cjx-annoyance（弹窗 / 跳转 / 自我推广）](https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt) | 0 / 0 | 114 / 0 | 🆕 New / ➖ 0 | ✅ |
+| 8 | [I-Don't-Care-About-Cookies](https://www.i-dont-care-about-cookies.eu/abp/) | 0 / 0 | 104 / 0 | 🆕 New / ➖ 0 | ✅ |
+| **总计** | **8 个源** | **0 / -** | **293,728 / 131** | **🔼 +293728 / 🔼 +131** | |
 
 ---
 
