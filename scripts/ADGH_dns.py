@@ -11,7 +11,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(SCRIPT_DIR, "..", "config", "sources.yml")
 OUTPUT_DNS = os.path.join(SCRIPT_DIR, "..", "adguard_dns.txt")       # 输出到根目录
 OUTPUT_README = os.path.join(SCRIPT_DIR, "..", "README.md")        # 输出到根目录
-STATS_FILE = os.path.join(SCRIPT_DIR, "..", "config", "ADGH_dns_stats.json")  # 存储在 config 文件夹
+# 强制指定 config 目录下的 stats 文件
+STATS_FILE = os.path.join(SCRIPT_DIR, "..", "config", "ADGH_dns_stats.json")
 
 extractor = tldextract.TLDExtract(suffix_list_urls=None)
 
@@ -63,6 +64,7 @@ def load_sources():
 def load_stats():
     """读取上次运行的统计数据"""
     if not os.path.exists(STATS_FILE):
+        print(f"[INFO] Stats file not found at {STATS_FILE}, starting fresh.")
         return {}
     try:
         with open(STATS_FILE, "r", encoding="utf-8") as f:
@@ -75,10 +77,17 @@ def load_stats():
 def save_stats(stats):
     """保存本次运行的统计数据"""
     try:
+        # 关键修改：确保目录存在
+        stats_dir = os.path.dirname(STATS_FILE)
+        if not os.path.exists(stats_dir):
+            os.makedirs(stats_dir, exist_ok=True)
+            print(f"[INFO] Created directory: {stats_dir}")
+            
         with open(STATS_FILE, "w", encoding="utf-8") as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
+        print(f"[INFO] Stats saved successfully to: {STATS_FILE}")
     except Exception as e:
-        print(f"[WARN] Failed to save stats file: {e}")
+        print(f"[ERROR] Failed to save stats file: {e}")
 
 
 def generate_data(data):
@@ -101,7 +110,7 @@ def generate_data(data):
             "dns": dns,
             "domains": sorted(alive_domains),
             "raw_count": len(raw_domains),
-            "alive_count": len(alive_domains),
+            "alive_count": len(alive_digits),
         }
         stats[category] = len(alive_domains)
         all_domains.update(alive_domains)
