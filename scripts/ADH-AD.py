@@ -174,6 +174,14 @@ old_total = sum(old_stats.values()) if isinstance(old_stats, dict) else 0
 delta = total_count - old_total
 ratio = (delta / old_total) if old_total else 0
 
+# 变化显示（用于数据概览）
+if delta > 0:
+    total_diff_str = f"🔼 +{delta}"
+elif delta < 0:
+    total_diff_str = f"🔽 {delta}"
+else:
+    total_diff_str = "➖ 0"
+
 if old_total and not force:
     if ratio > max_inc or ratio < -max_dec:
         print("❌ Rule change exceeds threshold")
@@ -214,13 +222,13 @@ time_str = now_cst.strftime('%Y-%m-%d %H:%M:%S')
 
 # 生成表格行
 table_rows = []
-total_diff = 0
+total_diff_for_table = 0
 
 for name, info in source_stats.items():
     current = info["count"]
     prev = old_stats.get(name, 0)
     diff = current - prev
-    total_diff += diff
+    total_diff_for_table += diff
     url = info.get("url", "")
     status = info.get("status", "OK")
     
@@ -246,16 +254,16 @@ for name, info in source_stats.items():
         f"| {len(table_rows) + 1} | {link_cell} | {prev:,} | {current:,} | {diff_str} | {status_icon} |"
     )
 
-# 总计变化
-if total_diff > 0:
-    total_diff_str = f"🔼 +{total_diff}"
-elif total_diff < 0:
-    total_diff_str = f"🔽 {total_diff}"
+# 总计变化（用于表格底部）
+if total_diff_for_table > 0:
+    total_diff_table_str = f"🔼 +{total_diff_for_table}"
+elif total_diff_for_table < 0:
+    total_diff_table_str = f"🔽 {total_diff_for_table}"
 else:
-    total_diff_str = "➖ 0"
+    total_diff_table_str = "➖ 0"
 
 table_rows.append(
-    f"| **总计** | **{len(source_stats)} 个源** | **{old_total:,}** | **{total_count:,}** | **{total_diff_str}** | |"
+    f"| **总计** | **{len(source_stats)} 个源** | **{old_total:,}** | **{total_count:,}** | **{total_diff_table_str}** | |"
 )
 
 readme_content = f"""# ADH-AD 订阅统计
@@ -268,9 +276,11 @@ readme_content = f"""# ADH-AD 订阅统计
 
 | 指标 | 数量 | 说明 |
 | :--- | :--- | :--- |
-| 🚫 黑名单规则 | **{len(block_rules)}** | 包含所有阻断域名 |
-| ⚪ 白名单规则 | **{len(white_rules)}** | 包含所有信任域名 |
-| 📈 较上次变化 | **{total_diff_str}** | 上次总数: {old_total} |
+| 🚫 黑名单规则 | **{total_count:,}** | 本次运行的黑名单规则总数 |
+| ⚪ 白名单规则 | **{len(white_rules):,}** | 包含所有信任域名 |
+| 🔄 上次更新 | {old_total:,} | 上次运行的黑名单规则总数 |
+| 🔄 本次更新 | {total_count:,} | 本次运行的黑名单规则总数 |
+| 📈 更新变化 | {total_diff_str} | 较上次的增减情况 |
 
 ---
 
