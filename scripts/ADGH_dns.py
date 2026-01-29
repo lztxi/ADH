@@ -109,23 +109,68 @@ def write_dns(category_data):
 def write_readme(all_domains, category_data):
     beijing = pytz.timezone("Asia/Shanghai")
     now = datetime.now(beijing).strftime("%Y-%m-%d %H:%M:%S")
-    lines = [
-        "# 自动生成 AdGuardHome DNS 分流规则",
-        "",
-        f"最后生成时间（北京时间）：{now}",
-        "",
-        f"最终域名总数：{len(all_domains)}",
-        "",
-        "## 分类统计"
-    ]
+    
+    # 计算总数用于徽章展示
+    total_count = len(all_domains)
+    # 格式化时间用于徽章 (去掉空格和冒号，或者只保留日期)
+    date_badge = datetime.now(beijing).strftime("%Y-%m-%d")
+
+    # 构建统计表格的行
+    table_rows = []
+    total_raw = 0
+    total_filtered = 0
 
     for cat, info in category_data.items():
-        lines.append(
-            f"- {cat}: {info['alive_count']} / {info['raw_count']}（已过滤 {info['raw_count'] - info['alive_count']}）"
+        raw = info['raw_count']
+        alive = info['alive_count']
+        filtered = raw - alive
+        
+        total_raw += raw
+        total_filtered += filtered
+        
+        table_rows.append(
+            f"| {cat} | {alive:,} | {raw:,} | {filtered} |"
         )
 
+    # 总计行
+    table_rows.append(
+        f"| **总计** | **{total_count:,}** | **{total_raw:,}** | **{total_filtered}** |"
+    )
+
+    content = f"""# 🛡️ AdGuardHome DNS 分流规则
+
+![Total Domains](https://img.shields.io/badge/域名总数-{total_count}-blue?style=flat-square)
+![Last Update](https://img.shields.io/badge/最后更新-{date_badge}-green?style=flat-square)
+
+> 🤖 本文件由脚本自动生成，用于 AdGuardHome 的 DNS 分流配置。
+
+---
+
+## 📊 数据统计
+
+| 分类 | 有效域名 | 原始数量 | 过滤数量 |
+| :--- | :---: | :---: | :---: |
+{chr(10).join(table_rows)}
+
+---
+
+## 📝 使用说明
+
+1.  复制仓库根目录下的 `adguard_dns.txt` 文件内容。
+2.  打开 AdGuardHome 管理面板。
+3.  进入 **设置** -> **DNS 服务**。
+4.  在 **上游 DNS 服务器** 配置中，找到或新建对应的服务器规则（通常是特定域名的分流）。
+5.  将内容粘贴并保存应用即可。
+
+---
+
+## ⏰ 更新记录
+
+- **生成时间**: {now} (北京时间)
+- **生成脚本**: `scripts/ADGH_dns.py`
+"""
     with open(OUTPUT_README, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        f.write(content)
 
 
 def main():
