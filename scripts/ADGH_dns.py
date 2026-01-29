@@ -8,10 +8,10 @@ import json
 
 # 脚本现在在 scripts/ 文件夹里运行，所有输入输出文件路径都相对于 scripts/
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SOURCE_FILE = os.path.join(SCRIPT_DIR, "sources.yml")
+SOURCE_FILE = os.path.join(SCRIPT_DIR, "..", "config", "sources.yml")
 OUTPUT_DNS = os.path.join(SCRIPT_DIR, "..", "adguard_dns.txt")       # 输出到根目录
 OUTPUT_README = os.path.join(SCRIPT_DIR, "..", "README.md")        # 输出到根目录
-STATS_FILE = os.path.join(SCRIPT_DIR, "stats.json")                # 用于记录历史统计数据的文件
+STATS_FILE = os.path.join(SCRIPT_DIR, "..", "config", "ADGH_dns_stats.json")  # 存储在 config 文件夹
 
 extractor = tldextract.TLDExtract(suffix_list_urls=None)
 
@@ -131,12 +131,12 @@ def write_readme(all_domains, category_data, prev_stats):
     beijing = pytz.timezone("Asia/Shanghai")
     now = datetime.now(beijing).strftime("%Y-%m-%d %H:%M:%S")
     date_badge = datetime.now(beijing).strftime("%Y-%m-%d")
-    
+
     total_count = len(all_domains)
 
     # 构建统计表格
     table_rows = []
-    
+
     # 计算上一次的总数，用于表格底部对比
     prev_total = 0
     for cat, info in category_data.items():
@@ -146,10 +146,10 @@ def write_readme(all_domains, category_data, prev_stats):
         current = info['alive_count']
         # 获取上次数量，如果没有则默认为 0
         prev = prev_stats.get(cat, 0)
-        
+
         # 计算变化
         diff = current - prev
-        
+
         # 格式化变化显示：带颜色和箭头
         if diff > 0:
             diff_str = f"🔼 +{diff}"
@@ -157,7 +157,7 @@ def write_readme(all_domains, category_data, prev_stats):
             diff_str = f"🔽 {diff}"
         else:
             diff_str = "➖ 0"
-            
+
         # 如果是第一次运行（prev == 0 且 current > 0），可以标记为 New
         if prev == 0 and current > 0:
             diff_str = "🆕 New"
@@ -218,7 +218,7 @@ def write_readme(all_domains, category_data, prev_stats):
 
 def main():
     print("=== Program start ===")
-    
+
     # 1. 读取上次的统计数据
     prev_stats = load_stats()
     print("[OK] Previous stats loaded")
@@ -227,11 +227,11 @@ def main():
     data = load_sources()
     print("[OK] sources.yml loaded")
     category_data, all_domains, stats = generate_data(data)
-    
+
     # 3. 保存这次的统计数据（供下次对比）
     save_stats(stats)
     print("[OK] Current stats saved")
-    
+
     # 4. 写入 DNS 文件和 README
     write_dns(category_data)
     write_readme(all_domains, category_data, prev_stats)
