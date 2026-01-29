@@ -66,6 +66,7 @@ def load_stats():
     """读取上次运行的统计数据（记录黑名单和白名单）"""
     stats_file = BASE / "config" / "ADH_AD_stats.json"
     if not stats_file.exists():
+        print(f"[INFO] Stats file not found at {stats_file}, starting fresh.")
         return {}
     try:
         old_stats = json.loads(stats_file.read_text())
@@ -82,9 +83,14 @@ def save_stats(new_stats):
     """保存本次运行的统计数据（记录黑名单和白名单）"""
     stats_file = BASE / "config" / "ADH_AD_stats.json"
     try:
+        # 关键修改：确保目录存在
+        stats_file.parent.mkdir(parents=True, exist_ok=True)
+        print(f"[INFO] Ensured directory exists for: {stats_file.parent}")
+        
         stats_file.write_text(json.dumps(new_stats, indent=2), encoding="utf-8")
+        print(f"[INFO] Stats saved successfully to: {stats_file}")
     except Exception as e:
-        print(f"[WARN] 保存统计文件失败: {e}")
+        print(f"[ERROR] 保存统计文件失败: {e}")
 
 
 # ================= Main =================
