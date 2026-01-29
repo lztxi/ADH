@@ -14,6 +14,10 @@ from datetime import datetime, timedelta
 BASE = Path(__file__).resolve().parents[1]
 CFG = BASE / "config" / "ADH-AD.yaml"
 
+print(f"[DEBUG] BASE: {BASE}")
+print(f"[DEBUG] CFG: {CFG}")
+print(f"[DEBUG] CFG absolute: {CFG.resolve()}")
+
 if not CFG.exists():
     print(f"❌ 错误：找不到配置文件！")
     print(f"脚本正在寻找的路径是: {CFG}")
@@ -28,6 +32,8 @@ else:
     OUT = BASE.parent / "release"
 
 OUT.mkdir(parents=True, exist_ok=True)
+print(f"[DEBUG] OUT: {OUT}")
+print(f"[DEBUG] OUT absolute: {OUT.resolve()}")
 
 
 # ================= Regex =================
@@ -65,8 +71,12 @@ def parse_line(line: str):
 def load_stats():
     """读取上次运行的统计数据（记录黑名单和白名单）"""
     stats_file = BASE / "config" / "ADH_AD_stats.json"
+    stats_abs = stats_file.resolve()
+    
+    print(f"[INFO] Loading stats from: {stats_abs}")
+    
     if not stats_file.exists():
-        print(f"[INFO] Stats file not found at {stats_file}, starting fresh.")
+        print(f"[INFO] Stats file not found, starting fresh.")
         return {}
     try:
         old_stats = json.loads(stats_file.read_text())
@@ -82,15 +92,29 @@ def load_stats():
 def save_stats(new_stats):
     """保存本次运行的统计数据（记录黑名单和白名单）"""
     stats_file = BASE / "config" / "ADH_AD_stats.json"
+    stats_abs = stats_file.resolve()
+    
     try:
         # 关键修改：确保目录存在
-        stats_file.parent.mkdir(parents=True, exist_ok=True)
-        print(f"[INFO] Ensured directory exists for: {stats_file.parent}")
+        stats_dir = stats_file.parent
+        if not stats_dir.exists():
+            stats_dir.mkdir(parents=True, exist_ok=True)
+            print(f"[INFO] Created directory: {stats_dir.resolve()}")
+        else:
+            print(f"[INFO] Directory already exists: {stats_dir.resolve()}")
         
         stats_file.write_text(json.dumps(new_stats, indent=2), encoding="utf-8")
-        print(f"[INFO] Stats saved successfully to: {stats_file}")
+        
+        # 验证文件是否真的写成功了
+        if stats_file.exists():
+            print(f"[INFO] Stats saved successfully to: {stats_abs}")
+            print(f"[INFO] File size: {stats_file.stat().st_size} bytes")
+        else:
+            print(f"[ERROR] File not found after save attempt: {stats_abs}")
     except Exception as e:
         print(f"[ERROR] 保存统计文件失败: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 # ================= Main =================
