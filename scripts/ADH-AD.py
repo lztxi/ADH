@@ -220,7 +220,7 @@ now_utc = datetime.utcnow()
 now_cst = now_utc + timedelta(hours=8)
 time_str = now_cst.strftime('%Y-%m-%d %H:%M:%S')
 
-# 生成表格行
+# 生成上游源详情表格行
 table_rows = []
 total_diff_for_table = 0
 
@@ -274,13 +274,10 @@ readme_content = f"""# ADH-AD 订阅统计
 
 ## 📊 数据概览
 
-| 指标 | 数量 | 说明 |
-| :--- | :--- | :--- |
-| 🚫 黑名单规则 | **{total_count:,}** | 本次运行的黑名单规则总数 |
-| ⚪ 白名单规则 | **{len(white_rules):,}** | 包含所有信任域名 |
-| 🔄 上次更新 | {old_total:,} | 上次运行的黑名单规则总数 |
-| 🔄 本次更新 | {total_count:,} | 本次运行的黑名单规则总数 |
-| 📈 更新变化 | {total_diff_str} | 较上次的增减情况 |
+| 项目 | 上次更新 | 本次更新 | 更新变化 |
+| :--- | :---: | :---: | :---: |
+| 🚫 黑名单规则 | {old_total:,} | {total_count:,} | {total_diff_str} |
+| ⚪ 白名单规则 | - | {len(white_rules):,} | - |
 
 ---
 
