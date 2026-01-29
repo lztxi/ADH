@@ -1,6 +1,6 @@
 # ADH-AD 订阅统计
 
-> 数据最后合并时间 (北京时间): **2026-01-28 20:40:16**
+> 数据最后合并时间 (北京时间): **2026-01-29 15:11:52**
 
 ---
 
@@ -8,9 +8,9 @@
 
 | 指标 | 数量 | 说明 |
 | :--- | :--- | :--- |
-| 🚫 黑名单规则 | **178837** | 包含所有阻断域名 |
+| 🚫 黑名单规则 | **179124** | 包含所有阻断域名 |
 | ⚪ 白名单规则 | **120** | 包含所有信任域名 |
-| 📈 较上次变化 | **+178837** | 上次总数: 0 |
+| 📈 较上次变化 | **🔼 +293667** | 上次总数: 0 |
 
 ---
 
@@ -18,17 +18,17 @@
 
 共 **8** 个订阅源参与了合并。
 
-| 序号 | 订阅源 URL | 贡献规则数 (黑名单) | 状态 |
-| :--- | :--- | :--- | :--- |
-| 1 | https://raw.githubusercontent.com/AdguardTeam/FiltersRegi... | 141480 | ✅ |
-| 2 | https://raw.githubusercontent.com/AdguardTeam/FiltersRegi... | 6463 | ✅ |
-| 3 | https://raw.githubusercontent.com/privacy-protection-tool... | 97323 | ✅ |
-| 4 | https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ad... | 905 | ✅ |
-| 5 | https://raw.githubusercontent.com/damengzhu/banad/main/ji... | 4446 | ✅ |
-| 6 | https://easylist.to/easylist/easyprivacy.txt | 42385 | ✅ |
-| 7 | https://raw.githubusercontent.com/cjx82630/cjxlist/master... | 114 | ✅ |
-| 8 | https://www.i-dont-care-about-cookies.eu/abp/ | 104 | ✅ |
-
+| 序号 | 订阅源 | 上次更新 | 本次更新 | 更新变化 | 状态 |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 0 | 141,760 | 🆕 New | ✅ |
+| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 0 | 6,476 | 🆕 New | ✅ |
+| 3 | [anti-AD（中文区主要规则）](https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt) | 0 | 97,471 | 🆕 New | ✅ |
+| 4 | [秋风（适配路由器）](https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt) | 0 | 905 | 🆕 New | ✅ |
+| 5 | [大萌主（轻量去除色情 / 悬浮广告）](https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt) | 0 | 4,446 | 🆕 New | ✅ |
+| 6 | [EasyPrivacy（隐私保护 / 跟踪器）](https://easylist.to/easylist/easyprivacy.txt) | 0 | 42,391 | 🆕 New | ✅ |
+| 7 | [cjx-annoyance（弹窗 / 跳转 / 自我推广）](https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt) | 0 | 114 | 🆕 New | ✅ |
+| 8 | [I-Don't-Care-About-Cookies](https://www.i-dont-care-about-cookies.eu/abp/) | 0 | 104 | 🆕 New | ✅ |
+| **总计** | **8 个源** | **0** | **293,667** | **🔼 +293667** | |
 
 ---
 
