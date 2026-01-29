@@ -8,7 +8,7 @@ import json
 
 # 脚本现在在 scripts/ 文件夹里运行
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SOURCE_FILE = os.path.join(SCRIPT_DIR, "..", "config", "sources.yml")
+SOURCE_FILE = os.path.join(SCRIPT_DIR, "..", "config", "ADGH_DNS.yml")
 OUTPUT_DNS = os.path.join(SCRIPT_DIR, "..", "adguard_dns.txt")
 OUTPUT_README = os.path.join(SCRIPT_DIR, "..", "README.md")
 # 统计文件路径
@@ -246,7 +246,7 @@ def main():
 
     # 2. 读取配置并生成数据
     data = load_sources()
-    print("[OK] sources.yml loaded")
+    print("[OK] ADGH_DNS.yml loaded")
     category_data, all_domains, stats = generate_data(data)
 
     # 3. 保存这次的统计数据（供下次对比）
