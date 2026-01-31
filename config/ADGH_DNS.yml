@@ -3,6 +3,7 @@ categories:
     dns: https://doh.pub/dns-query
     urls:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/tencent.list
+      - https://raw.githubusercontent.com/lztxi/ADH/refs/heads/main/config/tencent.list
 
   阿里:
     dns: https://dns.alidns.com/dns-query
