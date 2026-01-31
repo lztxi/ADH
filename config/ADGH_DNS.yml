@@ -11,6 +11,6 @@ categories:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/alibaba.list
 
   字节跳动:
-    dns: 180.184.1.1
+    dns: 180.184.1.1 180.184.2.2
     urls:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/bytedance.list
