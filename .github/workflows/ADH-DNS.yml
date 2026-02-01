@@ -2,7 +2,7 @@ name: 无用的更新DNS
 
 on:
   schedule:
-    - cron: '0 0 */30 * *'
+    - cron: '0 0 1 * *'
   workflow_dispatch:
 
 permissions:
