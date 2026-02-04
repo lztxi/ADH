@@ -125,3 +125,280 @@ white_rules: set[str] = set()
 source_stats = {}
 
 try:
+    cfg = yaml.safe_load(CFG.read_text(encoding="utf-8"))
+except Exception as e:
+    print(f"❌ 读取配置文件失败: {e}")
+    sys.exit(1)
+
+# 读取上次的统计数据
+old_stats = load_stats()
+
+for src in cfg.get("sources", []):
+    if not src.get("enabled", True):
+        continue
+
+    url = src.get("url", "")
+    name = src.get("name", "")
+
+    # 如果配置里没有 name，用 URL 的文件名作为默认名称
+    if not name and url:
+        name = url.rstrip("/").split("/")[-1]
+    if not name:
+        name = "Unknown"
+
+    temp_block = 0
+    temp_white = 0
+    status = "OK"
+
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"Error fetching {url}: {e}")
+        status = "Failed"
+        source_stats[name] = {
+            "url": url,
+            "block_count": 0,
+            "white_count": 0,
+            "status": status,
+        }
+        continue
+
+    for raw in resp.text.splitlines():
+        domain, is_white = parse_line(raw)
+        if not domain:
+            continue
+
+        if is_white:
+            white_rules.add(f"@@||{domain}^")
+            temp_white += 1
+        else:
+            block_rules.add(f"||{domain}^")
+            temp_block += 1
+
+    source_stats[name] = {
+        "url": url,
+        "block_count": temp_block,
+        "white_count": temp_white,
+        "status": status,
+    }
+
+# 构建本次统计（记录黑名单和白名单）
+new_stats = {}
+total_block_count = 0
+total_white_count = 0
+for name, info in source_stats.items():
+    block_count = info["block_count"]
+    white_count = info["white_count"]
+    new_stats[name] = {
+        "block_count": block_count,
+        "white_count": white_count,
+    }
+    total_block_count += block_count
+    total_white_count += white_count
+
+
+# ================= Threshold =================
+threshold = cfg.get("threshold", {})
+max_inc = threshold.get("max_increase", 0.2)
+max_dec = threshold.get("max_decrease", 0.2)
+force = os.getenv("FORCE_PASS", "false").lower() == "true"
+
+# 计算上次总数用于阈值检查（仍然只检查黑名单）
+old_total = sum(v.get("block_count", 0) for v in old_stats.values()) if isinstance(old_stats, dict) else 0
+delta = total_block_count - old_total
+ratio = (delta / old_total) if old_total else 0
+
+if old_total and not force:
+    if ratio > max_inc or ratio < -max_dec:
+        print("❌ Rule change exceeds threshold")
+        sys.exit(1)
+
+
+# ================= Output =================
+
+# AdGuardHome（包含白名单）
+adguardhome_rules = sorted(white_rules | block_rules)
+(OUT / "adguardhome.txt").write_text(
+    "
+".join(adguardhome_rules) + "
+",
+    encoding="utf-8",
+)
+
+# dnsmasq（仅阻断）
+dnsmasq_rules = sorted(block_rules)
+(OUT / "dnsmasq.conf").write_text(
+    "
+".join(
+        f"address=/{r[2:-1]}/0.0.0.0"
+        for r in dnsmasq_rules
+    ) + "
+",
+    encoding="utf-8",
+)
+
+# Clash（仅阻断）
+clash_rules = sorted(block_rules)
+(OUT / "clash.yaml").write_text(
+    "payload:
+"
+    + "
+".join(f"  - '{r[2:-1]}'" for r in clash_rules)
+    + "
+",
+    encoding="utf-8",
+)
+
+# 计算三个输出文件的数量
+adguardhome_count = len(adguardhome_rules)
+dnsmasq_count = len(dnsmasq_rules)
+clash_count = len(clash_rules)
+
+# 将输出文件数量保存到统计数据中
+new_stats["_output_files"] = {
+    "adguardhome": adguardhome_count,
+    "dnsmasq": dnsmasq_count,
+    "clash": clash_count,
+}
+
+# 保存本次统计
+save_stats(new_stats)
+
+
+# ================= README 生成 =================
+# 计算北京时间 (UTC+8)
+now_utc = datetime.utcnow()
+now_cst = now_utc + timedelta(hours=8)
+time_str = now_cst.strftime('%Y-%m-%d %H:%M:%S')
+
+# 生成上游源详情表格行
+table_rows = []
+total_block_diff = 0
+total_white_diff = 0
+
+for name, info in source_stats.items():
+    current_block = info["block_count"]
+    current_white = info["white_count"]
+    prev = old_stats.get(name, {})
+    prev_block = prev.get("block_count", 0)
+    prev_white = prev.get("white_count", 0)
+
+    block_diff = current_block - prev_block
+    white_diff = current_white - prev_white
+
+    total_block_diff += block_diff
+    total_white_diff += white_diff
+
+    url = info.get("url", "")
+    status = info.get("status", "OK")
+
+    # 黑名单变化显示
+    if block_diff > 0:
+        block_diff_str = f"🔼 +{block_diff}"
+    elif block_diff < 0:
+        block_diff_str = f"🔽 {block_diff}"
+    else:
+        block_diff_str = "➖ 0"
+
+    if prev_block == 0 and current_block > 0:
+        block_diff_str = "🆕 New"
+
+    # 白名单变化显示
+    if white_diff > 0:
+        white_diff_str = f"🔼 +{white_diff}"
+    elif white_diff < 0:
+        white_diff_str = f"🔽 {white_diff}"
+    else:
+        white_diff_str = "➖ 0"
+
+    if prev_white == 0 and current_white > 0:
+        white_diff_str = "🆕 New"
+
+    # 名称做成超链接
+    if url:
+        link_cell = f"[{name}]({url})"
+    else:
+        link_cell = name
+
+    status_icon = "✅" if status == "OK" else "❌"
+    table_rows.append(
+        f"| {len(table_rows) + 1} | {link_cell} | {prev_block:,} / {prev_white:,} | {current_block:,} / {current_white:,} | {block_diff_str} / {white_diff_str} | {status_icon} |"
+    )
+
+# 总计变化（用于表格底部）
+if total_block_diff > 0:
+    total_block_diff_str = f"🔼 +{total_block_diff}"
+elif total_block_diff < 0:
+    total_block_diff_str = f"🔽 {total_block_diff}"
+else:
+    total_block_diff_str = "➖ 0"
+
+if total_white_diff > 0:
+    total_white_diff_str = f"🔼 +{total_white_diff}"
+elif total_white_diff < 0:
+    total_white_diff_str = f"🔽 {total_white_diff}"
+else:
+    total_white_diff_str = "➖ 0"
+
+table_rows.append(
+    f"| **总计** | **{len(source_stats)} 个源** | **{old_total:,} / -** | **{total_block_count:,} / {total_white_count:,}** | **{total_block_diff_str} / {total_white_diff_str}** | |"
+)
+
+# 计算上次的输出文件数量
+old_output_files = old_stats.get("_output_files", {})
+old_adguardhome = old_output_files.get("adguardhome", 0)
+old_dnsmasq = old_output_files.get("dnsmasq", 0)
+old_clash = old_output_files.get("clash", 0)
+
+# 计算输出文件数量变化
+adguardhome_diff = adguardhome_count - old_adguardhome
+dnsmasq_diff = dnsmasq_count - old_dnsmasq
+clash_diff = clash_count - old_clash
+
+def format_diff(diff):
+    if diff > 0:
+        return f"🔼 +{diff}"
+    elif diff < 0:
+        return f"🔽 {diff}"
+    else:
+        return "➖ 0"
+
+# 生成数据概览表格
+overview_table = f"""| 文件名 | 上次更新 | 本次更新 | 更新变化 |
+| :--- | :---: | :---: | :---: |
+| 📄 adguardhome | {old_adguardhome:,} | {adguardhome_count:,} | {format_diff(adguardhome_diff)} |
+| 📄 dnsmasq | {old_dnsmasq:,} | {dnsmasq_count:,} | {format_diff(dnsmasq_diff)} |
+| 📄 clash | {old_clash:,} | {clash_count:,} | {format_diff(clash_diff)} |
+"""
+
+readme_content = f"""# ADH-AD 订阅统计
+
+> 数据最后合并时间 (北京时间): **{time_str}**
+
+---
+
+## 📊 数据概览
+
+{overview_table}
+
+---
+
+## 📡 上游源详情
+
+共 **{len(source_stats)}** 个订阅源参与了合并。
+
+| 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+{chr(10).join(table_rows)}
+
+---
+
+🤖 Generated by [GitHub Actions](https://github.com/{os.getenv('GITHUB_REPOSITORY', 'lztxi/ADH')}/actions)
+"""
+
+(OUT / "README.md").write_text(readme_content, encoding="utf-8")
+
+print(
+    f"✔ Build success | adguardhome={adguardhome_count} dnsmasq={dnsmasq_count} clash={clash_count}"
+)
