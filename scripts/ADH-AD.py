@@ -264,9 +264,9 @@ def format_diff(diff):
 
 overview_header = "| 文件名 | 上次更新 | 本次更新 | 更新变化 |"
 overview_separator = "| :--- | :---: | :---: | :---: |"
-row1 = "| 📄 adguardhome.txt | " + str(old_adguardhome) + " | " + str(adguardhome_count) + " | " + format_diff(adguardhome_diff) + " |"
-row2 = "| 📄 dnsmasq.conf | " + str(old_dnsmasq) + " | " + str(dnsmasq_count) + " | " + format_diff(dnsmasq_diff) + " |"
-row3 = "| 📄 clash.yaml | " + str(old_clash) + " | " + str(clash_count) + " | " + format_diff(clash_diff) + " |"
+row1 = "| 🥝 clash | " + str(old_clash) + " | " + str(clash_count) + " | " + format_diff(clash_diff) + " |"
+row2 = "| 🍋 dnsmasq | " + str(old_dnsmasq) + " | " + str(dnsmasq_count) + " | " + format_diff(dnsmasq_diff) + " |"
+row3 = "| 🍉 adguardhome | " + str(old_adguardhome) + " | " + str(adguardhome_count) + " | " + format_diff(adguardhome_diff) + " |"
 overview_table = overview_header + "\n" + overview_separator + "\n" + row1 + "\n" + row2 + "\n" + row3 + "\n"
 
 readme_parts = []
