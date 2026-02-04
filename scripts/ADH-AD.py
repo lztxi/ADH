@@ -80,7 +80,6 @@ def load_stats():
         return {}
     try:
         old_stats = json.loads(stats_file.read_text())
-        # 兼容旧格式：如果只有 total/previous/delta/ratio，则返回空字典
         if isinstance(old_stats, dict) and "total" in old_stats:
             return {}
         return old_stats if isinstance(old_stats, dict) else {}
@@ -95,7 +94,6 @@ def save_stats(new_stats):
     stats_abs = stats_file.resolve()
     
     try:
-        # 关键修改：确保目录存在
         stats_dir = stats_file.parent
         if not stats_dir.exists():
             stats_dir.mkdir(parents=True, exist_ok=True)
@@ -105,7 +103,6 @@ def save_stats(new_stats):
         
         stats_file.write_text(json.dumps(new_stats, indent=2), encoding="utf-8")
         
-        # 验证文件是否真的写成功了
         if stats_file.exists():
             print(f"[INFO] Stats saved successfully to: {stats_abs}")
             print(f"[INFO] File size: {stats_file.stat().st_size} bytes")
@@ -120,8 +117,6 @@ def save_stats(new_stats):
 # ================= Main =================
 block_rules: set[str] = set()
 white_rules: set[str] = set()
-
-# 用于记录每个源的统计信息：{ name: { url, block_count, white_count, status } }
 source_stats = {}
 
 try:
@@ -130,7 +125,6 @@ except Exception as e:
     print(f"❌ 读取配置文件失败: {e}")
     sys.exit(1)
 
-# 读取上次的统计数据
 old_stats = load_stats()
 
 for src in cfg.get("sources", []):
@@ -140,7 +134,6 @@ for src in cfg.get("sources", []):
     url = src.get("url", "")
     name = src.get("name", "")
 
-    # 如果配置里没有 name，用 URL 的文件名作为默认名称
     if not name and url:
         name = url.rstrip("/").split("/")[-1]
     if not name:
@@ -183,7 +176,6 @@ for src in cfg.get("sources", []):
         "status": status,
     }
 
-# 构建本次统计（记录黑名单和白名单）
 new_stats = {}
 total_block_count = 0
 total_white_count = 0
@@ -204,7 +196,6 @@ max_inc = threshold.get("max_increase", 0.2)
 max_dec = threshold.get("max_decrease", 0.2)
 force = os.getenv("FORCE_PASS", "false").lower() == "true"
 
-# 计算上次总数用于阈值检查（仍然只检查黑名单）
 old_total = sum(v.get("block_count", 0) for v in old_stats.values()) if isinstance(old_stats, dict) else 0
 delta = total_block_count - old_total
 ratio = (delta / old_total) if old_total else 0
@@ -217,7 +208,6 @@ if old_total and not force:
 
 # ================= Output =================
 
-# AdGuardHome（包含白名单）
 adguardhome_rules = sorted(white_rules | block_rules)
 (OUT / "adguardhome.txt").write_text(
     "
@@ -226,7 +216,6 @@ adguardhome_rules = sorted(white_rules | block_rules)
     encoding="utf-8",
 )
 
-# dnsmasq（仅阻断）
 dnsmasq_rules = sorted(block_rules)
 (OUT / "dnsmasq.conf").write_text(
     "
@@ -238,7 +227,6 @@ dnsmasq_rules = sorted(block_rules)
     encoding="utf-8",
 )
 
-# Clash（仅阻断）
 clash_rules = sorted(block_rules)
 (OUT / "clash.yaml").write_text(
     "payload:
@@ -250,29 +238,24 @@ clash_rules = sorted(block_rules)
     encoding="utf-8",
 )
 
-# 计算三个输出文件的数量
 adguardhome_count = len(adguardhome_rules)
 dnsmasq_count = len(dnsmasq_rules)
 clash_count = len(clash_rules)
 
-# 将输出文件数量保存到统计数据中
 new_stats["_output_files"] = {
     "adguardhome": adguardhome_count,
     "dnsmasq": dnsmasq_count,
     "clash": clash_count,
 }
 
-# 保存本次统计
 save_stats(new_stats)
 
 
 # ================= README 生成 =================
-# 计算北京时间 (UTC+8)
 now_utc = datetime.utcnow()
 now_cst = now_utc + timedelta(hours=8)
 time_str = now_cst.strftime('%Y-%m-%d %H:%M:%S')
 
-# 生成上游源详情表格行
 table_rows = []
 total_block_diff = 0
 total_white_diff = 0
@@ -293,7 +276,6 @@ for name, info in source_stats.items():
     url = info.get("url", "")
     status = info.get("status", "OK")
 
-    # 黑名单变化显示
     if block_diff > 0:
         block_diff_str = f"🔼 +{block_diff}"
     elif block_diff < 0:
@@ -304,7 +286,6 @@ for name, info in source_stats.items():
     if prev_block == 0 and current_block > 0:
         block_diff_str = "🆕 New"
 
-    # 白名单变化显示
     if white_diff > 0:
         white_diff_str = f"🔼 +{white_diff}"
     elif white_diff < 0:
@@ -315,7 +296,6 @@ for name, info in source_stats.items():
     if prev_white == 0 and current_white > 0:
         white_diff_str = "🆕 New"
 
-    # 名称做成超链接
     if url:
         link_cell = f"[{name}]({url})"
     else:
@@ -326,7 +306,6 @@ for name, info in source_stats.items():
         f"| {len(table_rows) + 1} | {link_cell} | {prev_block:,} / {prev_white:,} | {current_block:,} / {current_white:,} | {block_diff_str} / {white_diff_str} | {status_icon} |"
     )
 
-# 总计变化（用于表格底部）
 if total_block_diff > 0:
     total_block_diff_str = f"🔼 +{total_block_diff}"
 elif total_block_diff < 0:
@@ -345,13 +324,11 @@ table_rows.append(
     f"| **总计** | **{len(source_stats)} 个源** | **{old_total:,} / -** | **{total_block_count:,} / {total_white_count:,}** | **{total_block_diff_str} / {total_white_diff_str}** | |"
 )
 
-# 计算上次的输出文件数量
 old_output_files = old_stats.get("_output_files", {})
 old_adguardhome = old_output_files.get("adguardhome", 0)
 old_dnsmasq = old_output_files.get("dnsmasq", 0)
 old_clash = old_output_files.get("clash", 0)
 
-# 计算输出文件数量变化
 adguardhome_diff = adguardhome_count - old_adguardhome
 dnsmasq_diff = dnsmasq_count - old_dnsmasq
 clash_diff = clash_count - old_clash
@@ -364,38 +341,56 @@ def format_diff(diff):
     else:
         return "➖ 0"
 
-# 生成数据概览表格
-overview_table = f"""| 文件名 | 上次更新 | 本次更新 | 更新变化 |
-| :--- | :---: | :---: | :---: |
-| 📄 adguardhome | {old_adguardhome:,} | {adguardhome_count:,} | {format_diff(adguardhome_diff)} |
-| 📄 dnsmasq | {old_dnsmasq:,} | {dnsmasq_count:,} | {format_diff(dnsmasq_diff)} |
-| 📄 clash | {old_clash:,} | {clash_count:,} | {format_diff(clash_diff)} |
-"""
+# 数据概览表格 - 使用简单字符串连接而不是 f-string 三引号
+overview_header = "| 文件名 | 上次更新 | 本次更新 | 更新变化 |"
+overview_separator = "| :--- | :---: | :---: | :---: |"
+row1 = f"| 📄 adguardhome.txt | {old_adguardhome:,} | {adguardhome_count:,} | {format_diff(adguardhome_diff)} |"
+row2 = f"| 📄 dnsmasq.conf | {old_dnsmasq:,} | {dnsmasq_count:,} | {format_diff(dnsmasq_diff)} |"
+row3 = f"| 📄 clash.yaml | {old_clash:,} | {clash_count:,} | {format_diff(clash_diff)} |"
+overview_table = overview_header + "
+" + overview_separator + "
+" + row1 + "
+" + row2 + "
+" + row3 + "
+"
 
-readme_content = f"""# ADH-AD 订阅统计
+readme_content = (
+    "# ADH-AD 订阅统计
 
-> 数据最后合并时间 (北京时间): **{time_str}**
+"
+    f"> 数据最后合并时间 (北京时间): **{time_str}**
 
----
+"
+    "---
 
-## 📊 数据概览
+"
+    "## 📊 数据概览
 
-{overview_table}
+"
+    + overview_table +
+    "---
 
----
+"
+    "## 📡 上游源详情
 
-## 📡 上游源详情
+"
+    f"共 **{len(source_stats)}** 个订阅源参与了合并。
 
-共 **{len(source_stats)}** 个订阅源参与了合并。
+"
+    "| 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
+"
+    "| :--- | :--- | :---: | :---: | :---: | :---: |
+"
+    + "
+".join(table_rows) + "
 
-| 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-{chr(10).join(table_rows)}
+"
+    "---
 
----
-
-🤖 Generated by [GitHub Actions](https://github.com/{os.getenv('GITHUB_REPOSITORY', 'lztxi/ADH')}/actions)
-"""
+"
+    f"🤖 Generated by [GitHub Actions](https://github.com/{os.getenv('GITHUB_REPOSITORY', 'lztxi/ADH')}/actions)
+"
+)
 
 (OUT / "README.md").write_text(readme_content, encoding="utf-8")
 
