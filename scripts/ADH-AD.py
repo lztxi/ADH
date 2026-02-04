@@ -10,21 +10,19 @@ import requests
 from pathlib import Path
 from datetime import datetime, timedelta
 
-# ================= Paths =================
 BASE = Path(__file__).resolve().parents[1]
 CFG = BASE / "config" / "ADH-AD.yaml"
 
-print(f"[DEBUG] BASE: {BASE}")
-print(f"[DEBUG] CFG: {CFG}")
-print(f"[DEBUG] CFG absolute: {CFG.resolve()}")
+print("[DEBUG] BASE: " + str(BASE))
+print("[DEBUG] CFG: " + str(CFG))
+print("[DEBUG] CFG absolute: " + str(CFG.resolve()))
 
 if not CFG.exists():
-    print(f"❌ 错误：找不到配置文件！")
-    print(f"脚本正在寻找的路径是: {CFG}")
-    print(f"请确保你已经将 ADH-AD.yaml 放在了 main/config 目录下。")
+    print("❌ 错误：找不到配置文件！")
+    print("脚本正在寻找的路径是: " + str(CFG))
+    print("请确保你已经将 ADH-AD.yaml 放在了 main/config 目录下。")
     sys.exit(1)
 
-# ================= 输出目录 =================
 out_dir = os.getenv("OUTPUT_DIR")
 if out_dir:
     OUT = Path(out_dir).resolve()
@@ -32,16 +30,12 @@ else:
     OUT = BASE.parent / "release"
 
 OUT.mkdir(parents=True, exist_ok=True)
-print(f"[DEBUG] OUT: {OUT}")
-print(f"[DEBUG] OUT absolute: {OUT.resolve()}")
+print("[DEBUG] OUT: " + str(OUT))
+print("[DEBUG] OUT absolute: " + str(OUT.resolve()))
 
-
-# ================= Regex =================
 DOMAIN_RE = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,}$", re.I)
 
-
-# ================= Parser =================
-def parse_line(line: str):
+def parse_line(line):
     line = line.strip()
 
     if not line or line.startswith(("#", "!", "[")):
@@ -52,7 +46,6 @@ def parse_line(line: str):
         is_whitelist = True
         line = line[2:]
 
-    # hosts format
     if line.startswith(("0.0.0.0", "127.0.0.1")):
         parts = line.split()
         if len(parts) < 2:
@@ -66,17 +59,14 @@ def parse_line(line: str):
 
     return domain.lower(), is_whitelist
 
-
-# ================= 统计文件读写 =================
 def load_stats():
-    """读取上次运行的统计数据（记录黑名单、白名单和输出文件数量）"""
     stats_file = BASE / "config" / "ADH_AD_stats.json"
     stats_abs = stats_file.resolve()
     
-    print(f"[INFO] Loading stats from: {stats_abs}")
+    print("[INFO] Loading stats from: " + str(stats_abs))
     
     if not stats_file.exists():
-        print(f"[INFO] Stats file not found, starting fresh.")
+        print("[INFO] Stats file not found, starting fresh.")
         return {}
     try:
         old_stats = json.loads(stats_file.read_text())
@@ -84,12 +74,10 @@ def load_stats():
             return {}
         return old_stats if isinstance(old_stats, dict) else {}
     except Exception as e:
-        print(f"[WARN] 读取旧统计文件失败: {e}")
+        print("[WARN] 读取旧统计文件失败: " + str(e))
         return {}
 
-
 def save_stats(new_stats):
-    """保存本次运行的统计数据（记录黑名单、白名单和输出文件数量）"""
     stats_file = BASE / "config" / "ADH_AD_stats.json"
     stats_abs = stats_file.resolve()
     
@@ -97,32 +85,30 @@ def save_stats(new_stats):
         stats_dir = stats_file.parent
         if not stats_dir.exists():
             stats_dir.mkdir(parents=True, exist_ok=True)
-            print(f"[INFO] Created directory: {stats_dir.resolve()}")
+            print("[INFO] Created directory: " + str(stats_dir.resolve()))
         else:
-            print(f"[INFO] Directory already exists: {stats_dir.resolve()}")
+            print("[INFO] Directory already exists: " + str(stats_dir.resolve()))
         
         stats_file.write_text(json.dumps(new_stats, indent=2), encoding="utf-8")
         
         if stats_file.exists():
-            print(f"[INFO] Stats saved successfully to: {stats_abs}")
-            print(f"[INFO] File size: {stats_file.stat().st_size} bytes")
+            print("[INFO] Stats saved successfully to: " + str(stats_abs))
+            print("[INFO] File size: " + str(stats_file.stat().st_size) + " bytes")
         else:
-            print(f"[ERROR] File not found after save attempt: {stats_abs}")
+            print("[ERROR] File not found after save attempt: " + str(stats_abs))
     except Exception as e:
-        print(f"[ERROR] 保存统计文件失败: {e}")
+        print("[ERROR] 保存统计文件失败: " + str(e))
         import traceback
         traceback.print_exc()
 
-
-# ================= Main =================
-block_rules: set[str] = set()
-white_rules: set[str] = set()
+block_rules = set()
+white_rules = set()
 source_stats = {}
 
 try:
     cfg = yaml.safe_load(CFG.read_text(encoding="utf-8"))
 except Exception as e:
-    print(f"❌ 读取配置文件失败: {e}")
+    print("❌ 读取配置文件失败: " + str(e))
     sys.exit(1)
 
 old_stats = load_stats()
@@ -147,253 +133,6 @@ for src in cfg.get("sources", []):
         resp = requests.get(url, timeout=30)
         resp.raise_for_status()
     except Exception as e:
-        print(f"Error fetching {url}: {e}")
+        print("Error fetching " + url + ": " + str(e))
         status = "Failed"
         source_stats[name] = {
-            "url": url,
-            "block_count": 0,
-            "white_count": 0,
-            "status": status,
-        }
-        continue
-
-    for raw in resp.text.splitlines():
-        domain, is_white = parse_line(raw)
-        if not domain:
-            continue
-
-        if is_white:
-            white_rules.add(f"@@||{domain}^")
-            temp_white += 1
-        else:
-            block_rules.add(f"||{domain}^")
-            temp_block += 1
-
-    source_stats[name] = {
-        "url": url,
-        "block_count": temp_block,
-        "white_count": temp_white,
-        "status": status,
-    }
-
-new_stats = {}
-total_block_count = 0
-total_white_count = 0
-for name, info in source_stats.items():
-    block_count = info["block_count"]
-    white_count = info["white_count"]
-    new_stats[name] = {
-        "block_count": block_count,
-        "white_count": white_count,
-    }
-    total_block_count += block_count
-    total_white_count += white_count
-
-
-# ================= Threshold =================
-threshold = cfg.get("threshold", {})
-max_inc = threshold.get("max_increase", 0.2)
-max_dec = threshold.get("max_decrease", 0.2)
-force = os.getenv("FORCE_PASS", "false").lower() == "true"
-
-old_total = sum(v.get("block_count", 0) for v in old_stats.values()) if isinstance(old_stats, dict) else 0
-delta = total_block_count - old_total
-ratio = (delta / old_total) if old_total else 0
-
-if old_total and not force:
-    if ratio > max_inc or ratio < -max_dec:
-        print("❌ Rule change exceeds threshold")
-        sys.exit(1)
-
-
-# ================= Output =================
-
-adguardhome_rules = sorted(white_rules | block_rules)
-(OUT / "adguardhome.txt").write_text(
-    "
-".join(adguardhome_rules) + "
-",
-    encoding="utf-8",
-)
-
-dnsmasq_rules = sorted(block_rules)
-(OUT / "dnsmasq.conf").write_text(
-    "
-".join(
-        f"address=/{r[2:-1]}/0.0.0.0"
-        for r in dnsmasq_rules
-    ) + "
-",
-    encoding="utf-8",
-)
-
-clash_rules = sorted(block_rules)
-(OUT / "clash.yaml").write_text(
-    "payload:
-"
-    + "
-".join(f"  - '{r[2:-1]}'" for r in clash_rules)
-    + "
-",
-    encoding="utf-8",
-)
-
-adguardhome_count = len(adguardhome_rules)
-dnsmasq_count = len(dnsmasq_rules)
-clash_count = len(clash_rules)
-
-new_stats["_output_files"] = {
-    "adguardhome": adguardhome_count,
-    "dnsmasq": dnsmasq_count,
-    "clash": clash_count,
-}
-
-save_stats(new_stats)
-
-
-# ================= README 生成 =================
-now_utc = datetime.utcnow()
-now_cst = now_utc + timedelta(hours=8)
-time_str = now_cst.strftime('%Y-%m-%d %H:%M:%S')
-
-table_rows = []
-total_block_diff = 0
-total_white_diff = 0
-
-for name, info in source_stats.items():
-    current_block = info["block_count"]
-    current_white = info["white_count"]
-    prev = old_stats.get(name, {})
-    prev_block = prev.get("block_count", 0)
-    prev_white = prev.get("white_count", 0)
-
-    block_diff = current_block - prev_block
-    white_diff = current_white - prev_white
-
-    total_block_diff += block_diff
-    total_white_diff += white_diff
-
-    url = info.get("url", "")
-    status = info.get("status", "OK")
-
-    if block_diff > 0:
-        block_diff_str = f"🔼 +{block_diff}"
-    elif block_diff < 0:
-        block_diff_str = f"🔽 {block_diff}"
-    else:
-        block_diff_str = "➖ 0"
-
-    if prev_block == 0 and current_block > 0:
-        block_diff_str = "🆕 New"
-
-    if white_diff > 0:
-        white_diff_str = f"🔼 +{white_diff}"
-    elif white_diff < 0:
-        white_diff_str = f"🔽 {white_diff}"
-    else:
-        white_diff_str = "➖ 0"
-
-    if prev_white == 0 and current_white > 0:
-        white_diff_str = "🆕 New"
-
-    if url:
-        link_cell = f"[{name}]({url})"
-    else:
-        link_cell = name
-
-    status_icon = "✅" if status == "OK" else "❌"
-    table_rows.append(
-        f"| {len(table_rows) + 1} | {link_cell} | {prev_block:,} / {prev_white:,} | {current_block:,} / {current_white:,} | {block_diff_str} / {white_diff_str} | {status_icon} |"
-    )
-
-if total_block_diff > 0:
-    total_block_diff_str = f"🔼 +{total_block_diff}"
-elif total_block_diff < 0:
-    total_block_diff_str = f"🔽 {total_block_diff}"
-else:
-    total_block_diff_str = "➖ 0"
-
-if total_white_diff > 0:
-    total_white_diff_str = f"🔼 +{total_white_diff}"
-elif total_white_diff < 0:
-    total_white_diff_str = f"🔽 {total_white_diff}"
-else:
-    total_white_diff_str = "➖ 0"
-
-table_rows.append(
-    f"| **总计** | **{len(source_stats)} 个源** | **{old_total:,} / -** | **{total_block_count:,} / {total_white_count:,}** | **{total_block_diff_str} / {total_white_diff_str}** | |"
-)
-
-old_output_files = old_stats.get("_output_files", {})
-old_adguardhome = old_output_files.get("adguardhome", 0)
-old_dnsmasq = old_output_files.get("dnsmasq", 0)
-old_clash = old_output_files.get("clash", 0)
-
-adguardhome_diff = adguardhome_count - old_adguardhome
-dnsmasq_diff = dnsmasq_count - old_dnsmasq
-clash_diff = clash_count - old_clash
-
-def format_diff(diff):
-    if diff > 0:
-        return f"🔼 +{diff}"
-    elif diff < 0:
-        return f"🔽 {diff}"
-    else:
-        return "➖ 0"
-
-# 数据概览表格 - 使用简单字符串连接而不是 f-string 三引号
-overview_header = "| 文件名 | 上次更新 | 本次更新 | 更新变化 |"
-overview_separator = "| :--- | :---: | :---: | :---: |"
-row1 = f"| 📄 adguardhome.txt | {old_adguardhome:,} | {adguardhome_count:,} | {format_diff(adguardhome_diff)} |"
-row2 = f"| 📄 dnsmasq.conf | {old_dnsmasq:,} | {dnsmasq_count:,} | {format_diff(dnsmasq_diff)} |"
-row3 = f"| 📄 clash.yaml | {old_clash:,} | {clash_count:,} | {format_diff(clash_diff)} |"
-overview_table = overview_header + "
-" + overview_separator + "
-" + row1 + "
-" + row2 + "
-" + row3 + "
-"
-
-readme_content = (
-    "# ADH-AD 订阅统计
-
-"
-    f"> 数据最后合并时间 (北京时间): **{time_str}**
-
-"
-    "---
-
-"
-    "## 📊 数据概览
-
-"
-    + overview_table +
-    "---
-
-"
-    "## 📡 上游源详情
-
-"
-    f"共 **{len(source_stats)}** 个订阅源参与了合并。
-
-"
-    "| 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
-"
-    "| :--- | :--- | :---: | :---: | :---: | :---: |
-"
-    + "
-".join(table_rows) + "
-
-"
-    "---
-
-"
-    f"🤖 Generated by [GitHub Actions](https://github.com/{os.getenv('GITHUB_REPOSITORY', 'lztxi/ADH')}/actions)
-"
-)
-
-(OUT / "README.md").write_text(readme_content, encoding="utf-8")
-
-print(
-    f"✔ Build success | adguardhome={adguardhome_count} dnsmasq={dnsmasq_count} clash={clash_count}"
-)
