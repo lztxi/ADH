@@ -1,6 +1,6 @@
 categories:
   腾讯:
-    dns: https://doh.pub/dns-query
+    dns: tls://dot.pub https://doh.pub/dns-query
     urls:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/tencent.list
       - https://raw.githubusercontent.com/lztxi/ADH/refs/heads/main/config/tencent.list
