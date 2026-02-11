@@ -1,10 +1,10 @@
 {
   "AdGuard DNS Filter\uff08DNS \u5c42\u62e6\u622a\u5e7f\u544a / \u8ddf\u8e2a\u5668 / \u6076\u610f\u8f6f\u4ef6\uff09": {
-    "block_count": 145549,
+    "block_count": 145690,
     "white_count": 11
   },
   "AdGuard \u4e2d\u6587": {
-    "block_count": 5468,
+    "block_count": 5474,
     "white_count": 11
   },
   "anti-AD\uff08\u4e2d\u6587\u533a\u4e3b\u8981\u89c4\u5219\uff09": {
@@ -16,11 +16,11 @@
     "white_count": 0
   },
   "\u5927\u840c\u4e3b\uff08\u8f7b\u91cf\u53bb\u9664\u8272\u60c5 / \u60ac\u6d6e\u5e7f\u544a\uff09": {
-    "block_count": 4446,
+    "block_count": 4447,
     "white_count": 4
   },
   "EasyPrivacy\uff08\u9690\u79c1\u4fdd\u62a4 / \u8ddf\u8e2a\u5668\uff09": {
-    "block_count": 42429,
+    "block_count": 42428,
     "white_count": 4
   },
   "cjx-annoyance\uff08\u5f39\u7a97 / \u8df3\u8f6c / \u81ea\u6211\u63a8\u5e7f\uff09": {
@@ -32,8 +32,8 @@
     "white_count": 0
   },
   "_output_files": {
-    "adguardhome": 182591,
-    "dnsmasq": 182471,
-    "clash": 182471
+    "adguardhome": 182732,
+    "dnsmasq": 182612,
+    "clash": 182612
   }
 }
