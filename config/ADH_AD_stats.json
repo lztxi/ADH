@@ -1,10 +1,10 @@
 {
   "AdGuard DNS Filter\uff08DNS \u5c42\u62e6\u622a\u5e7f\u544a / \u8ddf\u8e2a\u5668 / \u6076\u610f\u8f6f\u4ef6\uff09": {
-    "block_count": 146836,
+    "block_count": 146995,
     "white_count": 11
   },
   "AdGuard \u4e2d\u6587": {
-    "block_count": 5495,
+    "block_count": 5497,
     "white_count": 11
   },
   "anti-AD\uff08\u4e2d\u6587\u533a\u4e3b\u8981\u89c4\u5219\uff09": {
@@ -32,8 +32,8 @@
     "white_count": 0
   },
   "_output_files": {
-    "adguardhome": 183858,
-    "dnsmasq": 183738,
-    "clash": 183738
+    "adguardhome": 184015,
+    "dnsmasq": 183895,
+    "clash": 183895
   }
 }
