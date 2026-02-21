@@ -15,6 +15,4 @@
 | GoodbyeAds     | https://cdn.jsdelivr.net/gh/jerryn70/GoodbyeAds@master/Formats/GoodbyeAds-AdBlock-Filter.txt |
 | WindowsSpyBlocker - Hosts spy rules     | https://cdn.jsdelivr.net/gh/crazy-max/WindowsSpyBlocker@master/data/hosts/spy.txt |
 | 阻止广告，跟踪和恶意软件域来提高安全性和隐私性     | https://hblock.molinero.dev/hosts |
-
 | 坂本ADK     | https://cdn.jsdelivr.net/gh/banbendalao/ADgk@master/ADgk.txt |
-
