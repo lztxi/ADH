@@ -14,6 +14,8 @@
 
 #OPPO
 ||ads-cn.heytapmobi.com^
+||push-ads-cn.heytapmobi.com^
+||nebula-api-cn.heytapmobi.com^
 
 #miui扫描信息
 ||miav-cse.avlyun.com^
@@ -214,6 +216,16 @@
 ||free-lbv*.idouyinvod.com^
 ||sf3-ttcdn-tos.pstatp.com^
 ! 视频内容广告智能匹配引擎
+
+||yingt.fun^
+||xdrtc.com^
+||vegslb.com^
+#||*-wha.douyinvod.com^
+||wha.douyinvod.com^
+||*-ncdnwha.douyinvod.com^
+||sdktt.data.comfylink.com^
+||*awememusicugc.douyinmusicpromotion.com^
+
 #非PCDN
 #||ndcpp.com^
 #||*-brain.ndcpp.com^
