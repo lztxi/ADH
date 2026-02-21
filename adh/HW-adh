@@ -1,5 +1,5 @@
 #||irisgw.cn^
-@@||h8.blued.cn^$important
+@@||h8.blued.cn^
 ||blued.cn^
 ||blued.com^
 ||bdurl.net^
@@ -22,8 +22,6 @@
 ||b-gtc.gepush.com^
 ||sdk.open.talk.gepush.com^
 
-#快手
-||adukwai.com^
 
 ##抖音
 #||apimobile.meituan.com^
@@ -44,6 +42,15 @@
 
 ||z.cjjd14.com^
 ||sdktt.data.tianwenca.com^
+
+||yingt.fun^
+||xdrtc.com^
+||vegslb.com^
+#||*-wha.douyinvod.com^
+||wha.douyinvod.com^
+||*-ncdnwha.douyinvod.com^
+||sdktt.data.comfylink.com^
+||*awememusicugc.douyinmusicpromotion.com^
 
 #巨量引擎
 ||oceanengine.com^
@@ -87,6 +94,11 @@
 
 #美团
 ||httpdns.meituan.com^
+
+#OPPO
+||ads-cn.heytapmobi.com^
+||push-ads-cn.heytapmobi.com^
+||nebula-api-cn.heytapmobi.com^
 
 #腾讯
 ||api.iegadp.qq.com^
