@@ -1,14 +1,7 @@
 <h1 align="center">✨ ADH ✨</h1>
 
 <p align="center">
-  一个优雅的 AI编写 工具合集 · 自动化 & 脚本增强框架
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/github/stars/lztxi/ADH?style=for-the-badge&color=yellow" />
-  <img src="https://img.shields.io/github/forks/lztxi/ADH?style=for-the-badge&color=orange" />
-  <img src="https://img.shields.io/github/license/lztxi/ADH?style=for-the-badge&color=blue" />
-  <img src="https://img.shields.io/github/last-commit/lztxi/ADH?style=for-the-badge&color=green" />
+  一个优雅的 AI编写 的工具合集 · 自动化
 </p>
 
 <p align="center">
