@@ -1,4 +1,4 @@
-<details>
+
 
 | 服务提供者 | 链接 |
 |------------|------|
@@ -15,4 +15,4 @@
 | bylw     | https://cdn.jsdelivr.net/gh/lztxi/ADH@main/adh/bylw |
 | YS     | https://cdn.jsdelivr.net/gh/lztxi/ADH@main/adh/ys |
 | 坂本ADK     | https://cdn.jsdelivr.net/gh/banbendalao/ADgk@master/ADgk.txt |
-</details>
+
