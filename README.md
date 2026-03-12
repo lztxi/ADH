@@ -1,6 +1,6 @@
 # ADH-AD 订阅统计
 
-> 数据最后合并时间 (北京时间): **2026-03-12 09:48:47**
+> 数据最后合并时间 (北京时间): **2026-03-12 20:53:10**
 
 ---
 
@@ -8,9 +8,9 @@
 
 | 文件名 | 上次更新 | 本次更新 | 更新变化 |
 | :--- | :---: | :---: | :---: |
-| 🥝 clash | 192753 | 192930 | 🔼 +177 |
-| 🍋 dnsmasq | 192753 | 192930 | 🔼 +177 |
-| 🍉 adguardhome | 192873 | 193050 | 🔼 +177 |
+| 🥝 clash | 192930 | 193061 | 🔼 +131 |
+| 🍋 dnsmasq | 192930 | 193061 | 🔼 +131 |
+| 🍉 adguardhome | 193050 | 193181 | 🔼 +131 |
 
 ---
 
@@ -20,15 +20,15 @@
 
 | 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 159786 / 11 | 159964 / 11 | 🔼 +178 / ➖ 0 | ✅ |
-| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 5637 / 11 | 5650 / 11 | 🔼 +13 / ➖ 0 | ✅ |
+| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 159964 / 11 | 160095 / 11 | 🔼 +131 / ➖ 0 | ✅ |
+| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 5650 / 11 | 5656 / 11 | 🔼 +6 / ➖ 0 | ✅ |
 | 3 | [anti-AD（中文区主要规则）](https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt) | 99362 / 101 | 99362 / 101 | ➖ 0 / ➖ 0 | ✅ |
 | 4 | [秋风（适配路由器）](https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt) | 904 / 0 | 904 / 0 | ➖ 0 / ➖ 0 | ✅ |
-| 5 | [大萌主（轻量去除色情 / 悬浮广告）](https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt) | 4447 / 4 | 4447 / 4 | ➖ 0 / ➖ 0 | ✅ |
-| 6 | [EasyPrivacy（隐私保护 / 跟踪器）](https://easylist.to/easylist/easyprivacy.txt) | 42509 / 4 | 42510 / 4 | 🔼 +1 / ➖ 0 | ✅ |
+| 5 | [大萌主（轻量去除色情 / 悬浮广告）](https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt) | 4447 / 4 | 4450 / 4 | 🔼 +3 / ➖ 0 | ✅ |
+| 6 | [EasyPrivacy（隐私保护 / 跟踪器）](https://easylist.to/easylist/easyprivacy.txt) | 42510 / 4 | 42510 / 4 | ➖ 0 / ➖ 0 | ✅ |
 | 7 | [cjx-annoyance（弹窗 / 跳转 / 自我推广）](https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt) | 114 / 0 | 114 / 0 | ➖ 0 / ➖ 0 | ✅ |
 | 8 | [I-Don't-Care-About-Cookies](https://www.i-dont-care-about-cookies.eu/abp/) | 104 / 0 | 104 / 0 | ➖ 0 / ➖ 0 | ✅ |
-| **总计** | **8 个源** | **312863 / -** | **313055 / 131** | **🔼 +192 / ➖ 0** | |
+| **总计** | **8 个源** | **313055 / -** | **313195 / 131** | **🔼 +140 / ➖ 0** | |
 
 ---
 
