@@ -1,5 +1,9 @@
 name: ADH-广告订阅合并
 
+# 修复：强制使用 Node.js 24 运行 Actions，解决 Node.js 20 弃用警告
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
   actions: write
@@ -21,11 +25,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     env:
       DRY_RUN: ${{ github.event.inputs.dry_run }}
       FORCE_PASS: ${{ github.event.inputs.force }}
-
     steps:
       - name: Checkout main (scripts & config)
         uses: actions/checkout@v4
@@ -61,7 +63,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
           # 检查 stats 文件是否存在并添加
           if [ -f config/ADH_AD_stats.json ]; then
             git add config/ADH_AD_stats.json
@@ -81,18 +82,12 @@ jobs:
         run: |
           echo "🔍 当前目录内容："
           ls -la
-          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          
           git add -A
-          
           git diff --cached --quiet && echo "No changes to commit, skipping" && exit 0
-          
           git commit -m "auto: update rules $(date +'%Y-%m-%d %H:%M UTC')"
-          
           git push origin release
 
   cleanup:
@@ -105,4 +100,4 @@ jobs:
         uses: Mattraks/delete-workflow-runs@v2
         with:
           retain_days: 2
-          keep_minimum_runs: 3
+          keep_minimum_runs: 2
