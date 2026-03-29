@@ -1,9 +1,5 @@
 name: ADH-广告订阅合并
 
-# 修复：强制使用 Node.js 24 运行 Actions，解决 Node.js 20 弃用警告
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 permissions:
   contents: write
   actions: write
@@ -30,23 +26,24 @@ jobs:
       FORCE_PASS: ${{ github.event.inputs.force }}
     steps:
       - name: Checkout main (scripts & config)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5        # 旧 v4 → 新 v5（node24）
         with:
           ref: main
           path: main
 
       - name: Checkout release (output branch)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5        # 旧 v4 → 新 v5（node24）
         with:
           ref: release
           path: release
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6    # 旧 v5 → 新 v6（node24）
         with:
           python-version: "3.x"
 
+      # 下面保持不变……
       - name: Install dependencies
         run: pip install requests pyyaml
 
@@ -57,13 +54,11 @@ jobs:
           cd main
           python scripts/ADH-AD.py
 
-      # --- 新增：提交统计文件到 main 分支 ---
       - name: Commit stats to main branch
         working-directory: main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # 检查 stats 文件是否存在并添加
           if [ -f config/ADH_AD_stats.json ]; then
             git add config/ADH_AD_stats.json
             git diff --cached --quiet || git commit -m "chore: update ADH-AD stats $(date +'%Y-%m-%d %H:%M UTC')"
@@ -72,7 +67,6 @@ jobs:
           else
             echo "⚠️ Stats file not found, skipping commit."
           fi
-      # ----------------------------------------
 
       - name: Commit & Push to release
         if: env.DRY_RUN != 'true'
