@@ -86,6 +86,9 @@
 ||httpdns.alicdn.com^
 ||httpdns.aliyuncs.com^
 
+#淘宝系
+||h-adashx.ut.taobao.com^
+
 #httpdns
 ||httpdns-sc.aliyuncs.com^
 ||httpdns.yunxindns.com^
@@ -101,6 +104,8 @@
 ||nebula-api-cn.heytapmobi.com^
 
 #腾讯
+||wxsnsdythumb.wxs.qq.com^
+||wxsnsdy.wxs.qq.com^
 ||api.iegadp.qq.com^
 
 #
@@ -110,3 +115,6 @@
 ||bdlog.tanx.com^
 ||www.qchannel01.cn^
 ||adash-emas.cn-hangzhou.aliyuncs.com^
+||dnsmeasure.top^
+||test.whitechun.xyz^
+||*-live.wskwai.com^
