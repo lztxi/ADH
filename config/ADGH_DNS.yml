@@ -4,12 +4,13 @@ categories:
     urls:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/tencent.list
       - https://raw.githubusercontent.com/lztxi/ADH/refs/heads/main/config/tencent.list
+      - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/oppo.list
 
   阿里:
     dns: https://dns.alidns.com/dns-query
     urls:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/alibaba.list
-      - https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.list
+      - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/meituan.list
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/jd.list
       
   字节跳动:
