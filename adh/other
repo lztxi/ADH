@@ -14,8 +14,10 @@
 
 #OPPO
 ||ads-cn.heytapmobi.com^
-||push-ads-cn.heytapmobi.com^
+||*ads-cn.heytapmobi.com^
 ||nebula-api-cn.heytapmobi.com^
+||ads.heytapmobi.com^
+||adsfs-elr.heytapimage.com^
 
 #miui扫描信息
 ||miav-cse.avlyun.com^
@@ -130,10 +132,10 @@
 ||amsweb-cdn-*.file.myqcloud.com^
 ||wallpaper-*.file.myqcloud.com^
 ##云试听极光
-||ad.xelements.cn^$important
+||ad.xelements.cn^
 
 #银联云闪付
-||ads.cup.com.cn^$important
+||ads.cup.com.cn^
 
 #央视频TV
 ||adott.ottcn.com^
@@ -276,20 +278,18 @@
 ||mumu.nie.netease.com^
 
 #百度追踪-晓蚕惠生活
-||bes-mtj.baidu.com^$important
+||bes-mtj.baidu.com^
 
 #晓蚕惠生活
-||adsdk.vivo.com.cn^$important
-||ads.heytapmobi.com^$important
-||adsfs-elr.heytapimage.com^$important
-||adsmind.ugdtimg.com^$important
-||sdk.1rtb.net^$important
+||adsdk.vivo.com.cn^
+||adsmind.ugdtimg.com^
+||sdk.1rtb.net^
 #晓晓优选
-||ad.gameley.com^$important
-||adx.sogaha.cn^$important
-||wanproxy-hz.127.net^$important
-||sdkconf.adbiding.com^$important
-||sl.adbiding.com^$important
+||ad.gameley.com^
+||adx.sogaha.cn^
+||wanproxy-hz.127.net^
+||sdkconf.adbiding.com^
+||sl.adbiding.com^
 
 
 #北京腾云天下
@@ -298,14 +298,14 @@
 ||sportxuan.com^
 
 #及刻-位置信息营销
-||isjike.com^$important
-||clickwifi.net^$important
+||isjike.com^
+||clickwifi.net^
 ###预防性加入
-||isjike.cn^$important
-||igeekee.cn^$important
-||keliuyi.com^$important
-||laikemap.com^$important
-||ekeliu.com^$important
+||isjike.cn^
+||igeekee.cn^
+||keliuyi.com^
+||laikemap.com^
+||ekeliu.com^
 
 #httpdns
 ||httpdns-sc.aliyuncs.com^
@@ -323,5 +323,5 @@
 ||gamesapi2.aslk2018.com^
 
 #bandizip
-||ver.bandi.so^$important
-||bandisoft.com^$important
+||ver.bandi.so^
+||bandisoft.com^
