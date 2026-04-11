@@ -100,8 +100,10 @@
 
 #OPPO
 ||ads-cn.heytapmobi.com^
-||push-ads-cn.heytapmobi.com^
+||*ads-cn.heytapmobi.com^
 ||nebula-api-cn.heytapmobi.com^
+||ads.heytapmobi.com^
+||adsfs-elr.heytapimage.com^
 
 #腾讯
 ||wxsnsdythumb.wxs.qq.com^
@@ -109,19 +111,17 @@
 ||api.iegadp.qq.com^
 
 #百度追踪-晓蚕惠生活
-||bes-mtj.baidu.com^$important
+||bes-mtj.baidu.com^
 #晓蚕惠生活
-||adsdk.vivo.com.cn^$important
-||ads.heytapmobi.com^$important
-||adsfs-elr.heytapimage.com^$important
-||adsmind.ugdtimg.com^$important
-||sdk.1rtb.net^$important
+||adsdk.vivo.com.cn^
+||adsmind.ugdtimg.com^
+||sdk.1rtb.net^
 #晓晓优选
-||ad.gameley.com^$important
-||adx.sogaha.cn^$important
-||wanproxy-hz.127.net^$important
-||sdkconf.adbiding.com^$important
-||sl.adbiding.com^$important
+||ad.gameley.com^
+||adx.sogaha.cn^
+||wanproxy-hz.127.net^
+||sdkconf.adbiding.com^
+||sl.adbiding.com^
 
 
 #
