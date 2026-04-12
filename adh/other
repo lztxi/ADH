@@ -283,13 +283,67 @@
 #晓蚕惠生活
 ||adsdk.vivo.com.cn^
 ||adsmind.ugdtimg.com^
-||sdk.1rtb.net^
+||1rtb.net^
+
 #晓晓优选
 ||ad.gameley.com^
 ||adx.sogaha.cn^
-||wanproxy-hz.127.net^
+#||wanproxy-hz.127.net^
 ||sdkconf.adbiding.com^
 ||sl.adbiding.com^
+! —— 百度 / 阿里神马 ——
+||xlab.baidu.com^
+||httpdns.bcelive.com^
+||huichuan-mc.sm.cn^
+! —— 联想 (Lenovo) ——
+||api-lemeng.lenovomm.com^
+! —— 北京众智嘉能 (章鱼移动广告) ——
+||v.adintl.cn^
+||sdk.zhangyuyidong.cn^
+! —— 杭州白盒信息科技 (白盒移动广告) ——
+||ad.baihemob.com^
+! —— 北京数字悦动科技 (DatAds) ——
+||adsmartget.datads.cn^
+! —— 北京热线传媒 (热线传媒 DSP) ——
+||bid.adbiding.com^
+! —— 杭州嗨量科技 (Halomobi) ——
+||adx.halomobi.com^
+! —— 上海旺脉信息科技 (旺脉 WM) ——
+||adx.adwangmai.com^
+! —— 杭州壹恩数字科技 (1NMOB 广告交易平台) ——
+||ssp.1nmob.com^
+! —— 北京鑫雨鸿源科技 ——
+||report.xinyuhongyuan.com^
+! —— 北京前呈无限科技 (Medproad) ——
+||tr.medproad.com^
+! —— 北京点星互动网络科技 ——
+||report.dxunion.cn^
+! —— 北京格瑞创新科技 (枫岚互联) ——
+||ssp.maplehaze.cn^
+! —— 北京必方科技 (Funmob) ——
+||adx.funmob.top^
+! —— 杭州因代克斯信息科技 (Indexmobi) ——
+||ssp.indexmob.com^
+! —— 上海二三四五网络科技 (2345) ——
+||trrs-adp.2345.com^
+! Taku（广州塔酷信息科技有限公司）- 广告Token/请求/归因API
+||txtss.take-token.cn^
+||report.bjzghd.com^
+! —— 以下为归属信息不明确的广告/追踪域名 ——
+||ad.richmob.cn^
+||ad.shunchangzhixing.com^
+||adx.admtvs.com^
+||ctrace.sogaha.cn^
+||log.yayaad.com^
+||sdk.markmedia.com.cn^
+||sdkapi.richmob.cn^
+||sdk-track.66mobi.com^
+||api.sogaha.cn^
+||adx-back.jizbmedia.com^
+#再次添加
+||track.tapseek.cn^
+||trace.aqyad.com^
+||optimized-ai.com^
 
 
 #北京腾云天下
