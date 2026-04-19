@@ -7,7 +7,7 @@ categories:
       #- https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/oppo.list
 
   阿里:
-    dns: https://dns.alidns.com/dns-query
+    dns: tls://dns.alidns.com https://dns.alidns.com/dns-query
     urls:
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/alibaba.list
       #- https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/meituan.list
