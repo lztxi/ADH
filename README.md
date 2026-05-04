@@ -1,6 +1,6 @@
 # ADH-AD 订阅统计
 
-> 数据最后合并时间 (北京时间): **2026-05-03 21:02:02**
+> 数据最后合并时间 (北京时间): **2026-05-04 10:34:19**
 
 ---
 
@@ -8,9 +8,9 @@
 
 | 文件名 | 上次更新 | 本次更新 | 更新变化 |
 | :--- | :---: | :---: | :---: |
-| 🥝 clash | 197920 | 198003 | 🔼 +83 |
-| 🍋 dnsmasq | 197920 | 198003 | 🔼 +83 |
-| 🍉 adguardhome | 198042 | 198125 | 🔼 +83 |
+| 🥝 clash | 198003 | 198141 | 🔼 +138 |
+| 🍋 dnsmasq | 198003 | 198141 | 🔼 +138 |
+| 🍉 adguardhome | 198125 | 198263 | 🔼 +138 |
 
 ---
 
@@ -20,15 +20,15 @@
 
 | 序号 | 订阅源 | 上次更新 (黑/白) | 本次更新 (黑/白) | 更新变化 (黑/白) | 状态 |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 164475 / 11 | 164556 / 11 | 🔼 +81 / ➖ 0 | ✅ |
-| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 6072 / 11 | 6078 / 11 | 🔼 +6 / ➖ 0 | ✅ |
+| 1 | [AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt) | 164556 / 11 | 164696 / 11 | 🔼 +140 / ➖ 0 | ✅ |
+| 2 | [AdGuard 中文](https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt) | 6078 / 11 | 6082 / 11 | 🔼 +4 / ➖ 0 | ✅ |
 | 3 | [anti-AD（中文区主要规则）](https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt) | 100734 / 103 | 100734 / 103 | ➖ 0 / ➖ 0 | ✅ |
 | 4 | [秋风（适配路由器）](https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt) | 906 / 0 | 906 / 0 | ➖ 0 / ➖ 0 | ✅ |
 | 5 | [大萌主（轻量去除色情 / 悬浮广告）](https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt) | 4475 / 4 | 4475 / 4 | ➖ 0 / ➖ 0 | ✅ |
 | 6 | [EasyPrivacy（隐私保护 / 跟踪器）](https://easylist.to/easylist/easyprivacy.txt) | 42637 / 4 | 42637 / 4 | ➖ 0 / ➖ 0 | ✅ |
 | 7 | [cjx-annoyance（弹窗 / 跳转 / 自我推广）](https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt) | 114 / 0 | 114 / 0 | ➖ 0 / ➖ 0 | ✅ |
 | 8 | [I-Don't-Care-About-Cookies](https://www.i-dont-care-about-cookies.eu/abp/) | 104 / 0 | 104 / 0 | ➖ 0 / ➖ 0 | ✅ |
-| **总计** | **8 个源** | **319517 / -** | **319604 / 133** | **🔼 +87 / ➖ 0** | |
+| **总计** | **8 个源** | **319604 / -** | **319748 / 133** | **🔼 +144 / ➖ 0** | |
 
 ---
 
