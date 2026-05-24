@@ -215,12 +215,15 @@
 #抖音系
 ||id6.me^
 ||msv6.wosms.cn^
-#||*.lan^
-#||apimobile.meituan.com^
 ||*-ad.byteimg.com^
 ||ecomuser.snssdk.com^
 ||free-lbv*.idouyinvod.com^
 ||sf3-ttcdn-tos.pstatp.com^
+||scc.bytedance.com^
+
+###pcdn
+||ctydoh.cn^
+
 ! 视频内容广告智能匹配引擎
 
 ||yingt.fun^
