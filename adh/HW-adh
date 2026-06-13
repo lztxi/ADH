@@ -1,5 +1,5 @@
 #||irisgw.cn^
-@@||app.blued.cn^$important
+@@||app.blued.cn^
 @@||h8.blued.cn^
 ||blued.cn^
 ||blued.com^
@@ -22,10 +22,11 @@
 ||ido.gepush.com^
 ||b-gtc.gepush.com^
 ||sdk.open.talk.gepush.com^
+@@||moments.irisgw.cn^
 
-||openinstall.com^$important
-||moments.irisgw.cn^$important
-||bidex.cn^$important
+||openinstall.com^
+||moments.irisgw.cn^
+||bidex.cn^
 
 
 ##抖音
@@ -36,7 +37,7 @@
 ||scc.bytedance.com^
 
 ###pcdn
-||ctydoh.cn^
+#||ctydoh.cn^
 
 #内容分发
 #||whoami.akamai.net^
@@ -126,6 +127,14 @@
 ||adsdk.vivo.com.cn^
 ||adsmind.ugdtimg.com^
 ||1rtb.net^
+||hdjad.com^
+||shunchangzhixing.com^
+||adx.pw^
+||baihemob.com^
+||shunchangzhixing.com^
+||bwton.com^
+||dashisx.com^
+||tobidad.cn^
 
 #晓晓优选
 ||ad.gameley.com^
