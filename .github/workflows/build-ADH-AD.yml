@@ -1,4 +1,4 @@
-name: ADH-广告订阅合并
+name: ADH-AD Build
 
 permissions:
   contents: write
@@ -10,11 +10,11 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "仅构建，不提交 release"
+        description: "Dry run mode - build only, no commit"
         required: false
         default: "false"
       force:
-        description: "忽略规则变化阈值"
+        description: "Force mode - ignore threshold check"
         required: false
         default: "false"
 
@@ -28,20 +28,20 @@ jobs:
       DEBUG: "false"
     
     steps:
-      - name: Checkout main (scripts & config)
+      - name: Checkout main branch
         uses: actions/checkout@v5
         with:
           ref: main
           path: main
       
-      - name: Checkout release (output branch)
+      - name: Checkout release branch
         uses: actions/checkout@v5
         with:
           ref: release
           path: release
           fetch-depth: 0
       
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.x"
@@ -61,28 +61,28 @@ jobs:
       
       - name: Verify output files
         run: |
-          echo "检查输出文件..."
+          echo "Checking output files..."
           ls -lh release/
           
           if [ ! -f "release/adguardhome.txt" ]; then
-            echo "::error::adguardhome.txt 未生成"
+            echo "::error::adguardhome.txt not generated"
             exit 1
           fi
           if [ ! -f "release/dnsmasq.conf" ]; then
-            echo "::error::dnsmasq.conf 未生成"
+            echo "::error::dnsmasq.conf not generated"
             exit 1
           fi
           if [ ! -f "release/clash.yaml" ]; then
-            echo "::error::clash.yaml 未生成"
+            echo "::error::clash.yaml not generated"
             exit 1
           fi
           if [ ! -f "release/README.md" ]; then
-            echo "::error::README.md 未生成"
+            echo "::error::README.md not generated"
             exit 1
           fi
-          echo "✅ 所有输出文件已生成"
+          echo "All output files generated successfully"
       
-      - name: Commit stats to main branch
+      - name: Commit stats to main
         if: env.DRY_RUN != 'true'
         working-directory: main
         run: |
@@ -94,7 +94,7 @@ jobs:
             git push origin main
           fi
       
-      - name: Commit & Push to release
+      - name: Commit to release
         if: env.DRY_RUN != 'true'
         working-directory: release
         run: |
@@ -102,7 +102,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add -A
-          git diff --cached --quiet && echo "No changes to commit, skipping" && exit 0
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
           git commit -m "auto: update rules $(date +'%Y-%m-%d %H:%M UTC')"
           git push origin release
       
