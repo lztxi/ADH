@@ -29,13 +29,13 @@ jobs:
     
     steps:
       - name: Checkout main branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
         with:
           ref: main
           path: main
       
       - name: Checkout release branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
         with:
           ref: release
           path: release
