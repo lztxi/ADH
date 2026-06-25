@@ -1,48 +1,75 @@
-# ADH-AD Blocklist
+# 🛡️ ADH-AD 广告域名规则
 
-Auto-merge multiple upstream ad domain rules
-Supports: AdGuard Home, dnsmasq, Clash
+> ✨ 自动合并多个上游广告域名规则
+> 🎯 让你的网络环境更清爽，远离广告骚扰！
 
-## Statistics
+## 📊 规则统计
 
-Updated: 2026-06-25 14:13 UTC
-Block domains: 314,584
-White domains: 848
-Upstream sources: 8
+| 项目 | 数量 |
+|------|------|
+| 🕐 **更新时间** | 2026-06-25 14:45 UTC |
+| 📦 **黑名单域名** | 314,584 个 |
+| 🎯 **白名单域名** | 848 个 |
+| 📋 **上游源数量** | 8 个 |
 
-## Download URLs
+## 📥 快速订阅
 
-### AdGuard Home
+### 1️⃣ AdGuard Home 用户
+```
 https://raw.githubusercontent.com/lztxi/ADH/release/adguardhome.txt
+```
 
-### dnsmasq
+### 2️⃣ dnsmasq 用户
+```
 https://raw.githubusercontent.com/lztxi/ADH/release/dnsmasq.conf
+```
 
-### Clash
+### 3️⃣ Clash 用户
+```
 https://raw.githubusercontent.com/lztxi/ADH/release/clash.yaml
+```
 
-## Upstream Sources
+## 📋 上游源详情
 
-| Name | Block | White | Total | Status |
-|------|-------|-------|-------|--------|
-| AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件） | 158,215 | 172 | 160,733 | OK |
-| AdGuard 中文 | 6,971 | 379 | 23,688 | OK |
-| EasyPrivacy（隐私保护 / 跟踪器） | 46,853 | 180 | 56,211 | OK |
-| I-Don't-Care-About-Cookies | 80 | 0 | 24,339 | OK |
-| anti-AD（中文区主要规则） | 96,866 | 105 | 97,075 | OK |
-| cjx-annoyance（弹窗 / 跳转 / 自我推广） | 197 | 1 | 1,861 | OK |
-| 大萌主（轻量去除色情 / 悬浮广告） | 4,502 | 11 | 5,889 | OK |
-| 秋风（适配路由器） | 900 | 0 | 916 | OK |
+| 名称 | 黑名单 | 白名单 | 状态 |
+|------|--------|--------|------|
+| AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件） | 158,215 | 172 | ✅ 正常 |
+| AdGuard 中文 | 6,971 | 379 | ✅ 正常 |
+| EasyPrivacy（隐私保护 / 跟踪器） | 46,853 | 180 | ✅ 正常 |
+| I-Don't-Care-About-Cookies | 80 | 0 | ✅ 正常 |
+| anti-AD（中文区主要规则） | 96,866 | 105 | ✅ 正常 |
+| cjx-annoyance（弹窗 / 跳转 / 自我推广） | 197 | 1 | ✅ 正常 |
+| 大萌主（轻量去除色情 / 悬浮广告） | 4,502 | 11 | ✅ 正常 |
+| 秋风（适配路由器） | 900 | 0 | ✅ 正常 |
 
-## Features
+## 🔧 使用指南
 
-- Auto-update twice daily (00:00, 12:00 UTC)
-- Multiple format support (AdGuard, dnsmasq, Clash)
-- Smart whitelist handling
-- Threshold monitoring
-- Parallel download for high performance
+### 🏠 AdGuard Home 用户
+1. 打开 AdGuard Home 设置 → 过滤器
+2. 添加自定义过滤规则列表
+3. 粘贴上述订阅地址即可 ✅
 
-## License
+### 📱 dnsmasq 用户
+将 dnsmasq.conf 放置到配置目录，重启服务生效 🔄
 
-Rules from upstream sources, copyright belongs to original authors
-Build script maintained by ADH project
+### 🌐 Clash 用户
+在配置文件中添加规则提供商配置即可 ⚙️
+
+## ✨ 特色功能
+
+- 🔥 **自动更新**：每日 00:00 和 12:00 UTC
+- 🎯 **多格式支持**：AdGuard + dnsmasq + Clash
+- 🛡️ **智能白名单**：自动处理上游规则
+- 📊 **变化监控**：超阈值自动回滚
+- 🚀 **高性能**：并行下载多源
+
+## 📜 许可证
+
+规则来自各上游源，版权归原作者所有
+构建脚本由 ADH 项目维护
+
+---
+
+💡 **小贴士**：推荐使用 AdGuard Home，配置最简单！
+
+🌟 觉得有用就给个 Star 吧！
