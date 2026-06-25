@@ -53,9 +53,34 @@ jobs:
           pip install requests pyyaml
       
       - name: Build rules
+        env:
+          OUTPUT_DIR: ${{ github.workspace }}/release
         run: |
           cd main
           python scripts/ADH-AD.py
+      
+      - name: Verify output files
+        run: |
+          echo "检查输出文件..."
+          ls -lh release/
+          
+          if [ ! -f "release/adguardhome.txt" ]; then
+            echo "::error::adguardhome.txt 未生成"
+            exit 1
+          fi
+          if [ ! -f "release/dnsmasq.conf" ]; then
+            echo "::error::dnsmasq.conf 未生成"
+            exit 1
+          fi
+          if [ ! -f "release/clash.yaml" ]; then
+            echo "::error::clash.yaml 未生成"
+            exit 1
+          fi
+          if [ ! -f "release/README.md" ]; then
+            echo "::error::README.md 未生成"
+            exit 1
+          fi
+          echo "✅ 所有输出文件已生成"
       
       - name: Commit stats to main branch
         if: env.DRY_RUN != 'true'
@@ -68,14 +93,6 @@ jobs:
             git diff --cached --quiet || git commit -m "chore: update ADH-AD stats $(date +'%Y-%m-%d %H:%M UTC')"
             git push origin main
           fi
-      
-      - name: Copy output files to release
-        if: env.DRY_RUN != 'true'
-        run: |
-          cp -f main/out/adguardhome.txt release/adguardhome.txt
-          cp -f main/out/dnsmasq.conf release/dnsmasq.conf
-          cp -f main/out/clash.yaml release/clash.yaml
-          cp -f main/out/README.md release/README.md
       
       - name: Commit & Push to release
         if: env.DRY_RUN != 'true'
@@ -90,15 +107,17 @@ jobs:
           git push origin release
       
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ADH-AD-rules
-          path: main/out/
+          path: release/
           retention-days: 7
   
   cleanup:
     needs: build
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Delete old workflow runs
         uses: Mattraks/delete-workflow-runs@v2
