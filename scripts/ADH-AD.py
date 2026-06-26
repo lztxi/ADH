@@ -449,12 +449,55 @@ def check_threshold(old_stats: dict, new_stats: dict, threshold_cfg: dict):
 # README generation - using simple string concatenation to avoid syntax issues
 
 def generate_readme(source_stats, old_stats, out_dir):
-    """生成漂亮的中文+Emoji README"""
+    """生成漂亮的中文+Emoji README（含总变化对比）"""
     info("生成 README.md...")
     
+    # ========== 计算本次统计 ==========
     total_block = sum(v.get("block_count", 0) for v in source_stats.values() if isinstance(v, dict))
     total_white = sum(v.get("white_count", 0) for v in source_stats.values() if isinstance(v, dict))
     
+    # ========== 计算上次统计 ==========
+    last_block = 0
+    last_white = 0
+    last_update = "首次运行"
+    
+    # 从 old_stats 提取上次数据
+    if isinstance(old_stats, dict):
+        # 优先使用新版统计格式
+        if "total_block" in old_stats:
+            last_block = old_stats.get("total_block", 0)
+            last_white = old_stats.get("total_white", 0)
+            last_update = old_stats.get("last_update", "未知时间")
+        # 兼容旧版统计格式
+        elif "sources" in old_stats:
+            sources = old_stats.get("sources", {})
+            last_block = sum(v.get("block_count", 0) for v in sources.values() if isinstance(v, dict))
+            last_white = sum(v.get("white_count", 0) for v in sources.values() if isinstance(v, dict))
+            last_update = old_stats.get("last_update", "未知时间")
+    
+    # ========== 计算变化 ==========
+    block_change = total_block - last_block
+    white_change = total_white - last_white
+    
+    # ========== 格式化变化显示 ==========
+    def format_change(change, total):
+        """格式化变化文本"""
+        if total == 0:
+            return "首次统计"
+        if change == 0:
+            return "无变化"
+        
+        percent = (change / total) * 100
+        
+        if change > 0:
+            return f"📈 +{change} (+{percent:.2f}%)"
+        else:
+            return f"📉 {change} ({percent:.2f}%)"
+    
+    block_change_text = format_change(block_change, last_block)
+    white_change_text = format_change(white_change, last_white)
+    
+    # ========== 构建 README 内容 ==========
     lines = []
     
     # 标题和简介
@@ -464,92 +507,40 @@ def generate_readme(source_stats, old_stats, out_dir):
     lines.append("> 🎯 让你的网络环境更清爽，远离广告骚扰！")
     lines.append("")
     
-    # 统计表格
+    # 统计表格（含对比）
     lines.append("## 📊 规则统计")
     lines.append("")
-    lines.append("| 项目 | 数量 |")
-    lines.append("|------|------|")
+    lines.append("| 项目 | 本次数量 | 上次数量 | 变化 |")
+    lines.append("|------|----------|----------|------|")
+    
+    # 时间对比
     update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M UTC")
-    lines.append(f"| 🕐 **更新时间** | {update_time} |")
-    lines.append(f"| 📦 **黑名单域名** | {total_block:,} 个 |")
-    lines.append(f"| 🎯 **白名单域名** | {total_white:,} 个 |")
-    lines.append(f"| 📋 **上游源数量** | {len(source_stats)} 个 |")
+    last_time_display = last_update.split('T')[0] if 'T' in last_update else last_update
+    lines.append(f"| 🕐 **更新时间** | {update_time} | {last_time_display} | - |")
+    
+    # 黑名单对比
+    lines.append(f"| 📦 **黑名单域名** | {total_block:,} 个 | {last_block:,} 个 | {block_change_text} |")
+    
+    # 白名单对比
+    lines.append(f"| 🎯 **白名单域名** | {total_white:,} 个 | {last_white:,} 个 | {white_change_text} |")
+    
+    # 上游源数量（无对比）
+    lines.append(f"| 📋 **上游源数量** | {len(source_stats)} 个 | - | - |")
     lines.append("")
     
-    # 订阅地址
+    # ========== 变化提示（仅当变化较大时显示） ==========
+    if abs(block_change) > 100:
+        lines.append(f"💡 **变化提示**: 本次黑名单变化 {abs(block_change):,} 条规则")
+        if block_change > 0:
+            lines.append(f"   📈 新增屏蔽 {block_change:,} 个广告域名")
+        else:
+            lines.append(f"   📉 移除屏蔽 {abs(block_change):,} 个域名（可能已失效）")
+        lines.append("")
+    
+    # ========== 快速订阅 ==========
     lines.append("## 📥 快速订阅")
     lines.append("")
-    lines.append("### 1️⃣ AdGuard Home 用户")
-    lines.append("```")
-    lines.append(f"https://raw.githubusercontent.com/{GITHUB_REPO}/release/adguardhome.txt")
-    lines.append("```")
-    lines.append("")
-    lines.append("### 2️⃣ dnsmasq 用户")
-    lines.append("```")
-    lines.append(f"https://raw.githubusercontent.com/{GITHUB_REPO}/release/dnsmasq.conf")
-    lines.append("```")
-    lines.append("")
-    lines.append("### 3️⃣ Clash 用户")
-    lines.append("```")
-    lines.append(f"https://raw.githubusercontent.com/{GITHUB_REPO}/release/clash.yaml")
-    lines.append("```")
-    lines.append("")
-    
-    # 上游源表格
-    lines.append("## 📋 上游源详情")
-    lines.append("")
-    lines.append("| 名称 | 黑名单 | 白名单 | 状态 |")
-    lines.append("|------|--------|--------|------|")
-    
-    for name, stats in sorted(source_stats.items()):
-        if isinstance(stats, dict):
-            block_count = stats.get("block_count", 0)
-            white_count = stats.get("white_count", 0)
-            error_msg = stats.get("error", "")
-            status = "✅ 正常" if not error_msg else "❌ 失败"
-            lines.append(f"| {name} | {block_count:,} | {white_count:,} | {status} |")
-    
-    lines.append("")
-    
-    # 使用指南
-    lines.append("## 🔧 使用指南")
-    lines.append("")
-    lines.append("### 🏠 AdGuard Home 用户")
-    lines.append("1. 打开 AdGuard Home 设置 → 过滤器")
-    lines.append("2. 添加自定义过滤规则列表")
-    lines.append("3. 粘贴上述订阅地址即可 ✅")
-    lines.append("")
-    lines.append("### 📱 dnsmasq 用户")
-    lines.append("将 dnsmasq.conf 放置到配置目录，重启服务生效 🔄")
-    lines.append("")
-    lines.append("### 🌐 Clash 用户")
-    lines.append("在配置文件中添加规则提供商配置即可 ⚙️")
-    lines.append("")
-    
-    # 特色功能
-    lines.append("## ✨ 特色功能")
-    lines.append("")
-    lines.append("- 🔥 **自动更新**：每日 00:00 和 12:00 UTC")
-    lines.append("- 🎯 **多格式支持**：AdGuard + dnsmasq + Clash")
-    lines.append("- 🛡️ **智能白名单**：自动处理上游规则")
-    lines.append("- 📊 **变化监控**：超阈值自动回滚")
-    lines.append("- 🚀 **高性能**：并行下载多源")
-    lines.append("")
-    
-    # 许可证
-    lines.append("## 📜 许可证")
-    lines.append("")
-    lines.append("规则来自各上游源，版权归原作者所有")
-    lines.append("构建脚本由 ADH 项目维护")
-    lines.append("")
-    lines.append("---")
-    lines.append("")
-    lines.append("💡 **小贴士**：推荐使用 AdGuard Home，配置最简单！")
-    lines.append("")
-    lines.append("🌟 觉得有用就给个 Star 吧！")
-    
-    content = "\n".join(lines) + "\n"
-    write_file(out_dir / "README.md", content, "README")
+
 
 # Main function
 def main():
