@@ -130,40 +130,87 @@ def normalize_domain(domain: str) -> str:
     return domain.strip().lstrip(".")
 
 def parse_line(line: str) -> Tuple[Optional[str], bool]:
+    """解析规则，严格过滤以避免误杀"""
     try:
         line = line.strip()
         
-        if not line or line.startswith(("#", "!", "[")):
+        # 跳过空行和注释
+        if not line or line.startswith("#") or line.startswith("!") or line.startswith("["):
             return None, False
         
         is_whitelist = False
         
+        # 处理白名单
         if line.startswith("@@"):
             is_whitelist = True
             line = line[2:]
         
-        if line.startswith("||") and "^" in line:
-            match = re.match(r"^\|\|([^/\^]+)\^", line)
-            if match:
-                domain = normalize_domain(match.group(1))
-                if DOMAIN_RE.match(domain):
-                    return domain, is_whitelist
+        # 🚨 显式跳过 CSS 选择器规则（AdGuard 专用语法）
+        # ## 和 #?# 是 CSS 注入规则，不适合 DNS 屏蔽
+        if "##" in line or "#?#" in line:
+            debug(f"跳过 CSS 选择器规则：{line}")
+            return None, False
         
+        # 🚨 显式跳过包含多个域名的规则（逗号分隔）
+        # 例如：domain1.com,domain2.com##selector
+        if "," in line and ("##" in line or "#?#" in line):
+            debug(f"跳过多域名+CSS规则：{line}")
+            return None, False
+        
+        # 处理 AdGuard 格式 ||domain^
+        if line.startswith("||"):
+            content = line[2:]
+            
+            # 🚨 关键安全检查：跳过 URL 级屏蔽
+            if "/" in content:
+                debug(f"跳过 URL 规则（含路径）：{line}")
+                return None, False
+            
+            if "$" in content:
+                debug(f"跳过规则（含修饰符）：{line}")
+                return None, False
+            
+            # 提取域名
+            if "^" in content:
+                domain_part = content.split("^")[0]
+            else:
+                debug(f"跳过不规则格式：{line}")
+                return None, False
+            
+            domain = domain_part.strip().lstrip(".")
+            if DOMAIN_RE.match(domain):
+                return domain, is_whitelist
+            
+            return None, False
+        
+        # 处理 Hosts 格式
         parts = line.split()
         if len(parts) >= 2:
             if parts[0] in ("0.0.0.0", "127.0.0.1", "::"):
-                domain = normalize_domain(parts[1])
+                domain = parts[1].strip().lstrip(".")
                 if DOMAIN_RE.match(domain):
                     return domain, is_whitelist
         
-        domain = normalize_domain(line)
-        if DOMAIN_RE.match(domain):
+        # 🚨 纯域名格式（最严格的检查）
+        domain = line.strip().lstrip(".")
+        
+        # 多重安全检查
+        if (
+            "/" not in domain           # 不能有路径
+            and "$" not in domain       # 不能有修饰符
+            and "," not in domain       # 不能有逗号（多域名）
+            and "#" not in domain       # 不能有 CSS 选择器符号
+            and ":" not in domain       # 不能有端口或伪类
+            and DOMAIN_RE.match(domain) # 必须是合法域名
+        ):
             return domain, is_whitelist
         
         return None, False
+        
     except Exception as e:
-        debug(f"Failed to parse line: {line[:50]}, error: {e}")
+        debug(f"解析失败: {e}")
         return None, False
+
 
 # Source fetching
 def fetch_source_list(source: dict, session: requests.Session) -> Tuple[List[Tuple[str, bool]], dict]:
