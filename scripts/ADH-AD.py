@@ -130,7 +130,7 @@ def normalize_domain(domain: str) -> str:
     return domain.strip().lstrip(".")
 
 def parse_line(line: str) -> Tuple[Optional[str], bool]:
-    """解析规则，严格过滤以避免误杀"""
+    """解析规则，严格过滤整域规则（包括白名单）"""
     try:
         line = line.strip()
         
@@ -140,50 +140,61 @@ def parse_line(line: str) -> Tuple[Optional[str], bool]:
         
         is_whitelist = False
         
-        # 处理白名单
+        # ========== 处理白名单标记 ==========
         if line.startswith("@@"):
             is_whitelist = True
             line = line[2:]
         
-        # 🚨 显式跳过 CSS 选择器规则（AdGuard 专用语法）
-        # ## 和 #?# 是 CSS 注入规则，不适合 DNS 屏蔽
+        # ========== 显式跳过 CSS 选择器规则 ==========
         if "##" in line or "#?#" in line:
             debug(f"跳过 CSS 选择器规则：{line}")
             return None, False
         
-        # 🚨 显式跳过包含多个域名的规则（逗号分隔）
-        # 例如：domain1.com,domain2.com##selector
-        if "," in line and ("##" in line or "#?#" in line):
-            debug(f"跳过多域名+CSS规则：{line}")
-            return None, False
-        
-        # 处理 AdGuard 格式 ||domain^
+        # ========== 处理 AdGuard 格式 ||domain^ ==========
         if line.startswith("||"):
             content = line[2:]
             
-            # 🚨 关键安全检查：跳过 URL 级屏蔽
+            # 🚨 核心安全检查：必须是纯整域规则
+            
+            # 检查是否包含路径（URL级规则）
             if "/" in content:
-                debug(f"跳过 URL 规则（含路径）：{line}")
+                debug(f"跳过 URL 级规则（含路径）：{line}")
                 return None, False
             
+            # 检查是否包含修饰符（条件规则）
             if "$" in content:
-                debug(f"跳过规则（含修饰符）：{line}")
+                debug(f"跳过条件规则（含修饰符）：{line}")
                 return None, False
             
-            # 提取域名
+            # 检查是否包含通配符（非标准域名）
+            if "*" in content:
+                debug(f"跳过通配符规则：{line}")
+                return None, False
+            
+            # 🚨 关键检查：^ 后面不能有内容
+            # 正确的整域规则：||example.com^（^是最后内容）
+            # 错误提取的规则：||example.com^xxx（后面还有内容）
             if "^" in content:
-                domain_part = content.split("^")[0]
+                parts = content.split("^", 1)  # 只分割一次
+                domain_part = parts[0]
+                # 检查 ^ 后面是否还有内容
+                remaining = parts[1] if len(parts) > 1 else ""
+                if remaining.strip():
+                    debug(f"跳过非整域规则（^后还有内容）：{line}")
+                    return None, False
             else:
-                debug(f"跳过不规则格式：{line}")
+                # 没有 ^ 的 || 规则，跳过（无法确定边界）
+                debug(f"跳过无边界规则（缺少^）：{line}")
                 return None, False
             
+            # 验证域名格式
             domain = domain_part.strip().lstrip(".")
             if DOMAIN_RE.match(domain):
                 return domain, is_whitelist
             
             return None, False
         
-        # 处理 Hosts 格式
+        # ========== 处理 Hosts 格式 ==========
         parts = line.split()
         if len(parts) >= 2:
             if parts[0] in ("0.0.0.0", "127.0.0.1", "::"):
@@ -191,17 +202,18 @@ def parse_line(line: str) -> Tuple[Optional[str], bool]:
                 if DOMAIN_RE.match(domain):
                     return domain, is_whitelist
         
-        # 🚨 纯域名格式（最严格的检查）
+        # ========== 纯域名格式（最严格检查） ==========
         domain = line.strip().lstrip(".")
         
-        # 多重安全检查
+        # 必须是纯域名，不能包含任何特殊符号
         if (
-            "/" not in domain           # 不能有路径
-            and "$" not in domain       # 不能有修饰符
-            and "," not in domain       # 不能有逗号（多域名）
-            and "#" not in domain       # 不能有 CSS 选择器符号
-            and ":" not in domain       # 不能有端口或伪类
-            and DOMAIN_RE.match(domain) # 必须是合法域名
+            "/" not in domain           # 无路径
+            and "$" not in domain       # 无修饰符
+            and "," not in domain       # 无多域名
+            and "#" not in domain       # 无CSS符号
+            and ":" not in domain       # 无端口/伪类
+            and "*" not in domain       # 无通配符
+            and DOMAIN_RE.match(domain) # 合法域名格式
         ):
             return domain, is_whitelist
         
@@ -210,7 +222,6 @@ def parse_line(line: str) -> Tuple[Optional[str], bool]:
     except Exception as e:
         debug(f"解析失败: {e}")
         return None, False
-
 
 # Source fetching
 def fetch_source_list(source: dict, session: requests.Session) -> Tuple[List[Tuple[str, bool]], dict]:
