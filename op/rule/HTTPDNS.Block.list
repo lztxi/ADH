@@ -64,7 +64,7 @@ DOMAIN,httpdns.ocloud.oppomobile.com
 DOMAIN,httpdns.push.oppomobile.com
 # Tencent Cloud
 DOMAIN-SUFFIX,httpdns.pro
-IP-CIDR,119.29.29.98/32
+#IP-CIDR,119.29.29.98/32
 IP-CIDR,119.29.29.99/32
 # Volcengine
 DOMAIN,httpdns.volcengineapi.com
