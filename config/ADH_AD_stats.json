@@ -1,63 +1,63 @@
 {
-  "last_update": "2026-07-21T01:14:29.408884",
-  "total_block": 191259,
+  "last_update": "2026-07-21T13:08:04.609831",
+  "total_block": 191404,
   "total_white": 125,
   "sources": {
     "秋风（适配路由器）": {
       "url": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt",
-      "block_count": 900,
+      "block_count": 898,
       "white_count": 0,
-      "total_lines": 916,
-      "last_update": "2026-07-21T01:14:27.990180"
+      "total_lines": 914,
+      "last_update": "2026-07-21T13:08:03.658100"
     },
     "大萌主（轻量去除色情 / 悬浮广告）": {
       "url": "https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt",
       "block_count": 4495,
       "white_count": 4,
       "total_lines": 5895,
-      "last_update": "2026-07-21T01:14:28.051734"
+      "last_update": "2026-07-21T13:08:03.694055"
     },
     "cjx-annoyance（弹窗 / 跳转 / 自我推广）": {
       "url": "https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt",
       "block_count": 114,
       "white_count": 0,
       "total_lines": 1861,
-      "last_update": "2026-07-21T01:14:28.145717"
+      "last_update": "2026-07-21T13:08:03.809812"
     },
     "AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）": {
       "url": "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt",
-      "block_count": 157824,
+      "block_count": 157976,
       "white_count": 11,
-      "total_lines": 160368,
-      "last_update": "2026-07-21T01:14:28.349534"
+      "total_lines": 160520,
+      "last_update": "2026-07-21T13:08:03.977885"
     },
     "AdGuard 中文": {
       "url": "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt",
-      "block_count": 5870,
+      "block_count": 5875,
       "white_count": 11,
-      "total_lines": 23278,
-      "last_update": "2026-07-21T01:14:28.400987"
+      "total_lines": 23283,
+      "last_update": "2026-07-21T13:08:04.025668"
     },
     "EasyPrivacy（隐私保护 / 跟踪器）": {
       "url": "https://easylist.to/easylist/easyprivacy.txt",
-      "block_count": 42672,
+      "block_count": 42671,
       "white_count": 4,
       "total_lines": 56344,
-      "last_update": "2026-07-21T01:14:28.485636"
+      "last_update": "2026-07-21T13:08:04.196216"
     },
     "anti-AD（中文区主要规则）": {
       "url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt",
       "block_count": 93926,
       "white_count": 106,
       "total_lines": 94136,
-      "last_update": "2026-07-21T01:14:28.664930"
+      "last_update": "2026-07-21T13:08:04.296189"
     },
     "I-Don't-Care-About-Cookies": {
       "url": "https://www.i-dont-care-about-cookies.eu/abp/",
       "block_count": 80,
       "white_count": 0,
       "total_lines": 24339,
-      "last_update": "2026-07-21T01:14:29.214583"
+      "last_update": "2026-07-21T13:08:04.438724"
     }
   }
 }
