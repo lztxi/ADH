@@ -1,361 +1,497 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ADH-AD - AdGuard Home 广告拦截规则自动构建脚本
+ADH-AD: Ad Domain Merge Tool
 """
 
 import os
+import re
 import sys
 import json
-import re
-import argparse
-from datetime import datetime, timezone
+import time
+import datetime
+from pathlib import Path
+from typing import Dict, List, Set, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import yaml
 import requests
+import yaml
 
-# ============================================================
-# 路径常量
-# ============================================================
-CONFIG_FILE = "config/ADH-AD.yaml"
-STATS_FILE = "config/ADH_AD_stats.json"
-OUTPUT_DIR = "release"
+# Environment variables
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+DRY_RUN = os.getenv("DRY_RUN", "false").lower() == "true"
+FORCE_PASS = os.getenv("FORCE_PASS", "false").lower() == "true"
+GITHUB_REPO = os.getenv("GITHUB_REPOSITORY", "lztxi/ADH")
 
+# Path configuration
+BASE = Path(__file__).resolve().parent.parent
+CFG = BASE / "config" / "ADH-AD.yaml"
+
+output_dir_env = os.getenv("OUTPUT_DIR")
+if output_dir_env:
+    OUT = Path(output_dir_env).resolve()
+else:
+    OUT = BASE.parent / "release"
+
+STATS_FILE = BASE / "config" / "ADH_AD_stats.json"
+
+# Constants
+DNSMASQ_BLOCK_IP = "0.0.0.0"
+MAX_WORKERS = 5
 REQUEST_TIMEOUT = 30
 MAX_RETRIES = 3
-MAX_WORKERS = 5
-PARALLEL_THRESHOLD = 5
 
-# 需要跳过的规则模式
-SKIP_PATTERNS = [
-    re.compile(r'^##'),
-    re.compile(r'^#\$#'),
-    re.compile(r'^#@#'),
-    re.compile(r'^#%#'),
-    re.compile(r'\$.*~'),
-    re.compile(r'\$.*domain='),
-    re.compile(r'\$.*third-party'),
-    re.compile(r'\$.*popup'),
-    re.compile(r'\$.*script'),
-    re.compile(r'\$.*image'),
-    re.compile(r'\$.*xmlhttprequest'),
-    re.compile(r'\*'),
-    re.compile(r'/'),
-    re.compile(r'\?'),
-    re.compile(r'\$'),
-]
+DOMAIN_RE = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,}$", re.I)
 
-INVALID_DOMAINS = {
-    'localhost', 'localhost.localdomain', 'local', 'broadcasthost',
-    'ip6-localhost', 'ip6-loopback', 'ip6-localnet', 'ip6-mcastprefix',
-    'ip6-allnodes', 'ip6-allrouters', 'ip6-allhosts',
-    '0.0.0.0', '127.0.0.1', '255.255.255.255', '::1', 'ff00::0',
-    'ff02::1', 'ff02::2', 'ff02::3', 'fe80::1%lo0',
-}
+# Logging functions
+def log(level: str, msg: str):
+    timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}][{level}] {msg}")
 
+def debug(msg: str):
+    if DEBUG:
+        log("DEBUG", msg)
 
-# ============================================================
-# 工具函数
-# ============================================================
+def info(msg: str):
+    log("INFO", msg)
 
-def load_config():
-    """加载 config/ADH-AD.yaml"""
-    if not os.path.exists(CONFIG_FILE):
-        print(f"[ERROR] 配置文件不存在: {CONFIG_FILE}")
-        sys.exit(1)
-    with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    print(f"[CONFIG] 已加载: {CONFIG_FILE}")
-    return config
+def warn(msg: str):
+    log("WARN", msg)
 
+def error(msg: str):
+    log("ERROR", msg)
 
-def load_previous_stats():
-    """加载 config/ADH_AD_stats.json"""
-    if not os.path.exists(STATS_FILE):
-        print(f"[STATS] 未找到 {STATS_FILE}，跳过阈值检查")
-        return None
-    try:
-        with open(STATS_FILE, 'r', encoding='utf-8') as f:
-            stats = json.load(f)
-        print(f"[STATS] 已加载历史统计: {stats.get('timestamp', 'unknown')}")
-        return stats
-    except (json.JSONDecodeError, IOError) as e:
-        print(f"[WARN] 历史统计读取失败: {e}")
-        return None
-
-
-def save_stats(stats):
-    """保存统计到 config/ADH_AD_stats.json"""
-    os.makedirs(os.path.dirname(STATS_FILE), exist_ok=True)
-    with open(STATS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(stats, f, ensure_ascii=False, indent=2)
-    print(f"[STATS] 已保存: {STATS_FILE}")
-
-
-def is_valid_domain(domain):
-    """验证域名合法性"""
-    if not domain or len(domain) > 253:
-        return False
-    if domain in INVALID_DOMAINS:
-        return False
-    if domain.startswith('.') or domain.endswith('.'):
-        return False
-    if '..' in domain:
-        return False
-    pattern = re.compile(
-        r'^[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?'
-        r'(\.[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?)*'
-        r'\.[a-zA-Z]{2,}$'
+# HTTP session with retry
+def create_session() -> requests.Session:
+    session = requests.Session()
+    
+    from requests.adapters import HTTPAdapter
+    from urllib3.util.retry import Retry
+    
+    retry_strategy = Retry(
+        total=MAX_RETRIES,
+        backoff_factor=1,
+        status_forcelist=[500, 502, 503, 504],
+        allowed_methods=["HEAD", "GET", "OPTIONS"]
     )
-    return bool(pattern.match(domain))
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ADH-AD-Bot/1.0"
+    })
+    
+    return session
 
+# Load configuration
+def load_config(cfg_path: Path) -> dict:
+    try:
+        if not cfg_path.exists():
+            error(f"Config file not found: {cfg_path}")
+            raise FileNotFoundError(f"Config file not found: {cfg_path}")
+        
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            cfg = yaml.safe_load(f)
+        info(f"Loaded config file: {cfg_path}")
+        return cfg
+    except Exception as e:
+        error(f"Failed to load config: {e}")
+        raise
 
-def should_skip_rule(line):
-    """判断是否跳过该规则"""
-    stripped = line.strip()
-    if not stripped:
-        return True
-    for p in SKIP_PATTERNS:
-        if p.search(stripped):
-            return True
-    return False
+# Stats file handling
+def load_stats(stats_path: Path) -> dict:
+    if not stats_path.exists():
+        debug(f"Stats file not found: {stats_path}")
+        return {}
+    
+    try:
+        with open(stats_path, "r", encoding="utf-8") as f:
+            stats = json.load(f)
+        info(f"Loaded stats file: {stats_path}")
+        return stats
+    except Exception as e:
+        warn(f"Failed to load stats: {e}")
+        return {}
 
+def save_stats(stats_path: Path, stats: dict):
+    try:
+        stats_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(stats_path, "w", encoding="utf-8") as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+        info(f"Saved stats file: {stats_path}")
+    except Exception as e:
+        error(f"Failed to save stats: {e}")
+        raise
 
-# ============================================================
-# 下载模块
-# ============================================================
+# Domain parsing
+def normalize_domain(domain: str) -> str:
+    return domain.strip().lstrip(".")
 
-def download_source(url, name, retries=MAX_RETRIES):
-    """下载单个源，带重试"""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-    for attempt in range(1, retries + 1):
+def parse_line(line: str) -> Tuple[Optional[str], bool]:
+    """解析规则，严格过滤整域规则（包括白名单）"""
+    try:
+        line = line.strip()
+        
+        # 跳过空行和注释
+        if not line or line.startswith("#") or line.startswith("!") or line.startswith("["):
+            return None, False
+        
+        is_whitelist = False
+        
+        # ========== 处理白名单标记 ==========
+        if line.startswith("@@"):
+            is_whitelist = True
+            line = line[2:]
+        
+        # ========== 显式跳过 CSS 选择器规则 ==========
+        if "##" in line or "#?#" in line:
+            debug(f"跳过 CSS 选择器规则：{line}")
+            return None, False
+        
+        # ========== 处理 AdGuard 格式 ||domain^ ==========
+        if line.startswith("||"):
+            content = line[2:]
+            
+            # 🚨 核心安全检查：必须是纯整域规则
+            
+            # 检查是否包含路径（URL级规则）
+            if "/" in content:
+                debug(f"跳过 URL 级规则（含路径）：{line}")
+                return None, False
+            
+            # 检查是否包含修饰符（条件规则）
+            if "$" in content:
+                debug(f"跳过条件规则（含修饰符）：{line}")
+                return None, False
+            
+            # 检查是否包含通配符（非标准域名）
+            if "*" in content:
+                debug(f"跳过通配符规则：{line}")
+                return None, False
+            
+            # 🚨 关键检查：^ 后面不能有内容
+            # 正确的整域规则：||example.com^（^是最后内容）
+            # 错误提取的规则：||example.com^xxx（后面还有内容）
+            if "^" in content:
+                parts = content.split("^", 1)  # 只分割一次
+                domain_part = parts[0]
+                # 检查 ^ 后面是否还有内容
+                remaining = parts[1] if len(parts) > 1 else ""
+                if remaining.strip():
+                    debug(f"跳过非整域规则（^后还有内容）：{line}")
+                    return None, False
+            else:
+                # 没有 ^ 的 || 规则，跳过（无法确定边界）
+                debug(f"跳过无边界规则（缺少^）：{line}")
+                return None, False
+            
+            # 验证域名格式
+            domain = domain_part.strip().lstrip(".")
+            if DOMAIN_RE.match(domain):
+                return domain, is_whitelist
+            
+            return None, False
+        
+        # ========== 处理 Hosts 格式 ==========
+        parts = line.split()
+        if len(parts) >= 2:
+            if parts[0] in ("0.0.0.0", "127.0.0.1", "::"):
+                domain = parts[1].strip().lstrip(".")
+                if DOMAIN_RE.match(domain):
+                    return domain, is_whitelist
+        
+        # ========== 纯域名格式（最严格检查） ==========
+        domain = line.strip().lstrip(".")
+        
+        # 必须是纯域名，不能包含任何特殊符号
+        if (
+            "/" not in domain           # 无路径
+            and "$" not in domain       # 无修饰符
+            and "," not in domain       # 无多域名
+            and "#" not in domain       # 无CSS符号
+            and ":" not in domain       # 无端口/伪类
+            and "*" not in domain       # 无通配符
+            and DOMAIN_RE.match(domain) # 合法域名格式
+        ):
+            return domain, is_whitelist
+        
+        return None, False
+        
+    except Exception as e:
+        debug(f"解析失败: {e}")
+        return None, False
+
+# Source fetching
+def fetch_source_list(source: dict, session: requests.Session) -> Tuple[List[Tuple[str, bool]], dict]:
+    url = source.get("url", "")
+    name = source.get("name", url)
+    
+    info(f"Downloading: {name} <- {url}")
+    
+    try:
+        resp = session.get(url, timeout=REQUEST_TIMEOUT)
+        resp.raise_for_status()
+        
+        lines = resp.text.splitlines()
+        domains = []
+        block_count = 0
+        white_count = 0
+        
+        for line in lines:
+            try:
+                domain, is_whitelist = parse_line(line)
+                if domain:
+                    domains.append((domain, is_whitelist))
+                    if is_whitelist:
+                        white_count += 1
+                    else:
+                        block_count += 1
+            except Exception as e:
+                debug(f"Failed to process line: {e}")
+        
+        stats = {
+            "url": url,
+            "block_count": block_count,
+            "white_count": white_count,
+            "total_lines": len(lines),
+            "last_update": datetime.datetime.now().isoformat()
+        }
+        
+        return domains, stats
+        
+    except Exception as e:
+        error(f"Download failed [{name}]: {e}")
+        return [], {
+            "url": url,
+            "error": str(e),
+            "last_update": datetime.datetime.now().isoformat()
+        }
+
+def process_sources_parallel(sources: List[dict], old_stats: dict, max_workers: int = MAX_WORKERS) -> Tuple[Set[str], Set[str], dict]:
+    block_rules = set()
+    white_rules = set()
+    source_stats = {}
+    
+    session = create_session()
+    enabled_sources = [s for s in sources if s.get("enabled", True)]
+    
+    info(f"Starting parallel download of {len(enabled_sources)} sources (workers: {max_workers})")
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_source = {
+            executor.submit(fetch_source_list, source, session): source 
+            for source in enabled_sources
+        }
+        
+        for future in as_completed(future_to_source):
+            source = future_to_source[future]
+            name = source.get("name", source.get("url", "unknown"))
+            
+            try:
+                domains, stats = future.result()
+                
+                for domain, is_whitelist in domains:
+                    if is_whitelist:
+                        white_rules.add(domain)
+                    else:
+                        block_rules.add(domain)
+                
+                source_stats[name] = stats
+                info(f"Parsed [{name}]: block {stats.get('block_count', 0)}, white {stats.get('white_count', 0)}")
+                
+            except Exception as e:
+                error(f"Failed to process source [{name}]: {e}")
+                source_stats[name] = {
+                    "url": source.get("url", ""),
+                    "error": str(e),
+                    "last_update": datetime.datetime.now().isoformat()
+                }
+    
+    return block_rules, white_rules, source_stats
+
+def process_sources_sequential(sources: List[dict], old_stats: dict) -> Tuple[Set[str], Set[str], dict]:
+    block_rules = set()
+    white_rules = set()
+    source_stats = {}
+    
+    session = create_session()
+    
+    for source in sources:
+        if not source.get("enabled", True):
+            debug(f"Skipping disabled source: {source.get('name', source.get('url'))}")
+            continue
+        
+        name = source.get("name", source.get("url", "unknown"))
+        
         try:
-            print(f"[DOWNLOAD] ({attempt}/{retries}) {name}")
-            resp = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
-            resp.raise_for_status()
-            resp.encoding = resp.apparent_encoding or 'utf-8'
-            print(f"[DOWNLOAD] ✅ {name} - {len(resp.text):,} bytes")
-            return resp.text
-        except requests.RequestException as e:
-            print(f"[WARN] ({attempt}/{retries}) {name} 失败: {e}")
-            if attempt == retries:
-                print(f"[ERROR] ❌ {name} 最终失败，跳过")
-                return None
-    return None
-
-
-def download_all_sources(sources):
-    """下载所有源"""
-    results = {}
-    if len(sources) > PARALLEL_THRESHOLD:
-        print(f"[DOWNLOAD] 并行下载 (workers={MAX_WORKERS})")
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(download_source, src['url'], src['name']): src
-                for src in sources
+            domains, stats = fetch_source_list(source, session)
+            
+            for domain, is_whitelist in domains:
+                if is_whitelist:
+                    white_rules.add(domain)
+                else:
+                    block_rules.add(domain)
+            
+            source_stats[name] = stats
+            info(f"Parsed [{name}]: block {stats.get('block_count', 0)}, white {stats.get('white_count', 0)}")
+            
+        except Exception as e:
+            error(f"Failed to process source [{name}]: {e}")
+            source_stats[name] = {
+                "url": source.get("url", ""),
+                "error": str(e),
+                "last_update": datetime.datetime.now().isoformat()
             }
-            for future in as_completed(futures):
-                src = futures[future]
-                try:
-                    content = future.result()
-                    if content:
-                        results[src['name']] = content
-                except Exception as e:
-                    print(f"[ERROR] {src['name']} 异常: {e}")
-    else:
-        for src in sources:
-            content = download_source(src['url'], src['name'])
-            if content:
-                results[src['name']] = content
+    
+    return block_rules, white_rules, source_stats
 
-    print(f"[DOWNLOAD] 完成: {len(results)}/{len(sources)}")
-    return results
-
-
-# ============================================================
-# 解析模块
-# ============================================================
-
-def parse_rules(content, source_name):
-    """解析规则内容，返回 (block_set, whitelist_set)"""
-    block_domains = set()
-    whitelist_domains = set()
-
-    for line in content.splitlines():
-        stripped = line.strip()
-
-        if not stripped:
-            continue
-
-        # 注释行
-        if stripped.startswith('!'):
-            continue
-        if stripped.startswith('#') and not stripped.startswith('0.0.0.0') and not stripped.startswith('127.0.0.1'):
-            continue
-
-        # 白名单: @@||domain^
-        if stripped.startswith('@@'):
-            domain = stripped[2:].strip('|').strip('^').strip()
-            if is_valid_domain(domain):
-                whitelist_domains.add(domain.lower())
-            continue
-
-        # AdGuard 格式: ||domain^
-        if stripped.startswith('||'):
-            domain = stripped[2:].rstrip('^').rstrip('/')
-            if should_skip_rule(domain):
-                continue
-            if is_valid_domain(domain):
-                block_domains.add(domain.lower())
-            continue
-
-        # Hosts 格式: 0.0.0.0 domain / 127.0.0.1 domain
-        if stripped.startswith('0.0.0.0') or stripped.startswith('127.0.0.1'):
-            parts = stripped.split()
-            if len(parts) >= 2:
-                domain = parts[1].strip().lower()
-                if is_valid_domain(domain):
-                    block_domains.add(domain)
-            continue
-
-        # 跳过特殊规则
-        if should_skip_rule(stripped):
-            continue
-
-        # 纯域名
-        domain = stripped.lower().rstrip('.')
-        if is_valid_domain(domain):
-            block_domains.add(domain)
-
-    return block_domains, whitelist_domains
-
-
-# ============================================================
-# 阈值检查
-# ============================================================
-
-def check_threshold(current_total, prev_stats, thresholds, force=False):
-    """检查变化是否在阈值内"""
-    if force:
-        print("[THRESHOLD] 强制模式，跳过")
-        return True
-    if not prev_stats:
-        print("[THRESHOLD] 无历史数据，跳过")
-        return True
-
-    prev_total = prev_stats.get("total_block", 0)
-    if prev_total == 0:
-        print("[THRESHOLD] 历史为 0，跳过")
-        return True
-
-    change_pct = (current_total - prev_total) / prev_total * 100
-    max_inc = thresholds.get("max_increase", 15)
-    max_dec = thresholds.get("max_decrease", 10)
-
-    print(f"[THRESHOLD] 上次: {prev_total:,} | 本次: {current_total:,} | 变化: {change_pct:+.2f}%")
-
-    if change_pct > max_inc:
-        print(f"[ERROR] ❌ 增长 {change_pct:.2f}% 超过 +{max_inc}%，终止！")
-        return False
-    if change_pct < -max_dec:
-        print(f"[ERROR] ❌ 减少 {abs(change_pct):.2f}% 超过 -{max_dec}%，终止！")
-        return False
-
-    print(f"[THRESHOLD] ✅ 在允许范围内")
-    return True
-
-
-# ============================================================
-# 输出模块（全部写入 release/ 目录）
-# ============================================================
-
-def generate_adguardhome(block_domains, whitelist_domains):
-    """生成 release/adguardhome.txt"""
-    filepath = os.path.join(OUTPUT_DIR, "adguardhome.txt")
+# Output generation
+def write_file(path: Path, content: str, name: str = ""):
     try:
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write("! Title: ADH-AD 广告拦截规则\n")
-            f.write(f"! Updated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n")
-            f.write(f"! Total: {len(block_domains):,} block + {len(whitelist_domains):,} whitelist\n")
-            f.write("!\n")
-            for domain in sorted(whitelist_domains):
-                f.write(f"@@||{domain}^\n")
-            for domain in sorted(block_domains):
-                f.write(f"||{domain}^\n")
-        print(f"[OUTPUT] ✅ adguardhome.txt ({len(block_domains):,} + {len(whitelist_domains):,})")
-    except IOError as e:
-        print(f"[ERROR] adguardhome.txt 写入失败: {e}")
-        open(filepath, 'w').close()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+        file_size = path.stat().st_size
+        info(f"Saved file [{name or path.name}]: {file_size:,} bytes")
+    except Exception as e:
+        error(f"Failed to write file [{path}]: {e}")
+        raise
 
-
-def generate_dnsmasq(block_domains):
-    """生成 release/dnsmasq.conf"""
-    filepath = os.path.join(OUTPUT_DIR, "dnsmasq.conf")
+def generate_outputs(block_rules: Set[str], white_rules: Set[str], out_dir: Path):
+    info(f"Generating output files to: {out_dir}")
+    
     try:
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(f"# ADH-AD dnsmasq 规则\n")
-            f.write(f"# Updated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n")
-            f.write(f"# Total: {len(block_domains):,}\n#\n")
-            for domain in sorted(block_domains):
-                f.write(f"address=/{domain}/0.0.0.0\n")
-        print(f"[OUTPUT] ✅ dnsmasq.conf ({len(block_domains):,})")
-    except IOError as e:
-        print(f"[ERROR] dnsmasq.conf 写入失败: {e}")
-        open(filepath, 'w').close()
+        out_dir.mkdir(parents=True, exist_ok=True)
+        info(f"Output directory created: {out_dir}")
+    except Exception as e:
+        error(f"Failed to create output directory: {e}")
+        raise
+    
+    total_block = len(block_rules)
+    total_white = len(white_rules)
+    info(f"Block domains: {total_block:,}, White domains: {total_white:,}")
+    
+    sorted_block = sorted(block_rules)
+    sorted_white = sorted(white_rules)
+    
+    # AdGuard Home
+    info("Generating AdGuard Home rules...")
+    adguardhome_lines = []
+    adguardhome_lines.append("! Title: ADH-AD Blocklist")
+    adguardhome_lines.append(f"! Updated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M UTC')}")
+    adguardhome_lines.append(f"! Total rules: {total_block + total_white:,}")
+    adguardhome_lines.append(f"! Block rules: {total_block:,}")
+    adguardhome_lines.append(f"! White rules: {total_white:,}")
+    adguardhome_lines.append(f"! Source: https://github.com/{GITHUB_REPO}")
+    adguardhome_lines.append("!")
+    
+    for domain in sorted_white:
+        adguardhome_lines.append(f"@@||{domain}^")
+    
+    for domain in sorted_block:
+        adguardhome_lines.append(f"||{domain}^")
+    
+    write_file(out_dir / "adguardhome.txt", "\n".join(adguardhome_lines) + "\n", "adguardhome")
+    
+    # dnsmasq
+    info("Generating dnsmasq rules...")
+    dnsmasq_lines = []
+    for domain in sorted_block:
+        dnsmasq_lines.append(f"address=/{domain}/{DNSMASQ_BLOCK_IP}")
+    
+    write_file(out_dir / "dnsmasq.conf", "\n".join(dnsmasq_lines) + "\n", "dnsmasq")
+    
+    # Clash
+    info("Generating Clash rules...")
+    clash_lines = [
+        "payload:",
+        f"  # Updated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M UTC')}",
+        f"  # Total domains: {total_block:,}",
+        f"  # Source: https://github.com/{GITHUB_REPO}",
+        ""
+    ]
+    
+    for domain in sorted_block:
+        clash_lines.append(f"  - '{domain}'")
+    
+    write_file(out_dir / "clash.yaml", "\n".join(clash_lines) + "\n", "clash")
 
+# Threshold check
+def check_threshold(old_stats: dict, new_stats: dict, threshold_cfg: dict):
+    if FORCE_PASS:
+        info("Force mode enabled, skipping threshold check")
+        return
+    
+    max_inc = threshold_cfg.get("max_increase", 0.2)
+    max_dec = threshold_cfg.get("max_decrease", 0.2)
+    
+    old_total = sum(
+        v.get("block_count", 0) 
+        for v in old_stats.values() 
+        if isinstance(v, dict)
+    )
+    
+    new_total = sum(
+        v.get("block_count", 0) 
+        for v in new_stats.values() 
+        if isinstance(v, dict)
+    )
+    
+    if old_total == 0:
+        info("First run, skipping threshold check")
+        return
+    
+    delta = new_total - old_total
+    ratio = delta / old_total
+    
+    info(f"Rule change: {old_total:,} -> {new_total:,} (delta: {delta:+,}, ratio: {ratio:+.2%})")
+    
+    if ratio > max_inc:
+        error(f"Rule increase exceeds threshold: {ratio:.2%} > {max_inc:.2%}")
+        sys.exit(1)
+    
+    if ratio < -max_dec:
+        error(f"Rule decrease exceeds threshold: {ratio:.2%} < -{max_dec:.2%}")
+        sys.exit(1)
+    
+    info(f"Threshold check passed (range: -{max_dec:.0%} ~ +{max_inc:.0%})")
 
-def generate_clash(block_domains):
-    """生成 release/clash.yaml"""
-    filepath = os.path.join(OUTPUT_DIR, "clash.yaml")
-    try:
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(f"# ADH-AD Clash 规则\n")
-            f.write(f"# Updated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n")
-            f.write(f"# Total: {len(block_domains):,}\n")
-            f.write("payload:\n")
-            for domain in sorted(block_domains):
-                f.write(f"  - '+.{domain}'\n")
-        print(f"[OUTPUT] ✅ clash.yaml ({len(block_domains):,})")
-    except IOError as e:
-        print(f"[ERROR] clash.yaml 写入失败: {e}")
-        open(filepath, 'w').close()
+# README generation - using simple string concatenation to avoid syntax issues
 
-
-def generate_readme(stats, prev_stats, sources_config):
+def generate_readme(output_dir, stats, prev_stats, sources_config):
     """
-    生成 release/README.md 统计报告
-    【修复】补全源详情表格 + 添加文件写入
+    生成 README.md 统计报告并写入文件
     """
+    from datetime import datetime, timezone
+
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     total_block = stats.get("total_block", 0)
     total_whitelist = stats.get("total_whitelist", 0)
     source_stats = stats.get("sources", {})
 
-    # 计算与上次的变化量
+    # ========== 计算变化量 ==========
     change_block = ""
     change_whitelist = ""
     if prev_stats:
         prev_block = prev_stats.get("total_block", 0)
-        prev_wl = prev_stats.get("total_whitelist", 0)
-        diff_b = total_block - prev_block
-        diff_w = total_whitelist - prev_wl
-        if diff_b > 0:
-            change_block = f" (📈 +{diff_b:,})"
-        elif diff_b < 0:
-            change_block = f" (📉 {diff_b:,})"
+        prev_whitelist = prev_stats.get("total_whitelist", 0)
+        diff_block = total_block - prev_block
+        diff_whitelist = total_whitelist - prev_whitelist
+        if diff_block > 0:
+            change_block = f" (📈 +{diff_block:,})"
+        elif diff_block < 0:
+            change_block = f" (📉 {diff_block:,})"
         else:
             change_block = " (➡️ 无变化)"
-        if diff_w > 0:
-            change_whitelist = f" (📈 +{diff_w:,})"
-        elif diff_w < 0:
-            change_whitelist = f" (📉 {diff_w:,})"
+        if diff_whitelist > 0:
+            change_whitelist = f" (📈 +{diff_whitelist:,})"
+        elif diff_whitelist < 0:
+            change_whitelist = f" (📉 {diff_whitelist:,})"
         else:
             change_whitelist = " (➡️ 无变化)"
 
-    # 构建 Markdown
+    # ========== 构建 Markdown 内容 ==========
     lines = []
     lines.append("# 🛡️ ADH-AD 广告拦截规则")
     lines.append("")
@@ -367,8 +503,8 @@ def generate_readme(stats, prev_stats, sources_config):
     lines.append("")
     lines.append("## 📊 规则统计")
     lines.append("")
-    lines.append("| 指标 | 数量 |")
-    lines.append("|------|------|")
+    lines.append(f"| 指标 | 数量 |")
+    lines.append(f"|------|------|")
     lines.append(f"| 🚫 拦截规则 | **{total_block:,}**{change_block} |")
     lines.append(f"| ✅ 白名单规则 | **{total_whitelist:,}**{change_whitelist} |")
     lines.append(f"| 📦 规则源数量 | **{len(source_stats)}** |")
@@ -380,17 +516,21 @@ def generate_readme(stats, prev_stats, sources_config):
     lines.append("| # | 规则源 | 拦截规则 | 白名单 | 占比 |")
     lines.append("|---|--------|----------|--------|------|")
 
+    # 按拦截数降序排列
     sorted_sources = sorted(
         source_stats.items(),
         key=lambda x: x[1].get("block", 0),
         reverse=True
     )
+
     for idx, (name, data) in enumerate(sorted_sources, 1):
-        b = data.get("block", 0)
-        w = data.get("whitelist", 0)
-        pct = (b / total_block * 100) if total_block > 0 else 0
-        medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(idx, str(idx))
-        lines.append(f"| {medal} | {name} | {b:,} | {w:,} | {pct:.1f}% |")
+        block_count = data.get("block", 0)
+        wl_count = data.get("whitelist", 0)
+        pct = (block_count / total_block * 100) if total_block > 0 else 0
+        medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(idx, f"{idx}")
+        lines.append(
+            f"| {medal} | {name} | {block_count:,} | {wl_count:,} | {pct:.1f}% |"
+        )
 
     lines.append("")
     lines.append("> ⚠️ 各源占比之和可能 > 100%，因为存在跨源重复域名，最终已去重。")
@@ -401,117 +541,156 @@ def generate_readme(stats, prev_stats, sources_config):
     lines.append("")
     lines.append("| 文件 | 格式 | 用途 |")
     lines.append("|------|------|------|")
-    lines.append("| `adguardhome.txt` | AdGuard Home | 导入 AdGuard Home 自定义过滤规则 |")
-    lines.append("| `dnsmasq.conf` | dnsmasq | OpenWrt / Pi-hole 等路由器 |")
-    lines.append("| `clash.yaml` | Clash | Clash / Meta 代理客户端 |")
+    lines.append("| `adguardhome.txt` | AdGuard Home | 直接导入 AdGuard Home 自定义过滤规则 |")
+    lines.append("| `dnsmasq.conf` | dnsmasq | 适用于 OpenWrt / Pi-hole 等路由器 |")
+    lines.append("| `clash.yaml` | Clash | 适用于 Clash / Meta 代理客户端 |")
     lines.append("")
     lines.append("---")
     lines.append("")
-    lines.append(f"*本文件由 ADH-AD 自动生成 · {now}*")
+    lines.append("## 🔗 订阅地址")
+    lines.append("")
+    lines.append("```")
+    lines.append("# AdGuard Home")
+    lines.append("https://raw.githubusercontent.com/<OWNER>/<REPO>/release/adguardhome.txt")
+    lines.append("")
+    lines.append("# dnsmasq")
+    lines.append("https://raw.githubusercontent.com/<OWNER>/<REPO>/release/dnsmasq.conf")
+    lines.append("")
+    lines.append("# Clash")
+    lines.append("https://raw.githubusercontent.com/<OWNER>/<REPO>/release/clash.yaml")
+    lines.append("```")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append(f"*本文件由 [ADH-AD](https://github.com/<OWNER>/<REPO>) 自动生成 · {now}*")
     lines.append("")
 
     content = "\n".join(lines)
 
-    # ✅ 关键修复：写入 release/README.md
-    readme_path = os.path.join(OUTPUT_DIR, "README.md")
-    try:
-        with open(readme_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"[OUTPUT] ✅ README.md ({len(content):,} bytes)")
-    except IOError as e:
-        print(f"[ERROR] README.md 写入失败: {e}")
-        open(readme_path, 'w').close()
+    # ========== ✅ 关键修复：写入文件 ==========
+    readme_path = os.path.join(output_dir, "README.md")
+    with open(readme_path, "w", encoding="utf-8") as f:
+        f.write(content)
 
+    print(f"[README] 已生成: {readme_path} ({len(content)} bytes)")
     return readme_path
 
-
-# ============================================================
-# 主流程
-# ============================================================
-
+# Main function
 def main():
-    parser = argparse.ArgumentParser(description="ADH-AD 规则构建器")
-    parser.add_argument('--dry-run', action='store_true', help='仅构建不提交')
-    parser.add_argument('--force', action='store_true', help='跳过阈值检查')
-    args = parser.parse_args()
-
-    print("=" * 60)
-    print("  ADH-AD 广告拦截规则构建器")
-    print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
-    print("=" * 60)
-
-    # 1. 加载配置 config/ADH-AD.yaml
-    config = load_config()
-    sources = config.get("sources", [])
-    thresholds = config.get("thresholds", {"max_increase": 15, "max_decrease": 10})
-
-    if not sources:
-        print("[ERROR] 无规则源！")
-        sys.exit(1)
-
-    # 2. 加载历史统计 config/ADH_AD_stats.json
-    prev_stats = load_previous_stats()
-
-    # 3. 下载
-    downloaded = download_all_sources(sources)
-    if not downloaded:
-        print("[ERROR] 所有源下载失败！")
-        sys.exit(1)
-
-    # 4. 解析
-    print("\n[PARSE] 开始解析...")
-    all_block = set()
-    all_whitelist = set()
-    source_stats = {}
-
-    for src in sources:
-        name = src.get("name", src.get("url", "unknown"))
-        content = downloaded.get(name)
-        if not content:
-            print(f"[PARSE] ⚠️ {name} 无内容，跳过")
-            source_stats[name] = {"block": 0, "whitelist": 0}
-            continue
-        block, whitelist = parse_rules(content, name)
-        source_stats[name] = {"block": len(block), "whitelist": len(whitelist)}
-        all_block.update(block)
-        all_whitelist.update(whitelist)
-        print(f"[PARSE] {name}: {len(block):,} 拦截 / {len(whitelist):,} 白名单")
-
-    # 白名单优先
-    all_block -= all_whitelist
-    print(f"\n[RESULT] 去重后: {len(all_block):,} 拦截 / {len(all_whitelist):,} 白名单")
-
-    # 5. 阈值检查
-    if not check_threshold(len(all_block), prev_stats, thresholds, force=args.force):
-        sys.exit(1)
-
-    # 6. 构建统计
-    current_stats = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "total_block": len(all_block),
-        "total_whitelist": len(all_whitelist),
+    start_time = time.time()
+    
+    info("=" * 60)
+    info("ADH-AD Ad Domain Merge Tool Started")
+    info("=" * 60)
+    info(f"Working directory: {BASE}")
+    info(f"Config file: {CFG}")
+    info(f"Output directory: {OUT}")
+    info(f"Stats file: {STATS_FILE}")
+    info(f"Mode: {'DRY RUN' if DRY_RUN else 'PRODUCTION'}")
+    info(f"Force mode: {'enabled' if FORCE_PASS else 'disabled'}")
+    info("=" * 60)
+    
+    try:
+        OUT.mkdir(parents=True, exist_ok=True)
+        info(f"Output directory created: {OUT}")
+    except Exception as e:
+        error(f"Failed to create output directory: {e}")
+        raise
+    
+    try:
+        cfg = load_config(CFG)
+        sources = cfg.get("sources", [])
+        threshold_cfg = cfg.get("threshold", {})
+        info(f"Loaded {len(sources)} upstream sources")
+    except Exception as e:
+        error(f"Failed to load config: {e}")
+        generate_outputs(set(), set(), OUT)
+        generate_readme({}, {}, OUT)
+        raise
+    
+    old_stats = load_stats(STATS_FILE)
+    
+    try:
+        if len(sources) > 5:
+            info("Using parallel download mode")
+            block_rules, white_rules, source_stats = process_sources_parallel(sources, old_stats)
+        else:
+            info("Using sequential download mode")
+            block_rules, white_rules, source_stats = process_sources_sequential(sources, old_stats)
+        
+        info(f"Parsing complete: block {len(block_rules):,}, white {len(white_rules):,}")
+    except Exception as e:
+        error(f"Failed to process upstream sources: {e}")
+        block_rules = set()
+        white_rules = set()
+        source_stats = {}
+    
+    try:
+        check_threshold(old_stats, source_stats, threshold_cfg)
+    except SystemExit:
+        raise
+    except Exception as e:
+        warn(f"Threshold check exception: {e}")
+    
+    try:
+        generate_outputs(block_rules, white_rules, OUT)
+    except Exception as e:
+        error(f"Failed to generate output files: {e}")
+        raise
+    
+    try:
+        generate_readme(source_stats, old_stats, OUT)
+    except Exception as e:
+        warn(f"Failed to generate README: {e}")
+    
+    new_stats = {
+        "last_update": datetime.datetime.now().isoformat(),
+        "total_block": len(block_rules),
+        "total_white": len(white_rules),
         "sources": source_stats
     }
-
-    # 7. 输出到 release/ 目录
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    print(f"\n[OUTPUT] 输出目录: {OUTPUT_DIR}/")
-
-    generate_adguardhome(all_block, all_whitelist)
-    generate_dnsmasq(all_block)
-    generate_clash(all_block)
-    generate_readme(current_stats, prev_stats, sources)
-
-    # 8. 保存统计到 config/ADH_AD_stats.json
-    if not args.dry_run:
-        save_stats(current_stats)
+    
+    if not DRY_RUN:
+        try:
+            save_stats(STATS_FILE, new_stats)
+        except Exception as e:
+            warn(f"Failed to save stats: {e}")
     else:
-        print("[DRY-RUN] 跳过统计保存")
-
-    print("\n" + "=" * 60)
-    print("  ✅ 构建完成！")
-    print("=" * 60)
-
+        info("DRY RUN mode, skipping stats save")
+    
+    elapsed_time = time.time() - start_time
+    info("=" * 60)
+    info("Build complete!")
+    info(f"Time elapsed: {elapsed_time:.2f} seconds")
+    info(f"Block domains: {len(block_rules):,}")
+    info(f"White domains: {len(white_rules):,}")
+    info(f"Upstream sources: {len(source_stats)}")
+    info("=" * 60)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        warn("User interrupted")
+        sys.exit(130)
+    except SystemExit:
+        raise
+    except Exception as e:
+        error(f"Program exception: {e}")
+        if DEBUG:
+            import traceback
+            traceback.print_exc()
+        
+        try:
+            OUT.mkdir(parents=True, exist_ok=True)
+            if not (OUT / "adguardhome.txt").exists():
+                write_file(OUT / "adguardhome.txt", "! Error occurred during build", "error-file")
+            if not (OUT / "dnsmasq.conf").exists():
+                write_file(OUT / "dnsmasq.conf", "# Error occurred during build", "error-file")
+            if not (OUT / "clash.yaml").exists():
+                write_file(OUT / "clash.yaml", "payload: # Error occurred during build", "error-file")
+            if not (OUT / "README.md").exists():
+                write_file(OUT / "README.md", "# Error occurred", "error-file")
+        except Exception as inner_e:
+            error(f"Failed to create error files: {inner_e}")
+        sys.exit(1)
