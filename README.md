@@ -5,71 +5,42 @@
 
 ## 📊 规则统计
 
-| 项目 | 数量 |
-|------|------|
-| 🕐 **更新时间** | 2026-06-26 09:29 UTC |
-| 📦 **黑名单域名** | 310,545 个 |
-| 🎯 **白名单域名** | 318 个 |
-| 📋 **上游源数量** | 8 个 |
+| 项目 | 本次数量 | 上次数量 | 变化 |
+|------|----------|----------|------|
+| 🕐 **更新时间** | 2026-08-04 09:06 UTC | 2026-08-04 | - |
+| 📦 **黑名单域名** | 312,001 个 | 195,095 个 | 📈 +116906 (+59.92%) |
+| 🎯 **白名单域名** | 136 个 | 125 个 | 📈 +11 (+8.80%) |
+| 📋 **上游源数量** | 8 个 | - | - |
+
+💡 **变化提示**: 本次黑名单变化 116,906 条规则
+   📈 新增屏蔽 116,906 个广告域名
 
 ## 📥 快速订阅
 
-### 1️⃣ AdGuard Home 用户
-```
-https://raw.githubusercontent.com/lztxi/ADH/release/adguardhome.txt
-```
+将以下链接复制到对应软件的订阅中即可使用：
 
-### 2️⃣ dnsmasq 用户
-```
-https://raw.githubusercontent.com/lztxi/ADH/release/dnsmasq.conf
-```
+| 格式 | 订阅链接 |
+|------|----------|
+| AdGuard Home | `https://raw.githubusercontent.com/lztxi/ADH/release/adguardhome.txt` |
+| dnsmasq | `https://raw.githubusercontent.com/lztxi/ADH/release/dnsmasq.conf` |
+| Clash | `https://raw.githubusercontent.com/lztxi/ADH/release/clash.yaml` |
 
-### 3️⃣ Clash 用户
-```
-https://raw.githubusercontent.com/lztxi/ADH/release/clash.yaml
-```
+## 📋 上游规则源
 
-## 📋 上游源详情
-
-| 名称 | 黑名单 | 白名单 | 状态 |
-|------|--------|--------|------|
-| AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件） | 158,484 | 172 | ✅ 正常 |
-| AdGuard 中文 | 6,380 | 33 | ✅ 正常 |
-| EasyPrivacy（隐私保护 / 跟踪器） | 42,613 | 4 | ✅ 正常 |
-| I-Don't-Care-About-Cookies | 80 | 0 | ✅ 正常 |
-| anti-AD（中文区主要规则） | 97,476 | 105 | ✅ 正常 |
-| cjx-annoyance（弹窗 / 跳转 / 自我推广） | 120 | 0 | ✅ 正常 |
-| 大萌主（轻量去除色情 / 悬浮广告） | 4,492 | 4 | ✅ 正常 |
-| 秋风（适配路由器） | 900 | 0 | ✅ 正常 |
-
-## 🔧 使用指南
-
-### 🏠 AdGuard Home 用户
-1. 打开 AdGuard Home 设置 → 过滤器
-2. 添加自定义过滤规则列表
-3. 粘贴上述订阅地址即可 ✅
-
-### 📱 dnsmasq 用户
-将 dnsmasq.conf 放置到配置目录，重启服务生效 🔄
-
-### 🌐 Clash 用户
-在配置文件中添加规则提供商配置即可 ⚙️
-
-## ✨ 特色功能
-
-- 🔥 **自动更新**：每日 00:00 和 12:00 UTC
-- 🎯 **多格式支持**：AdGuard + dnsmasq + Clash
-- 🛡️ **智能白名单**：自动处理上游规则
-- 📊 **变化监控**：超阈值自动回滚
-- 🚀 **高性能**：并行下载多源
-
-## 📜 许可证
-
-规则来自各上游源，版权归原作者所有
-构建脚本由 ADH 项目维护
+| 名称 | 拦截 | 白名单 | 总行数 |
+|------|------|--------|--------|
+| 秋风（适配路由器） | 898 | 0 | 914 |
+| AdGuard 中文 | 6,014 | 11 | 23,439 |
+| cjx-annoyance（弹窗 / 跳转 / 自我推广） | 114 | 0 | 1,861 |
+| EasyPrivacy（隐私保护 / 跟踪器） | 42,732 | 4 | 56,437 |
+| 大萌主（轻量去除色情 / 悬浮广告） | 4,495 | 4 | 5,896 |
+| AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件） | 161,723 | 11 | 164,274 |
+| anti-AD（中文区主要规则） | 95,945 | 106 | 96,155 |
+| I-Don't-Care-About-Cookies | 80 | 0 | 24,339 |
 
 ---
 
-💡 **小贴士**：推荐使用 AdGuard Home，配置最简单！
+🔄 **自动更新**：每 12 小时通过 GitHub Actions 自动构建
+⏰ **最近构建时间**：2026-08-04 09:06 UTC
+📦 **项目地址**：[GitHub](https://github.com/lztxi/ADH)
 
-🌟 觉得有用就给个 Star 吧！
