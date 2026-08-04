@@ -11,7 +11,7 @@ import json
 import time
 import datetime
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Optional
+from typing import List, Set, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
@@ -126,9 +126,6 @@ def save_stats(stats_path: Path, stats: dict):
         raise
 
 # Domain parsing
-def normalize_domain(domain: str) -> str:
-    return domain.strip().lstrip(".")
-
 def parse_line(line: str) -> Tuple[Optional[str], bool]:
     """解析规则，严格过滤整域规则（包括白名单）"""
     try:
@@ -269,7 +266,7 @@ def fetch_source_list(source: dict, session: requests.Session) -> Tuple[List[Tup
             "last_update": datetime.datetime.now().isoformat()
         }
 
-def process_sources_parallel(sources: List[dict], old_stats: dict, max_workers: int = MAX_WORKERS) -> Tuple[Set[str], Set[str], dict]:
+def process_sources_parallel(sources: List[dict], max_workers: int = MAX_WORKERS) -> Tuple[Set[str], Set[str], dict]:
     block_rules = set()
     white_rules = set()
     source_stats = {}
@@ -308,42 +305,6 @@ def process_sources_parallel(sources: List[dict], old_stats: dict, max_workers: 
                     "error": str(e),
                     "last_update": datetime.datetime.now().isoformat()
                 }
-    
-    return block_rules, white_rules, source_stats
-
-def process_sources_sequential(sources: List[dict], old_stats: dict) -> Tuple[Set[str], Set[str], dict]:
-    block_rules = set()
-    white_rules = set()
-    source_stats = {}
-    
-    session = create_session()
-    
-    for source in sources:
-        if not source.get("enabled", True):
-            debug(f"Skipping disabled source: {source.get('name', source.get('url'))}")
-            continue
-        
-        name = source.get("name", source.get("url", "unknown"))
-        
-        try:
-            domains, stats = fetch_source_list(source, session)
-            
-            for domain, is_whitelist in domains:
-                if is_whitelist:
-                    white_rules.add(domain)
-                else:
-                    block_rules.add(domain)
-            
-            source_stats[name] = stats
-            info(f"Parsed [{name}]: block {stats.get('block_count', 0)}, white {stats.get('white_count', 0)}")
-            
-        except Exception as e:
-            error(f"Failed to process source [{name}]: {e}")
-            source_stats[name] = {
-                "url": source.get("url", ""),
-                "error": str(e),
-                "last_update": datetime.datetime.now().isoformat()
-            }
     
     return block_rules, white_rules, source_stats
 
@@ -418,7 +379,7 @@ def generate_outputs(block_rules: Set[str], white_rules: Set[str], out_dir: Path
     write_file(out_dir / "clash.yaml", "\n".join(clash_lines) + "\n", "clash")
 
 # Threshold check
-def check_threshold(old_stats: dict, new_stats: dict, threshold_cfg: dict):
+def check_threshold(old_stats: dict, new_total: int, threshold_cfg: dict):
     if FORCE_PASS:
         info("Force mode enabled, skipping threshold check")
         return
@@ -426,17 +387,14 @@ def check_threshold(old_stats: dict, new_stats: dict, threshold_cfg: dict):
     max_inc = threshold_cfg.get("max_increase", 0.2)
     max_dec = threshold_cfg.get("max_decrease", 0.2)
     
-    old_total = sum(
-        v.get("block_count", 0) 
-        for v in old_stats.values() 
-        if isinstance(v, dict)
-    )
-    
-    new_total = sum(
-        v.get("block_count", 0) 
-        for v in new_stats.values() 
-        if isinstance(v, dict)
-    )
+    # 从 old_stats 提取上次去重后总数
+    old_total = 0
+    if isinstance(old_stats, dict):
+        if "total_block" in old_stats:
+            old_total = old_stats.get("total_block", 0)
+        elif "sources" in old_stats:
+            sources = old_stats.get("sources", {})
+            old_total = sum(v.get("block_count", 0) for v in sources.values() if isinstance(v, dict))
     
     if old_total == 0:
         info("First run, skipping threshold check")
@@ -459,13 +417,13 @@ def check_threshold(old_stats: dict, new_stats: dict, threshold_cfg: dict):
 
 # README generation - using simple string concatenation to avoid syntax issues
 
-def generate_readme(source_stats, old_stats, out_dir):
+def generate_readme(block_rules: Set[str], white_rules: Set[str], source_stats: dict, old_stats: dict, out_dir: Path):
     """生成漂亮的中文+Emoji README（含总变化对比）"""
     info("生成 README.md...")
     
-    # ========== 计算本次统计 ==========
-    total_block = sum(v.get("block_count", 0) for v in source_stats.values() if isinstance(v, dict))
-    total_white = sum(v.get("white_count", 0) for v in source_stats.values() if isinstance(v, dict))
+    # ========== 本次统计（去重后真实数量）==========
+    total_block = len(block_rules)
+    total_white = len(white_rules)
     
     # ========== 计算上次统计 ==========
     last_block = 0
@@ -582,7 +540,7 @@ def generate_readme(source_stats, old_stats, out_dir):
     lines.append("")
     lines.append(f"🔄 **自动更新**：每 12 小时通过 GitHub Actions 自动构建")
     lines.append(f"⏰ **最近构建时间**：{update_time}")
-    lines.append(f"📦 **项目地址**：[GitHub]({f'https://github.com/{GITHUB_REPO}'})")
+    lines.append(f"📦 **项目地址**：[GitHub](https://github.com/{GITHUB_REPO})")
     lines.append("")
 
     # ========== 写入文件 ==========
@@ -619,18 +577,14 @@ def main():
     except Exception as e:
         error(f"Failed to load config: {e}")
         generate_outputs(set(), set(), OUT)
-        generate_readme({}, {}, OUT)
+        generate_readme(set(), set(), {}, {}, OUT)
         raise
     
     old_stats = load_stats(STATS_FILE)
     
     try:
-        if len(sources) > 5:
-            info("Using parallel download mode")
-            block_rules, white_rules, source_stats = process_sources_parallel(sources, old_stats)
-        else:
-            info("Using sequential download mode")
-            block_rules, white_rules, source_stats = process_sources_sequential(sources, old_stats)
+        info("Using parallel download mode")
+        block_rules, white_rules, source_stats = process_sources_parallel(sources)
         
         info(f"Parsing complete: block {len(block_rules):,}, white {len(white_rules):,}")
     except Exception as e:
@@ -640,7 +594,7 @@ def main():
         source_stats = {}
     
     try:
-        check_threshold(old_stats, source_stats, threshold_cfg)
+        check_threshold(old_stats, len(block_rules), threshold_cfg)
     except SystemExit:
         raise
     except Exception as e:
@@ -653,7 +607,7 @@ def main():
         raise
     
     try:
-        generate_readme(source_stats, old_stats, OUT)
+        generate_readme(block_rules, white_rules, source_stats, old_stats, OUT)
     except Exception as e:
         warn(f"Failed to generate README: {e}")
     
@@ -708,3 +662,4 @@ if __name__ == "__main__":
         except Exception as inner_e:
             error(f"Failed to create error files: {inner_e}")
         sys.exit(1)
+        
