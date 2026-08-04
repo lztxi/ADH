@@ -459,121 +459,135 @@ def check_threshold(old_stats: dict, new_stats: dict, threshold_cfg: dict):
 
 # README generation - using simple string concatenation to avoid syntax issues
 
-def generate_readme(output_dir, stats, prev_stats, sources_config):
-    """
-    生成 README.md 统计报告并写入文件
-    """
-    from datetime import datetime, timezone
-
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    total_block = stats.get("total_block", 0)
-    total_whitelist = stats.get("total_whitelist", 0)
-    source_stats = stats.get("sources", {})
-
-    # ========== 计算变化量 ==========
-    change_block = ""
-    change_whitelist = ""
-    if prev_stats:
-        prev_block = prev_stats.get("total_block", 0)
-        prev_whitelist = prev_stats.get("total_whitelist", 0)
-        diff_block = total_block - prev_block
-        diff_whitelist = total_whitelist - prev_whitelist
-        if diff_block > 0:
-            change_block = f" (📈 +{diff_block:,})"
-        elif diff_block < 0:
-            change_block = f" (📉 {diff_block:,})"
+def generate_readme(source_stats, old_stats, out_dir):
+    """生成漂亮的中文+Emoji README（含总变化对比）"""
+    info("生成 README.md...")
+    
+    # ========== 计算本次统计 ==========
+    total_block = sum(v.get("block_count", 0) for v in source_stats.values() if isinstance(v, dict))
+    total_white = sum(v.get("white_count", 0) for v in source_stats.values() if isinstance(v, dict))
+    
+    # ========== 计算上次统计 ==========
+    last_block = 0
+    last_white = 0
+    last_update = "首次运行"
+    
+    # 从 old_stats 提取上次数据
+    if isinstance(old_stats, dict):
+        # 优先使用新版统计格式
+        if "total_block" in old_stats:
+            last_block = old_stats.get("total_block", 0)
+            last_white = old_stats.get("total_white", 0)
+            last_update = old_stats.get("last_update", "未知时间")
+        # 兼容旧版统计格式
+        elif "sources" in old_stats:
+            sources = old_stats.get("sources", {})
+            last_block = sum(v.get("block_count", 0) for v in sources.values() if isinstance(v, dict))
+            last_white = sum(v.get("white_count", 0) for v in sources.values() if isinstance(v, dict))
+            last_update = old_stats.get("last_update", "未知时间")
+    
+    # ========== 计算变化 ==========
+    block_change = total_block - last_block
+    white_change = total_white - last_white
+    
+    # ========== 格式化变化显示 ==========
+    def format_change(change, total):
+        """格式化变化文本"""
+        if total == 0:
+            return "首次统计"
+        if change == 0:
+            return "无变化"
+        
+        percent = (change / total) * 100
+        
+        if change > 0:
+            return f"📈 +{change} (+{percent:.2f}%)"
         else:
-            change_block = " (➡️ 无变化)"
-        if diff_whitelist > 0:
-            change_whitelist = f" (📈 +{diff_whitelist:,})"
-        elif diff_whitelist < 0:
-            change_whitelist = f" (📉 {diff_whitelist:,})"
-        else:
-            change_whitelist = " (➡️ 无变化)"
-
-    # ========== 构建 Markdown 内容 ==========
+            return f"📉 {change} ({percent:.2f}%)"
+    
+    block_change_text = format_change(block_change, last_block)
+    white_change_text = format_change(white_change, last_white)
+    
+    # ========== 构建 README 内容 ==========
     lines = []
-    lines.append("# 🛡️ ADH-AD 广告拦截规则")
+    
+    # 标题和简介
+    lines.append("# 🛡️ ADH-AD 广告域名规则")
     lines.append("")
-    lines.append("> 由 GitHub Actions 自动构建，每日 00:00 / 12:00 UTC 更新")
+    lines.append("> ✨ 自动合并多个上游广告域名规则")
+    lines.append("> 🎯 让你的网络环境更清爽，远离广告骚扰！")
     lines.append("")
-    lines.append(f"**最后更新：** {now}")
-    lines.append("")
-    lines.append("---")
-    lines.append("")
+    
+    # 统计表格（含对比）
     lines.append("## 📊 规则统计")
     lines.append("")
-    lines.append(f"| 指标 | 数量 |")
-    lines.append(f"|------|------|")
-    lines.append(f"| 🚫 拦截规则 | **{total_block:,}**{change_block} |")
-    lines.append(f"| ✅ 白名单规则 | **{total_whitelist:,}**{change_whitelist} |")
-    lines.append(f"| 📦 规则源数量 | **{len(source_stats)}** |")
+    lines.append("| 项目 | 本次数量 | 上次数量 | 变化 |")
+    lines.append("|------|----------|----------|------|")
+    
+    # 时间对比
+    update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M UTC")
+    last_time_display = last_update.split('T')[0] if 'T' in last_update else last_update
+    lines.append(f"| 🕐 **更新时间** | {update_time} | {last_time_display} | - |")
+    
+    # 黑名单对比
+    lines.append(f"| 📦 **黑名单域名** | {total_block:,} 个 | {last_block:,} 个 | {block_change_text} |")
+    
+    # 白名单对比
+    lines.append(f"| 🎯 **白名单域名** | {total_white:,} 个 | {last_white:,} 个 | {white_change_text} |")
+    
+    # 上游源数量（无对比）
+    lines.append(f"| 📋 **上游源数量** | {len(source_stats)} 个 | - | - |")
     lines.append("")
+    
+    # ========== 变化提示（仅当变化较大时显示） ==========
+    if abs(block_change) > 100:
+        lines.append(f"💡 **变化提示**: 本次黑名单变化 {abs(block_change):,} 条规则")
+        if block_change > 0:
+            lines.append(f"   📈 新增屏蔽 {block_change:,} 个广告域名")
+        else:
+            lines.append(f"   📉 移除屏蔽 {abs(block_change):,} 个域名（可能已失效）")
+        lines.append("")
+    
+    # ========== 快速订阅 ==========
+    lines.append("## 📥 快速订阅")
+    lines.append("")
+    lines.append("将以下链接复制到对应软件的订阅中即可使用：")
+    lines.append("")
+    lines.append("| 格式 | 订阅链接 |")
+    lines.append("|------|----------|")
+    lines.append(f"| AdGuard Home | `https://raw.githubusercontent.com/{GITHUB_REPO}/release/adguardhome.txt` |")
+    lines.append(f"| dnsmasq | `https://raw.githubusercontent.com/{GITHUB_REPO}/release/dnsmasq.conf` |")
+    lines.append(f"| Clash | `https://raw.githubusercontent.com/{GITHUB_REPO}/release/clash.yaml` |")
+    lines.append("")
+
+    # ========== 上游规则源明细 ==========
+    lines.append("## 📋 上游规则源")
+    lines.append("")
+    lines.append("| 名称 | 拦截 | 白名单 | 总行数 |")
+    lines.append("|------|------|--------|--------|")
+
+    for name, stats in source_stats.items():
+        if isinstance(stats, dict) and "error" not in stats:
+            block_cnt = stats.get("block_count", 0)
+            white_cnt = stats.get("white_count", 0)
+            total_lines = stats.get("total_lines", 0)
+            lines.append(f"| {name} | {block_cnt:,} | {white_cnt:,} | {total_lines:,} |")
+        elif isinstance(stats, dict) and "error" in stats:
+            lines.append(f"| {name} | ❌ 获取失败 | - | - |")
+
+    lines.append("")
+
+    # ========== 页脚 ==========
     lines.append("---")
     lines.append("")
-    lines.append("## 📋 各规则源详情")
-    lines.append("")
-    lines.append("| # | 规则源 | 拦截规则 | 白名单 | 占比 |")
-    lines.append("|---|--------|----------|--------|------|")
-
-    # 按拦截数降序排列
-    sorted_sources = sorted(
-        source_stats.items(),
-        key=lambda x: x[1].get("block", 0),
-        reverse=True
-    )
-
-    for idx, (name, data) in enumerate(sorted_sources, 1):
-        block_count = data.get("block", 0)
-        wl_count = data.get("whitelist", 0)
-        pct = (block_count / total_block * 100) if total_block > 0 else 0
-        medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(idx, f"{idx}")
-        lines.append(
-            f"| {medal} | {name} | {block_count:,} | {wl_count:,} | {pct:.1f}% |"
-        )
-
-    lines.append("")
-    lines.append("> ⚠️ 各源占比之和可能 > 100%，因为存在跨源重复域名，最终已去重。")
-    lines.append("")
-    lines.append("---")
-    lines.append("")
-    lines.append("## 📁 输出文件")
-    lines.append("")
-    lines.append("| 文件 | 格式 | 用途 |")
-    lines.append("|------|------|------|")
-    lines.append("| `adguardhome.txt` | AdGuard Home | 直接导入 AdGuard Home 自定义过滤规则 |")
-    lines.append("| `dnsmasq.conf` | dnsmasq | 适用于 OpenWrt / Pi-hole 等路由器 |")
-    lines.append("| `clash.yaml` | Clash | 适用于 Clash / Meta 代理客户端 |")
-    lines.append("")
-    lines.append("---")
-    lines.append("")
-    lines.append("## 🔗 订阅地址")
-    lines.append("")
-    lines.append("```")
-    lines.append("# AdGuard Home")
-    lines.append("https://raw.githubusercontent.com/<OWNER>/<REPO>/release/adguardhome.txt")
-    lines.append("")
-    lines.append("# dnsmasq")
-    lines.append("https://raw.githubusercontent.com/<OWNER>/<REPO>/release/dnsmasq.conf")
-    lines.append("")
-    lines.append("# Clash")
-    lines.append("https://raw.githubusercontent.com/<OWNER>/<REPO>/release/clash.yaml")
-    lines.append("```")
-    lines.append("")
-    lines.append("---")
-    lines.append("")
-    lines.append(f"*本文件由 [ADH-AD](https://github.com/<OWNER>/<REPO>) 自动生成 · {now}*")
+    lines.append(f"🔄 **自动更新**：每 12 小时通过 GitHub Actions 自动构建")
+    lines.append(f"⏰ **最近构建时间**：{update_time}")
+    lines.append(f"📦 **项目地址**：[GitHub]({f'https://github.com/{GITHUB_REPO}'})")
     lines.append("")
 
-    content = "\n".join(lines)
+    # ========== 写入文件 ==========
+    write_file(out_dir / "README.md", "\n".join(lines) + "\n", "README")
 
-    # ========== ✅ 关键修复：写入文件 ==========
-    readme_path = os.path.join(output_dir, "README.md")
-    with open(readme_path, "w", encoding="utf-8") as f:
-        f.write(content)
-
-    print(f"[README] 已生成: {readme_path} ({len(content)} bytes)")
-    return readme_path
 
 # Main function
 def main():
