@@ -62,11 +62,31 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r main/scripts/requirements.txt
 
+      - name: Verify script layout
+        run: |
+          set -euo pipefail
+          echo "=== 工作区布局 ==="
+          ls -la "$GITHUB_WORKSPACE"
+          echo
+          echo "main/scripts:"
+          ls -la "$GITHUB_WORKSPACE/main/scripts"
+          # 提前给出明确报错，避免后面出现 "No such file or directory"
+          if [ ! -f "$GITHUB_WORKSPACE/main/scripts/ADH-AD.py" ]; then
+            echo "::error::main/scripts/ADH-AD.py 不存在，请确认 main 分支是否包含该文件"
+            exit 1
+          fi
+          if [ ! -f "$GITHUB_WORKSPACE/main/config/ADH-AD.yaml" ]; then
+            echo "::error::main/config/ADH-AD.yaml 不存在，请确认 main 分支是否包含该配置"
+            exit 1
+          fi
+          echo "布局检查通过"
+
       - name: Parser self-test
         working-directory: main
         run: python scripts/ADH-AD.py --selftest
 
       - name: Build rules
+        working-directory: main
         env:
           OUTPUT_DIR: ${{ github.workspace }}/release
           DEBUG: "false"
