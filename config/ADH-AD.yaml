@@ -1,38 +1,69 @@
-# ================= 规则变化阈值 =================
-threshold:
-  max_increase: 0.15   # +15% 以上 fail CI
-  max_decrease: 0.10   # -10% 以上 fail CI
+# ============================================================
+# ADH-AD 规则聚合配置
+# ============================================================
 
-# ================= 上游规则源 =================
+threshold:
+  max_increase: 0.15        # 规则量上涨超过 15% → CI 失败（防上游被投毒）
+  max_decrease: 0.10        # 规则量下跌超过 10% → CI 失败（防上游集体失效）
+  min_total_domains: 80000  # 黑名单绝对下限，低于此值直接中止发布
+
+runtime:
+  max_workers: 5            # 并发抓取线程数
+  request_timeout: 30       # 单请求超时（秒）
+  max_retries: 3            # 单请求重试次数（含 429/5xx）
+  retry_backoff: 1.0        # 重试退避基数
+  min_domains_per_source: 100   # 单来源黑名单下限，低于此判定上游异常
+  min_success_ratio: 0.6    # 有效来源占比下限，低于此标记为降级构建
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ADH-AD-Bot/2.0"
+
+output:
+  adguard_expires: "2 days"    # AdGuard Home 订阅过期声明
+  dnsmasq_block_ip: "0.0.0.0"  # dnsmasq 屏蔽目标，可改为 "#" 或 "NXDOMAIN"
+
+# ============================================================
+# 上游规则源
+#   name        显示名，同时作为统计 key（改名会丢失历史对比）
+#   url         规则文件地址
+#   enabled     是否启用
+#   min_domains 覆盖该来源的黑名单数量下限（可选）
+# ============================================================
 sources:
   - name: AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）
     url: https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt
     enabled: true
+    min_domains: 150000
 
   - name: AdGuard 中文
     url: https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt
     enabled: true
+    min_domains: 4000
 
   - name: anti-AD（中文区主要规则）
     url: https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt
     enabled: true
+    min_domains: 80000
 
   - name: 秋风（适配路由器）
     url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt
     enabled: true
+    min_domains: 800
 
   - name: 大萌主（轻量去除色情 / 悬浮广告）
     url: https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt
     enabled: true
+    min_domains: 3000
 
   - name: EasyPrivacy（隐私保护 / 跟踪器）
     url: https://easylist.to/easylist/easyprivacy.txt
     enabled: true
+    min_domains: 35000
 
   - name: cjx-annoyance（弹窗 / 跳转 / 自我推广）
     url: https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt
     enabled: true
+    min_domains: 80
 
   - name: I-Don't-Care-About-Cookies
     url: https://www.i-dont-care-about-cookies.eu/abp/
     enabled: true
+    min_domains: 50
