@@ -4,108 +4,187 @@ permissions:
   contents: write
   actions: write
 
+# 同一时间只允许一个构建，避免并发 push 冲突
+concurrency:
+  group: adh-ad-build
+  cancel-in-progress: false
+
 on:
   schedule:
+    # 每天 00:00 和 12:00 UTC
     - cron: "0 0,12 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run mode - build only, no commit"
+        description: "Dry run - 只构建，不提交任何分支"
+        type: boolean
         required: false
-        default: "false"
+        default: false
       force:
-        description: "Force mode - ignore threshold check"
+        description: "Force - 跳过规则量阈值守卫"
+        type: boolean
         required: false
-        default: "false"
+        default: false
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    env:
-      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
-      FORCE_PASS: ${{ github.event.inputs.force || 'false' }}
-      GITHUB_REPOSITORY: ${{ github.repository }}
-      DEBUG: "false"
-    
+    # 说明: ubuntu-latest 将于 2026-10-19 起迁移到 Ubuntu 26.04。
+    # 本 job 负责向 release 分支发布用户订阅的产物，属生产流水线，
+    # 因此固定在当前镜像 ubuntu-24.04，避免 OS 迁移导致构建中断。
+    # 兼容性由下方 compat job 在 ubuntu-26.04 上持续验证。
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v6
         with:
           ref: main
           path: main
-      
+          persist-credentials: false
+
       - name: Checkout release branch
         uses: actions/checkout@v6
         with:
           ref: release
           path: release
-          fetch-depth: 0
-      
+          persist-credentials: false
+
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
-          cache: "pip"
-      
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: main/scripts/requirements.txt
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests pyyaml
-      
+          pip install -r main/scripts/requirements.txt
+
+      - name: Parser self-test
+        working-directory: main
+        run: python scripts/ADH-AD.py --selftest
+
       - name: Build rules
         env:
           OUTPUT_DIR: ${{ github.workspace }}/release
+          DEBUG: "false"
         run: |
-          cd main
-          python scripts/ADH-AD.py
-      
+          python scripts/ADH-AD.py \
+            --output "$OUTPUT_DIR" \
+            ${{ inputs.dry_run && '--dry-run' || '' }} \
+            ${{ inputs.force && '--force' || '' }}
+
       - name: Verify output files
         run: |
-          echo "Checking output files..."
+          set -euo pipefail
+          echo "=== 产物清单 ==="
           ls -lh release/
-          
-          if [ ! -f "release/adguardhome.txt" ]; then
-            echo "::error::adguardhome.txt not generated"
+
+          for f in adguardhome.txt dnsmasq.conf clash.yaml README.md; do
+            if [ ! -s "release/$f" ]; then
+              echo "::error::$f 缺失或为空"
+              exit 1
+            fi
+          done
+
+          # AdGuard Home 规则数下限（阈值下限 + 1%，留出余量）
+          MIN_RULES=80000
+          ADG=$(grep -cE '^\|\|' release/adguardhome.txt || true)
+          WHITE=$(grep -cE '^@@\|' release/adguardhome.txt || true)
+          DNSMASQ=$(grep -cE '^address=/' release/dnsmasq.conf || true)
+          CLASH=$(grep -cE "^  - DOMAIN," release/clash.yaml || true)
+
+          echo "adguardhome 黑名单: $ADG"
+          echo "adguardhome 白名单: $WHITE"
+          echo "dnsmasq 规则数:     $DNSMASQ"
+          echo "clash 规则数:       $CLASH"
+
+          for pair in "$ADG:adguardhome" "$DNSMASQ:dnsmasq" "$CLASH:clash"; do
+            n="${pair%%:*}"
+            name="${pair##*:}"
+            if [ "$n" -lt "$MIN_RULES" ]; then
+              echo "::error::$name 规则数 $n 低于下限 $MIN_RULES，疑似构建异常"
+              exit 1
+            fi
+          done
+
+          # 白名单必须使用精确匹配 @@|domain^，若出现 @@||domain^
+          # 会连带放行所有子域，导致子域黑名单失效
+          if grep -qE '^@@\|\|' release/adguardhome.txt; then
+            echo "::error::白名单使用了 @@||domain^，会影子覆盖子域黑名单，应为 @@|domain^"
             exit 1
           fi
-          if [ ! -f "release/dnsmasq.conf" ]; then
-            echo "::error::dnsmasq.conf not generated"
+
+          # 黑白名单不得出现同一域名
+          if comm -12 \
+              <(grep -oE '^\|\|[^|]+\^$' release/adguardhome.txt | sed 's/^||//;s/\^$//' | sort -u) \
+              <(grep -oE '^@@\|[^|]+\^$' release/adguardhome.txt | sed 's/^@@|//;s/\^$//' | sort -u) \
+              | grep -q .; then
+            echo "::error::存在域名同时出现在黑白名单中"
             exit 1
           fi
-          if [ ! -f "release/clash.yaml" ]; then
-            echo "::error::clash.yaml not generated"
+
+          # 黑名单不得包含非法字符
+          if grep -qE '^\|\|.*[/$*|,].*\^$' release/adguardhome.txt; then
+            echo "::error::adguardhome.txt 含非法规则语法"
             exit 1
           fi
-          if [ ! -f "release/README.md" ]; then
-            echo "::error::README.md not generated"
-            exit 1
-          fi
-          echo "All output files generated successfully"
-      
+
+          echo "=== 头部预览 ==="
+          head -20 release/adguardhome.txt
+          echo "=== 校验通过 ==="
+
       - name: Commit stats to main
-        if: env.DRY_RUN != 'true'
+        if: ${{ !inputs.dry_run }}
         working-directory: main
         run: |
+          if [ ! -f config/ADH_AD_stats.json ]; then
+            echo "统计文件不存在，跳过"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -f config/ADH_AD_stats.json ]; then
-            git add config/ADH_AD_stats.json
-            git diff --cached --quiet || git commit -m "chore: update ADH-AD stats $(date +'%Y-%m-%d %H:%M UTC')"
-            git push origin main
-          fi
-      
-      - name: Commit to release
-        if: env.DRY_RUN != 'true'
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git add config/ADH_AD_stats.json
+          git diff --cached --quiet && echo "统计无变化" && exit 0
+          git commit -m "chore: update ADH-AD stats $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push origin HEAD:main
+
+      - name: Commit rules to release
+        if: ${{ !inputs.dry_run }}
         working-directory: release
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           git add -A
-          git diff --cached --quiet && echo "No changes to commit" && exit 0
-          git commit -m "auto: update rules $(date +'%Y-%m-%d %H:%M UTC')"
-          git push origin release
-      
+          git diff --cached --quiet && echo "规则无变化" && exit 0
+          git commit -m "auto: update rules $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push origin HEAD:release
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## ADH-AD 构建摘要"
+            echo ""
+            if [ -f release/adguardhome.txt ]; then
+              echo "- AdGuard 黑名单：$(grep -cE '^\|\|' release/adguardhome.txt || echo 0)"
+              echo "- AdGuard 白名单（精确匹配）：$(grep -cE '^@@\|' release/adguardhome.txt || echo 0)"
+              echo "- dnsmasq 规则数：$(grep -cE '^address=/' release/dnsmasq.conf || echo 0)"
+              echo "- Clash 规则数：$(grep -cE '^  - DOMAIN,' release/clash.yaml || echo 0)"
+              echo ""
+              echo "### 校验和"
+              echo '```'
+              sha256sum release/adguardhome.txt release/dnsmasq.conf release/clash.yaml
+              echo '```'
+            else
+              echo "⚠️ 未生成产物，请查看上方日志"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -113,10 +192,64 @@ jobs:
           name: ADH-AD-rules
           path: release/
           retention-days: 7
-  
+          if-no-files-found: warn
+
+  # Ubuntu 26.04 兼容性验证
+  # ubuntu-latest 于 2026-10-19 ~ 11-19 迁移到 Ubuntu 26.04。
+  # 本 job 不发布任何内容，只验证构建流程在新镜像上可正常工作，
+  # 便于将来把 build job 切换到 ubuntu-26.04 时心中有数。
+  compat:
+    name: Compat check (Ubuntu 26.04)
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          path: main
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: main/scripts/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r main/scripts/requirements.txt
+
+      - name: Report runner info
+        run: |
+          echo "OS: ${{ runner.os }}"
+          echo "Image: ${{ runner.image }}"
+          python --version
+
+      - name: Parser self-test
+        working-directory: main
+        run: python scripts/ADH-AD.py --selftest
+
+      - name: Dry-run build
+        working-directory: main
+        run: python scripts/ADH-AD.py --output "$RUNNER_TEMP/out" --dry-run
+
+      - name: Verify output
+        run: |
+          set -euo pipefail
+          for f in adguardhome.txt dnsmasq.conf clash.yaml README.md; do
+            [ -s "$RUNNER_TEMP/out/$f" ] || { echo "::error::$f 缺失"; exit 1; }
+          done
+          echo "adguard rules: $(grep -cE '^\|\|' "$RUNNER_TEMP/out/adguardhome.txt")"
+          echo "dnsmasq rules: $(grep -cE '^address=/' "$RUNNER_TEMP/out/dnsmasq.conf")"
+          echo "Ubuntu 26.04 兼容性验证通过"
+
   cleanup:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: always()
     steps:
       - name: Delete old workflow runs
