@@ -101,6 +101,7 @@
 ||openinstall.com^
 ||moments.irisgw.cn^
 ||bidex.cn^
+||risk-fp-openapi.vivo.com.cn^
 @@||moments.irisgw.cn^
 
 #小红
@@ -231,6 +232,9 @@
 
 ###pcdn
 #||ctydoh.cn^
+||norglo.cn^
+||ydycdn.com^
+||180.76.76.200^
 
 ! 视频内容广告智能匹配引擎
 
@@ -282,7 +286,7 @@
 ||httpdns.meituan.com^
 
 #IDM
-||internetdownloadmanager.com^
+#||internetdownloadmanager.com^
 
 #米哈游
 ||ug-data.mihoyo.com^
@@ -401,4 +405,5 @@
 ||gamesapi2.aslk2018.com^
 ||cpc-service-square.iggrowth.cn^
 ||ssp.vivo.com.cn^
+||business-ad.cdn-go.cn^
 
