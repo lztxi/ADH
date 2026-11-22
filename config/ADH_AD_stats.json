@@ -1,6 +1,6 @@
 {
-  "last_update": "2026-11-21T18:18:39.271230+00:00",
-  "total_block": 224019,
+  "last_update": "2026-11-22T03:35:35.698323+00:00",
+  "total_block": 224182,
   "total_white": 127,
   "degraded": false,
   "failed_sources": [],
@@ -8,17 +8,17 @@
     "self_conflict": 6,
     "shadowed_subdomains": 9,
     "examples": [
-      "ad.jp -> a8cv.cpi.ad.jp",
-      "ad.jp -> metrics.iij.ad.jp",
-      "ad.jp -> a8cv.secure.sakura.ad.jp",
       "ads.microsoft.com -> smetric.ads.microsoft.com",
-      "ad.nl -> t.ad.nl"
+      "sax.sina.com.cn -> r.sax.sina.com.cn",
+      "ad.jp -> a8cv.cpi.ad.jp",
+      "ad.jp -> a8cv.secure.sakura.ad.jp",
+      "ad.jp -> metrics.iij.ad.jp"
     ]
   },
   "checksums": {
-    "adguardhome.txt": "1a011cb25765a0ac5f80c85ab1bbbe51f204e07aded9a43af0024b97c80b122d",
-    "dnsmasq.conf": "82042570a0ce610ad7e69c0df55ae8b35724e7fee60f573f8a741a855e68d1e9",
-    "clash.yaml": "fc4e4d1bf73a7c63f86e5820958314e882a8c17d0597f0ef19e4d3804acb29f4"
+    "adguardhome.txt": "701ea25603e91469f230e7cbbdea1e06850d8cc5fb804a861339b4835457739d",
+    "dnsmasq.conf": "d3ddf5e2b184257cdb57a98b68c386d66b8a7f1a1a063156a5aac65434101f18",
+    "clash.yaml": "13a082eca0b3166e3eb44c420d85670bd300bd751cd0ff8c9cd475a878f3cf07"
   },
   "sources": {
     "秋风（适配路由器）": {
@@ -28,8 +28,8 @@
       "block_count": 978,
       "white_count": 0,
       "total_lines": 996,
-      "elapsed_sec": 0.17,
-      "last_update": "2026-11-21T18:18:30.237436+00:00"
+      "elapsed_sec": 0.19,
+      "last_update": "2026-11-22T03:35:25.252441+00:00"
     },
     "大萌主（轻量去除色情 / 悬浮广告）": {
       "url": "https://raw.githubusercontent.com/damengzhu/banad/main/jiekouAD.txt",
@@ -38,8 +38,18 @@
       "block_count": 4515,
       "white_count": 4,
       "total_lines": 5939,
-      "elapsed_sec": 0.18,
-      "last_update": "2026-11-21T18:18:30.248789+00:00"
+      "elapsed_sec": 0.2,
+      "last_update": "2026-11-22T03:35:25.264934+00:00"
+    },
+    "AdGuard 中文": {
+      "url": "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt",
+      "http_status": 200,
+      "bytes": 755823,
+      "block_count": 5717,
+      "white_count": 11,
+      "total_lines": 21848,
+      "elapsed_sec": 0.29,
+      "last_update": "2026-11-22T03:35:25.349021+00:00"
     },
     "cjx-annoyance（弹窗 / 跳转 / 自我推广）": {
       "url": "https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt",
@@ -48,48 +58,8 @@
       "block_count": 115,
       "white_count": 0,
       "total_lines": 1863,
-      "elapsed_sec": 0.01,
-      "last_update": "2026-11-21T18:18:30.258076+00:00"
-    },
-    "EasyPrivacy（隐私保护 / 跟踪器）": {
-      "url": "https://easylist.to/easylist/easyprivacy.txt",
-      "http_status": 200,
-      "bytes": 1520558,
-      "block_count": 43504,
-      "white_count": 4,
-      "total_lines": 57550,
-      "elapsed_sec": 0.35,
-      "last_update": "2026-11-21T18:18:30.595950+00:00"
-    },
-    "AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）": {
-      "url": "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt",
-      "http_status": 200,
-      "bytes": 4888130,
-      "block_count": 191083,
-      "white_count": 11,
-      "total_lines": 193719,
-      "elapsed_sec": 0.74,
-      "last_update": "2026-11-21T18:18:30.820636+00:00"
-    },
-    "AdGuard 中文": {
-      "url": "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_224_Chinese/filter.txt",
-      "http_status": 200,
-      "bytes": 755766,
-      "block_count": 5714,
-      "white_count": 11,
-      "total_lines": 21845,
-      "elapsed_sec": 0.79,
-      "last_update": "2026-11-21T18:18:30.856761+00:00"
-    },
-    "I-Don't-Care-About-Cookies": {
-      "url": "https://www.i-dont-care-about-cookies.eu/abp/",
-      "http_status": 200,
-      "bytes": 773610,
-      "block_count": 81,
-      "white_count": 0,
-      "total_lines": 24339,
-      "elapsed_sec": 0.61,
-      "last_update": "2026-11-21T18:18:30.870889+00:00"
+      "elapsed_sec": 0.11,
+      "last_update": "2026-11-22T03:35:25.387083+00:00"
     },
     "anti-AD（中文区主要规则）": {
       "url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-easylist.txt",
@@ -98,8 +68,38 @@
       "block_count": 96392,
       "white_count": 108,
       "total_lines": 96603,
-      "elapsed_sec": 1.02,
-      "last_update": "2026-11-21T18:18:31.087540+00:00"
+      "elapsed_sec": 0.45,
+      "last_update": "2026-11-22T03:35:25.510834+00:00"
+    },
+    "I-Don't-Care-About-Cookies": {
+      "url": "https://www.i-dont-care-about-cookies.eu/abp/",
+      "http_status": 200,
+      "bytes": 773610,
+      "block_count": 81,
+      "white_count": 0,
+      "total_lines": 24339,
+      "elapsed_sec": 0.18,
+      "last_update": "2026-11-22T03:35:25.532619+00:00"
+    },
+    "EasyPrivacy（隐私保护 / 跟踪器）": {
+      "url": "https://easylist.to/easylist/easyprivacy.txt",
+      "http_status": 200,
+      "bytes": 1520596,
+      "block_count": 43508,
+      "white_count": 4,
+      "total_lines": 57556,
+      "elapsed_sec": 0.4,
+      "last_update": "2026-11-22T03:35:25.666832+00:00"
+    },
+    "AdGuard DNS Filter（DNS 层拦截广告 / 跟踪器 / 恶意软件）": {
+      "url": "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_15_DnsFilter/filter.txt",
+      "http_status": 200,
+      "bytes": 4891938,
+      "block_count": 191248,
+      "white_count": 11,
+      "total_lines": 193884,
+      "elapsed_sec": 1.0,
+      "last_update": "2026-11-22T03:35:26.069616+00:00"
     }
   }
 }
